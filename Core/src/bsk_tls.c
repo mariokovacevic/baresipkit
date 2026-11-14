@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include <string.h>
 #include <openssl/err.h>
 #include <openssl/sha.h>
@@ -136,7 +137,48 @@ static void visit_chain(X509_STORE_CTX *ctx, bsk_trust_cert_h *certh, void *arg)
 }
 
 
-bool bsk_trust_system(const char *host, const uint8_t *const *derv,
+static size_t load_ca_dir(X509_STORE *store, const char *dir)
+{
+	DIR *d = opendir(dir);
+	struct dirent *ent;
+	size_t loaded = 0;
+
+	if (!d)
+		return 0;
+
+	while ((ent = readdir(d))) {
+		char path[512];
+
+		if (ent->d_name[0] == '.')
+			continue;
+		if (re_snprintf(path, sizeof(path), "%s/%s", dir, ent->d_name) <
+		    0)
+			continue;
+		if (1 == X509_STORE_load_file(store, path))
+			++loaded;
+	}
+
+	closedir(d);
+	ERR_clear_error();
+
+	return loaded;
+}
+
+
+static void load_ca_dirs(X509_STORE *store, const char *const *dirs,
+			 size_t dir_count)
+{
+	size_t i;
+
+	for (i = 0; i < dir_count; i++) {
+		if (load_ca_dir(store, dirs[i]))
+			return;
+	}
+}
+
+
+bool bsk_trust_verify(const char *const *ca_dirs, size_t dir_count,
+		      const char *host, const uint8_t *const *derv,
 		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
 		      void *arg)
 {
@@ -159,8 +201,10 @@ bool bsk_trust_system(const char *host, const uint8_t *const *derv,
 		}
 	}
 
-	if (1 != X509_STORE_set_default_paths(store) ||
-	    1 != X509_STORE_CTX_init(ctx, store, sk_X509_value(chain, 0),
+	if (1 != X509_STORE_set_default_paths(store))
+		goto out;
+	load_ca_dirs(store, ca_dirs, dir_count);
+	if (1 != X509_STORE_CTX_init(ctx, store, sk_X509_value(chain, 0),
 				     chain) ||
 	    1 != X509_STORE_CTX_set_default(ctx, "ssl_server") ||
 	    !set_expected_host(ctx, host))
@@ -177,6 +221,24 @@ out:
 	ERR_clear_error();
 
 	return ok;
+}
+
+
+bool bsk_trust_system(const char *host, const uint8_t *const *derv,
+		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
+		      void *arg)
+{
+#if defined(__ANDROID__)
+	static const char *const dirs[] = {
+		"/apex/com.android.conscrypt/cacerts",
+		"/system/etc/security/cacerts",
+	};
+
+	return bsk_trust_verify(dirs, RE_ARRAY_SIZE(dirs), host, derv, lenv,
+				count, certh, arg);
+#else
+	return bsk_trust_verify(NULL, 0, host, derv, lenv, count, certh, arg);
+#endif
 }
 #endif
 

@@ -172,6 +172,18 @@ if [[ "$(uname -s)" != Darwin ]]; then
   openssl x509 -in "$TRUST_DIR/pinned.pem" -outform der -out "$TRUST_DIR/pinned.der"
   SSL_CERT_FILE="$TRUST_DIR/root.pem" "$BUILD/tests/bsk_test_trust" --unvisited sip.example.com \
     "$TRUST_DIR/leaf.der" "$TRUST_DIR/root.der" "$TRUST_DIR/pinned.der"
+  mkdir -p "$TRUST_DIR/cacerts-empty" "$TRUST_DIR/cacerts" "$TRUST_DIR/cacerts-other"
+  ROOT_HASH="$(openssl x509 -in "$TRUST_DIR/root.pem" -noout -subject_hash_old)"
+  { cat "$TRUST_DIR/root.pem"; openssl x509 -in "$TRUST_DIR/root.pem" -noout -text; } > "$TRUST_DIR/cacerts/$ROOT_HASH.0"
+  cp "$TRUST_DIR/pinned.pem" "$TRUST_DIR/cacerts-other/$(openssl x509 -in "$TRUST_DIR/pinned.pem" -noout -subject_hash_old).0"
+  SSL_CERT_FILE=/dev/null SSL_CERT_DIR="$TRUST_DIR/none" "$BUILD/tests/bsk_test_trust" \
+    --ca-dir "$TRUST_DIR/cacerts-empty" --ca-dir "$TRUST_DIR/cacerts" sip.example.com "$TRUST_DIR/leaf.der"
+  if SSL_CERT_FILE=/dev/null SSL_CERT_DIR="$TRUST_DIR/none" "$BUILD/tests/bsk_test_trust" \
+    --ca-dir "$TRUST_DIR/cacerts-other" --ca-dir "$TRUST_DIR/cacerts" sip.example.com "$TRUST_DIR/leaf.der" 2>/dev/null; then
+    echo "trust: FAIL (a later CA directory was read although an earlier one held certificates)" >&2
+    exit 1
+  fi
+  echo "trust: PASS (CA directories in the Android layout; only the first directory with certificates is read)"
 fi
 
 echo "== two-process call (hold/resume, DTMF, mute, stats)"

@@ -316,6 +316,15 @@ Beta, not released yet. The SDK is in active development, and the API can still 
   BSD-3-Clause.
 - `Docs/STABILITY.md` also states that creating output types yourself (initializers, Kotlin
   constructors, `copy` and `componentN`) and implementing SDK protocols are not covered.
+- Android: `baresipkit` declares `INTERNET` and `ACCESS_NETWORK_STATE`, and `baresipkit-audio`
+  `MODIFY_AUDIO_SETTINGS`, so they are merged into the app's manifest; an app that did not list
+  them failed at run time. `baresipkit-video` also declares the camera features
+  (`android.hardware.camera.any` and the ones `CAMERA` implies) with `required="false"`, so no
+  device is filtered out for lacking a back or autofocus camera. The consumer R8 rule for
+  `BaresipEngine.deliver`, which matched no member, is gone.
+- Android: `Docs/Android.md` has sections on TLS and certificates, NAT traversal, incoming calls
+  on Android 14 and later, and what each library adds to the merged manifest; every public
+  declaration has KDoc.
 
 ### Fixed
 
@@ -361,6 +370,36 @@ Beta, not released yet. The SDK is in active development, and the API can still 
 - Android: `BaresipCallVideo` and `BaresipCameraPreview` attach and detach in one coroutine, so
   leaving the screen quickly no longer leaves the camera running, and a composable that leaves
   no longer stops the preview or renderer of the one that replaced it.
+- Android: SIP over TLS verified the server only against the configured CAs, because OpenSSL's
+  default certificate locations do not exist on Android, so a server with a certificate from a
+  public CA was rejected unless its CA was configured. The core now also reads Android's system
+  CAs from `/apex/com.android.conscrypt/cacerts` or `/system/etc/security/cacerts`. CAs the user
+  installed or turned off and the app's network security configuration still do not apply.
+- Android: `BaresipEngine.close()` could free the native engine while `state`,
+  `registrationState` or the engine thread check read it from another thread; the handle is now
+  guarded by a lock.
+- Android: a coroutine cancelled after `makeCall` or `addAccount` reached the core left the call
+  or account in the core; the call is now hung up and the account removed before the
+  cancellation is thrown. `accounts()`, `activeCalls()`, `videoDevices()`, `stop()`,
+  `networkDidChange()` and the audio notifications swallowed `CancellationException` and
+  unexpected errors through `runCatching`; they now ignore only `BaresipError`.
+- Android: `BaresipTelecomAdapter` and `BaresipAppLifecycle.start()` subscribe to events before
+  they return, so an INVITE or a released call right after them is no longer missed.
+- Android: `BaresipTelecomAdapter.end()` no longer leaves the Telecom call in the system when the
+  engine cannot hang up, and no longer throws `NOT_FOUND` for a call the engine no longer knows.
+- Android: a pushed call bound to its INVITE takes the INVITE's address, and its name as on iOS:
+  the INVITE's display name, else the push's name when the INVITE confirmed the pushed caller,
+  else the INVITE's address. Before, a push without a caller could keep its name for an INVITE
+  from another caller.
+- Android: `BaresipAudioController` hands focus and route changes to the engine in the order
+  they happened (a loss and the following gain could arrive reversed and leave audio paused),
+  and stops calling the engine after `release()`. Before Android 12, Bluetooth SCO is turned on
+  only once the headset has connected the link, `onRouteChange` follows the link, and
+  `deactivate()` and `release()` stop the link the controller started.
+- Android: a camera that Camera2 disconnects or reports an error for closes its capture and is
+  logged under `BaresipKit.camera` instead of silently stopping video; switching to the same
+  camera opens it again. The display rotation comes from `DisplayManager` instead of the
+  deprecated `WindowManager.defaultDisplay`.
 
 ### Security
 

@@ -69,7 +69,10 @@ patches and the tests are shared; only the layers that talk to the operating sys
 5. **Platform modules in C, next to their Apple counterparts:** audio through baresip's `aaudio`
    module (patched if needed), H.264 through a new `mediacodec` module (the counterpart of
    `vidtoolbox`), the camera through a new `bskcamera` source fed from Camera2, and TLS trust of
-   the system store through a callback into Kotlin (the counterpart of `bsk_trust.c`).
+   the system store in C: OpenSSL reads the system CA certificates from Android's CA directory
+   (the counterpart of `bsk_trust.c`, which asks Security.framework). A callback into Kotlin
+   would also apply the app's network security configuration; it was not built, so that
+   configuration does not apply to SIP over TLS.
 6. **minSdk 28, compileSdk 36, Kotlin with coroutines, Compose for UI.** Packages are under
    `io.github.mariokovacevic.baresipkit`, and the Maven group is `io.github.mariokovacevic`, the
    namespace Maven Central verifies for this GitHub account; the build uses the Gradle wrapper (8.14.3), the Android Gradle

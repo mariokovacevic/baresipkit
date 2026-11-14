@@ -295,6 +295,12 @@ typedef void(bsk_trust_cert_h)(const uint8_t *der, size_t len, void *arg);
 bool bsk_trust_system(const char *host, const uint8_t *const *derv,
 		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
 		      void *arg);
+#if !defined(__APPLE__)
+bool bsk_trust_verify(const char *const *ca_dirs, size_t dir_count,
+		      const char *host, const uint8_t *const *derv,
+		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
+		      void *arg);
+#endif
 
 int bsk_video_init(bsk_engine *engine);
 void bsk_video_close(bsk_engine *engine);

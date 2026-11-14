@@ -171,11 +171,13 @@ val account =
   `BaresipCertificateException` for a file that holds no valid certificate. The server
   certificate is always verified, and there is no setting that turns this off: for a test server
   with a self-signed certificate, add that certificate or its CA here.
-- **The system's CAs.** On Android the core verifies the server with OpenSSL against its default
-  certificate locations, which Android does not provide. It does not read Android's CA store,
-  and the app's network security configuration does not apply to it. Add the CA of your SIP
-  server to `caCertificatesPem`, also when a public CA issued its certificate (not yet verified
-  on a device).
+- **The system's CAs.** When the certificates in `caCertificatesPem` do not verify the server,
+  the core verifies it with OpenSSL against Android's system CAs, read from
+  `/apex/com.android.conscrypt/cacerts` (the store Android 14 and later update) or, when that
+  does not exist, `/system/etc/security/cacerts`. CAs the user installed or turned off in the
+  settings, and the app's network security configuration, do not apply. A server whose
+  certificate a public CA issued therefore needs no CA here (verified with CA directories in
+  this layout on Linux, not yet against a public server on a device).
 - **Pins.** `pinnedSpkiSha256` lists the Base64 SHA-256 hashes of the server keys
   (SubjectPublicKeyInfo) you accept, checked on top of the normal verification; a certificate of
   the chain must match one of them. Compute a pin from the server's certificate with
@@ -303,8 +305,9 @@ the camera permission:
 [Android/zvono](../Android/zvono/README.md) is Zvono, the intercom sample, in Compose: doors with their last
 picture and Open, activity, keypad, messages, settings and diagnostics, the ring screen with a
 preview before answering, and the call screen with captions and chat for SIP messages. It uses
-every module above. CI runs its screenshot test on an emulator and keeps the pictures as the
-`android-sample-screenshots` artifact.
+every module above. CI runs its screenshot test on emulators with API 28 and 34 and keeps the
+pictures as the `android-sample-screenshots-api28` and `android-sample-screenshots-api34`
+artifacts.
 
 ## Building from source
 
