@@ -30,6 +30,9 @@ differ where they must is in [Platforms.md](Platforms.md).
 
 - Android 9 (API 28) or later, on `arm64-v8a` or `x86_64`
 - Kotlin 2.1 or later, with coroutines; Jetpack Compose for `baresipkit-compose`
+- The libraries are made for Kotlin callers. Their API uses value classes and suspend functions,
+  which Java sees under generated names and without coroutines, so calling them from Java is not
+  supported in 1.0
 - To build from source: JDK 21, the Android SDK and NDK, see [Building from source](#building-from-source)
 
 ## Installation
