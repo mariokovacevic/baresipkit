@@ -1,4 +1,5 @@
 #include <dirent.h>
+#include <pthread.h>
 #include <string.h>
 #include <openssl/err.h>
 #include <openssl/sha.h>
@@ -107,6 +108,12 @@ static int verify_handler(int preverify_ok, int depth, const uint8_t *der,
 
 
 #if !defined(__APPLE__)
+static pthread_mutex_t store_lock = PTHREAD_MUTEX_INITIALIZER;
+static X509_STORE *cached_store;
+static const char *const *cached_dirs;
+static size_t cached_dir_count;
+
+
 static bool set_expected_host(X509_STORE_CTX *ctx, const char *host)
 {
 	X509_VERIFY_PARAM *param = X509_STORE_CTX_get0_param(ctx);
@@ -177,12 +184,42 @@ static void load_ca_dirs(X509_STORE *store, const char *const *dirs,
 }
 
 
+static X509_STORE *system_store(const char *const *dirs, size_t dir_count)
+{
+	X509_STORE *store = NULL;
+
+	pthread_mutex_lock(&store_lock);
+	if (cached_store &&
+	    (cached_dirs != dirs || cached_dir_count != dir_count)) {
+		X509_STORE_free(cached_store);
+		cached_store = NULL;
+	}
+	if (!cached_store) {
+		X509_STORE *fresh = X509_STORE_new();
+
+		if (fresh && 1 == X509_STORE_set_default_paths(fresh)) {
+			load_ca_dirs(fresh, dirs, dir_count);
+			cached_store = fresh;
+			cached_dirs = dirs;
+			cached_dir_count = dir_count;
+		} else {
+			X509_STORE_free(fresh);
+		}
+	}
+	if (cached_store && 1 == X509_STORE_up_ref(cached_store))
+		store = cached_store;
+	pthread_mutex_unlock(&store_lock);
+
+	return store;
+}
+
+
 bool bsk_trust_verify(const char *const *ca_dirs, size_t dir_count,
 		      const char *host, const uint8_t *const *derv,
 		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
 		      void *arg)
 {
-	X509_STORE *store = X509_STORE_new();
+	X509_STORE *store = system_store(ca_dirs, dir_count);
 	X509_STORE_CTX *ctx = X509_STORE_CTX_new();
 	STACK_OF(X509) *chain = sk_X509_new_null();
 	bool ok = false;
@@ -201,9 +238,6 @@ bool bsk_trust_verify(const char *const *ca_dirs, size_t dir_count,
 		}
 	}
 
-	if (1 != X509_STORE_set_default_paths(store))
-		goto out;
-	load_ca_dirs(store, ca_dirs, dir_count);
 	if (1 != X509_STORE_CTX_init(ctx, store, sk_X509_value(chain, 0),
 				     chain) ||
 	    1 != X509_STORE_CTX_set_default(ctx, "ssl_server") ||
