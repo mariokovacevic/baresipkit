@@ -10,14 +10,15 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.OutputConfiguration
 import android.hardware.camera2.params.SessionConfiguration
+import android.hardware.display.DisplayManager
 import android.media.ImageReader
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.Log
 import android.util.Range
 import android.util.Size
+import android.view.Display
 import android.view.Surface
-import android.view.WindowManager
 import io.github.mariokovacevic.baresipkit.BaresipCameraHost
 import io.github.mariokovacevic.baresipkit.BaresipCameraSource
 import io.github.mariokovacevic.baresipkit.BaresipInternalApi
@@ -34,7 +35,7 @@ import kotlin.time.Duration.Companion.nanoseconds
  * ```
  *
  * The app needs the `CAMERA` permission before a call sends video. Frames are rotated upright for
- * the display's current rotation before they are encoded.
+ * the default display's current rotation before they are encoded.
  *
  * When a camera cannot be opened, or the system takes it away during a call (another app opens
  * it, the camera is disabled, or it fails), the camera is closed and the call sends no more
@@ -47,6 +48,7 @@ public class BaresipCamera private constructor(
 ) {
     private val context = context.applicationContext
     private val manager = this.context.getSystemService(CameraManager::class.java)
+    private val displays = this.context.getSystemService(DisplayManager::class.java)
     private val thread = HandlerThread("baresipkit.camera").apply { start() }
     private val handler = Handler(thread.looper)
     private val executor = Executor { handler.post(it) }
@@ -272,9 +274,8 @@ public class BaresipCamera private constructor(
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun displayRotationDegrees(): Int =
-        when (context.getSystemService(WindowManager::class.java)?.defaultDisplay?.rotation) {
+        when (displays?.getDisplay(Display.DEFAULT_DISPLAY)?.rotation) {
             Surface.ROTATION_90 -> 90
             Surface.ROTATION_180 -> 180
             Surface.ROTATION_270 -> 270
