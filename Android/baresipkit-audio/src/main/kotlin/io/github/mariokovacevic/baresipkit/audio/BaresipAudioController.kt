@@ -13,6 +13,8 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import io.github.mariokovacevic.baresipkit.BaresipEngine
+import io.github.mariokovacevic.baresipkit.BaresipError
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -32,8 +34,8 @@ import kotlinx.coroutines.launch
  * Losing audio focus, for example to a cellular call, pauses the engine's audio. When focus comes
  * back the engine resumes if [activate] had activated it; with Telecom the audio resumes with
  * the next [didActivateFromTelecom]. A headset or Bluetooth device that connects or disconnects
- * restarts the engine's audio streams. The engine is told about these changes in the order they
- * happen.
+ * restarts the engine's audio streams. The engine is told about these changes, and about
+ * [activate], [deactivate] and the Telecom calls, in the order they happen.
  *
  * ```kotlin
  * val audio = BaresipAudioController(context, engine)
@@ -58,7 +60,13 @@ public class BaresipAudioController(
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    private val engineUpdates = Channel<suspend BaresipEngine.() -> Unit>(Channel.UNLIMITED)
+    private class EngineUpdate(
+        val apply: suspend BaresipEngine.() -> Unit,
+        val done: CompletableDeferred<Unit>? = null,
+    )
+
+    private val engineUpdates =
+        Channel<EngineUpdate>(Channel.UNLIMITED, onUndeliveredElement = { it.done?.complete(Unit) })
 
     @Volatile private var activation = Activation.INACTIVE
     private var focusRequest: AudioFocusRequest? = null
@@ -92,7 +100,18 @@ public class BaresipAudioController(
     @Volatile private var scoReceiver: BroadcastReceiver? = null
 
     init {
-        scope.launch { for (update in engineUpdates) engine.update() }
+        scope.launch {
+            for (update in engineUpdates) {
+                try {
+                    engine.(update.apply)()
+                    update.done?.complete(Unit)
+                } catch (error: BaresipError) {
+                    update.done?.completeExceptionally(error)
+                } finally {
+                    update.done?.complete(Unit)
+                }
+            }
+        }
         audioManager.registerAudioDeviceCallback(deviceCallback, handler)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             audioManager.addOnCommunicationDeviceChangedListener(
@@ -134,7 +153,7 @@ public class BaresipAudioController(
         audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
         if (defaultToSpeaker) selectOutput(BaresipAudioOutput.SPEAKER)
         activation = Activation.CONTROLLER
-        engine.audioSessionDidActivate()
+        tellEngineAndWait { audioSessionDidActivate() }
         return true
     }
 
@@ -144,7 +163,7 @@ public class BaresipAudioController(
      */
     public suspend fun deactivate() {
         activation = Activation.INACTIVE
-        engine.audioSessionDidDeactivate()
+        tellEngineAndWait { audioSessionDidDeactivate() }
         clearCommunicationDevice()
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) stopSco()
         audioManager.mode = AudioManager.MODE_NORMAL
@@ -155,13 +174,13 @@ public class BaresipAudioController(
     /** Forwards the activation of a Telecom connection's audio, for example `onCallAudioStateChanged`, to the engine. */
     public suspend fun didActivateFromTelecom() {
         activation = Activation.TELECOM
-        engine.audioSessionDidActivate()
+        tellEngineAndWait { audioSessionDidActivate() }
     }
 
     /** Forwards the end of a Telecom connection's audio to the engine. */
     public suspend fun didDeactivateFromTelecom() {
         activation = Activation.INACTIVE
-        engine.audioSessionDidDeactivate()
+        tellEngineAndWait { audioSessionDidDeactivate() }
     }
 
     /**
@@ -170,7 +189,7 @@ public class BaresipAudioController(
      * controller afterwards.
      */
     public fun release() {
-        engineUpdates.close()
+        engineUpdates.cancel()
         scope.cancel()
         if (scoReceiver != null) stopSco()
         audioManager.unregisterAudioDeviceCallback(deviceCallback)
@@ -285,7 +304,12 @@ public class BaresipAudioController(
     }
 
     private fun tellEngine(update: suspend BaresipEngine.() -> Unit) {
-        engineUpdates.trySend(update)
+        engineUpdates.trySend(EngineUpdate(update))
+    }
+
+    private suspend fun tellEngineAndWait(update: suspend BaresipEngine.() -> Unit) {
+        val done = CompletableDeferred<Unit>()
+        if (engineUpdates.trySend(EngineUpdate(update, done)).isSuccess) done.await()
     }
 
     private fun clearCommunicationDevice() {
