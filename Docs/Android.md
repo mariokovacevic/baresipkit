@@ -128,10 +128,10 @@ call.
 focus for voice communication, sets `MODE_IN_COMMUNICATION` and tells the engine;
 `selectOutput` picks the earpiece, the speaker or a headset.
 
-**Video.** Call `BaresipCamera.install(context)` once (the app needs the `CAMERA` permission),
-then show a call's video with `BaresipCallVideo(engine, call)` in Compose or a
-`BaresipVideoView` attached with `engine.setVideoRenderer(call, view.renderer)`. H.264 is coded
-by MediaCodec and VP8 by libvpx.
+**Video.** Call `BaresipCamera.install(context)` once, and ask for the `CAMERA` permission, which
+`baresipkit-video` declares, before the first video call. Then show a call's video with
+`BaresipCallVideo(engine, call)` in Compose or a `BaresipVideoView` attached with
+`engine.setVideoRenderer(call, view.renderer)`. H.264 is coded by MediaCodec and VP8 by libvpx.
 
 **Network and lifecycle.** `BaresipNetworkMonitor(context, engine).start()` tells the engine
 when the default network changes, so registrations and calls move to it.
@@ -144,7 +144,7 @@ Before shipping a VoIP app built on BaresipKit for Android:
 
 | Where | What |
 |---|---|
-| Manifest | `INTERNET`, `ACCESS_NETWORK_STATE` and `RECORD_AUDIO`; `CAMERA` for video (merged from `baresipkit-video`); `MODIFY_AUDIO_SETTINGS`, and `BLUETOOTH_CONNECT` for Bluetooth headsets |
+| Manifest | `RECORD_AUDIO`; `BLUETOOTH_CONNECT` for Bluetooth headsets unless `baresipkit-telecom` merges it. The libraries declare the rest, see [What the libraries add to the manifest](#what-the-libraries-add-to-the-manifest) |
 | Manifest | For Telecom: `MANAGE_OWN_CALLS`, and a foreground service of type `phoneCall` (with `microphone` and `camera` for video calls) with the matching `FOREGROUND_SERVICE_*` permissions |
 | Manifest | For incoming calls: `POST_NOTIFICATIONS` and `USE_FULL_SCREEN_INTENT`, so the ring screen shows over the lock screen |
 | Runtime | Ask for the microphone, camera and notification permissions before the first call |
@@ -152,6 +152,29 @@ Before shipping a VoIP app built on BaresipKit for Android:
 | SIP server | Reads the push parameters from the `Contact` and sends a push for a call to a registered device |
 | Calls from other apps | The `sip:` and `tel:` intent filters and the `CALL_PHONE` alias from the recipe above |
 | Licenses | Ship the third-party notices, including OpenSSL's NOTICE (see [License](../README.md#license)) |
+
+## What the libraries add to the manifest
+
+Each library declares the permissions it needs itself, so they appear in the app's merged
+manifest without being listed again:
+
+| Library | Merged into the app's manifest |
+|---|---|
+| `baresipkit` | `INTERNET`; `ACCESS_NETWORK_STATE` for `BaresipNetworkMonitor` |
+| `baresipkit-audio` | `MODIFY_AUDIO_SETTINGS`, for communication mode, the speaker and Bluetooth SCO |
+| `baresipkit-video` | `CAMERA`; the features `android.hardware.camera.any`, `android.hardware.camera` and `android.hardware.camera.autofocus` and OpenGL ES 2.0, all with `required="false"`, so devices without a camera can still install the app |
+| `baresipkit-telecom` | From core-telecom: `MANAGE_OWN_CALLS`, `BLUETOOTH_CONNECT`, `MODIFY_AUDIO_SETTINGS`, and its `ConnectionService` and mute receiver |
+| `baresipkit-push` | Nothing of its own; it does not depend on a push messaging library. The one the app uses adds what it needs |
+| `baresipkit-compose` | Nothing |
+
+`RECORD_AUDIO`, `POST_NOTIFICATIONS`, `USE_FULL_SCREEN_INTENT` and the foreground service
+permissions stay with the app, which decides when to ask for them. An app that uses
+`baresipkit-video` only to show the other side's video, and never sends the camera, can remove
+the camera permission:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" tools:node="remove" />
+```
 
 ## Sample app
 
