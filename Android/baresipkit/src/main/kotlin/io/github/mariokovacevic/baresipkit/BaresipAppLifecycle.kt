@@ -4,6 +4,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -88,7 +89,8 @@ public class BaresipAppLifecycle(
 
     /**
      * Starts following the app's process lifecycle and the engine's calls. Call it on the main
-     * thread. Following the calls ends when the engine is closed.
+     * thread. The calls are followed from the moment `start` returns, and following them ends
+     * when the engine is closed.
      */
     public fun start() {
         if (observer != null) return
@@ -113,7 +115,7 @@ public class BaresipAppLifecycle(
 
     internal fun watchCalls() {
         eventJob =
-            scope.launch {
+            scope.launch(start = CoroutineStart.UNDISPATCHED) {
                 engine.events.collect { event ->
                     if (event is BaresipEvent.Call && event.state == BaresipCallState.RELEASED) goAwayIfIdle()
                 }

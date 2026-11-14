@@ -10,6 +10,7 @@ import io.github.mariokovacevic.baresipkit.internal.names
 import io.github.mariokovacevic.baresipkit.internal.values
 import io.github.mariokovacevic.baresipkit.internal.wholeMilliseconds
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,6 +22,9 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.write
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -55,6 +59,7 @@ public class BaresipEngine(
         }
     private val dispatcher: ExecutorCoroutineDispatcher = executor.asCoroutineDispatcher()
     private val closed = AtomicBoolean(false)
+    private val handleLock = ReentrantReadWriteLock()
     private val eventFlow = MutableSharedFlow<Any>(extraBufferCapacity = Int.MAX_VALUE)
 
     @Volatile private var eventsEnded = false
@@ -109,10 +114,10 @@ public class BaresipEngine(
 
     /** The current lifecycle state. */
     public val state: BaresipEngineState
-        get() = if (closed.get()) BaresipEngineState.STOPPED else BaresipEngineState.of(Native.engineState(handle))
+        get() = withHandle(BaresipEngineState.STOPPED) { BaresipEngineState.of(Native.engineState(it)) }
 
     internal val isEngineThread: Boolean
-        get() = !closed.get() && Native.engineIsEngineThread(handle)
+        get() = withHandle(false) { Native.engineIsEngineThread(it) }
 
     /**
      * Starts the engine: loads modules, opens transports and starts the engine thread. Only one
@@ -128,7 +133,7 @@ public class BaresipEngine(
      * accounts are removed; add them again after the next [start].
      */
     public suspend fun stop(timeout: Duration = 3.seconds) {
-        runCatching { onEngine { Native.engineStop(handle, timeout.wholeMilliseconds()) } }
+        ignoringErrors { onEngine { Native.engineStop(handle, timeout.wholeMilliseconds()) } }
     }
 
     /**
@@ -157,39 +162,44 @@ public class BaresipEngine(
         reregister: Boolean = true,
         updateCalls: Boolean = true,
     ) {
-        runCatching { onEngine { Native.engineNetworkChanged(handle, reregister, updateCalls) } }
+        ignoringErrors { onEngine { Native.engineNetworkChanged(handle, reregister, updateCalls) } }
     }
 
     /** Tells the engine that audio focus was gained and the audio device may start. */
     public suspend fun audioSessionDidActivate() {
-        runCatching { onEngine { Native.engineAudioSessionActivated(handle) } }
+        ignoringErrors { onEngine { Native.engineAudioSessionActivated(handle) } }
     }
 
     /** Tells the engine that audio focus was lost for good. */
     public suspend fun audioSessionDidDeactivate() {
-        runCatching { onEngine { Native.engineAudioSessionDeactivated(handle) } }
+        ignoringErrors { onEngine { Native.engineAudioSessionDeactivated(handle) } }
     }
 
     /** Tells the engine that the audio route changed, so audio streams are restarted. */
     public suspend fun audioRouteDidChange() {
-        runCatching { onEngine { Native.engineAudioRouteChanged(handle) } }
+        ignoringErrors { onEngine { Native.engineAudioRouteChanged(handle) } }
     }
 
     /** Tells the engine that an audio interruption, such as a cellular call, began or ended. */
     public suspend fun audioInterruption(began: Boolean) {
-        runCatching { onEngine { Native.engineAudioInterruption(handle, began) } }
+        ignoringErrors { onEngine { Native.engineAudioInterruption(handle, began) } }
     }
 
     /**
      * Adds an account. The first account added becomes the default for calls and messages.
      * Adding does not register; call [register].
      *
+     * When the calling coroutine is cancelled after the core added the account, the account is
+     * removed again before the cancellation is thrown.
+     *
      * @throws BaresipError when the settings are invalid or the engine is not running.
      */
     public suspend fun addAccount(account: BaresipAccountConfiguration): BaresipAccountID {
         account.validate()
         val native = NativeAccountConfig(account)
-        return BaresipAccountID(onEngine { Native.accountAdd(handle, native) })
+        return BaresipAccountID(
+            onEngineCreating(create = { Native.accountAdd(handle, native) }, discard = { Native.accountRemove(handle, it) }),
+        )
     }
 
     /** Unregisters and removes an account. Its calls are hung up. */
@@ -236,22 +246,18 @@ public class BaresipEngine(
      * while the engine is not running.
      */
     public suspend fun accounts(): Map<BaresipAccountID, BaresipRegistrationState> =
-        runCatching {
+        ignoringErrors(emptyMap()) {
             onEngine {
                 val pairs = Native.accountList(handle)
                 (pairs.indices step 2).associate {
                     BaresipAccountID(pairs[it]) to BaresipRegistrationState.of(pairs[it + 1].toInt())
                 }
             }
-        }.getOrDefault(emptyMap())
+        }
 
     /** The current registration state of an account, or [BaresipRegistrationState.NONE] for an unknown account. */
     public fun registrationState(account: BaresipAccountID): BaresipRegistrationState =
-        if (closed.get()) {
-            BaresipRegistrationState.NONE
-        } else {
-            BaresipRegistrationState.of(Native.accountRegistrationState(handle, account.rawValue))
-        }
+        withHandle(BaresipRegistrationState.NONE) { BaresipRegistrationState.of(Native.accountRegistrationState(it, account.rawValue)) }
 
     /**
      * Places a call.
@@ -259,6 +265,9 @@ public class BaresipEngine(
      * A destination without a scheme and domain, such as `1002`, is completed with the account's
      * domain. Video is always offered, so the callee's early media and video are shown even in an
      * audio call; [video] only decides whether your camera is sent.
+     *
+     * When the calling coroutine is cancelled after the core created the call, the call is hung
+     * up before the cancellation is thrown.
      *
      * @param account The account to call from, or `null` for the default account.
      * @param destination A SIP URI, user name or number.
@@ -272,7 +281,13 @@ public class BaresipEngine(
         destination: String,
         video: Boolean = false,
         audio: Boolean = true,
-    ): BaresipCallID = BaresipCallID(onEngine { Native.callMake(handle, account?.rawValue ?: 0, destination.cString(), audio, video) })
+    ): BaresipCallID =
+        BaresipCallID(
+            onEngineCreating(
+                create = { Native.callMake(handle, account?.rawValue ?: 0, destination.cString(), audio, video) },
+                discard = { Native.callHangup(handle, it) },
+            ),
+        )
 
     /**
      * Answers an incoming call. The caller's video, if offered, is always received; [video] only
@@ -375,7 +390,7 @@ public class BaresipEngine(
     ): String? = onEngine { Native.callHeader(handle, call.rawValue, name.cString()) }
 
     /** The identifiers of all calls that are not released, oldest first. */
-    public suspend fun activeCalls(): List<BaresipCallID> = runCatching { onEngine { Native.callList(handle).map(::BaresipCallID) } }.getOrDefault(emptyList())
+    public suspend fun activeCalls(): List<BaresipCallID> = ignoringErrors(emptyList()) { onEngine { Native.callList(handle).map(::BaresipCallID) } }
 
     /** Current media statistics for a call. */
     public suspend fun callStatistics(call: BaresipCallID): BaresipCallStatistics =
@@ -447,6 +462,9 @@ public class BaresipEngine(
      * Sends a text message as a SIP MESSAGE (RFC 3428). The result arrives later as
      * [BaresipEvent.MessageStatus] with the returned identifier.
      *
+     * A message the core has accepted cannot be withdrawn: when the calling coroutine is cancelled
+     * after that, the message is still sent and its [BaresipEvent.MessageStatus] still arrives.
+     *
      * @param account The account to send from, or `null` for the default account.
      */
     public suspend fun sendMessage(
@@ -457,8 +475,7 @@ public class BaresipEngine(
 
     /** The names of the cameras the video source offers. */
     public suspend fun videoDevices(): List<String> =
-        runCatching { onEngine { Native.videoDevices(handle).split('\n').filter { it.isNotEmpty() } } }
-            .getOrDefault(emptyList())
+        ignoringErrors(emptyList()) { onEngine { Native.videoDevices(handle).split('\n').filter { it.isNotEmpty() } } }
 
     /**
      * Attaches a renderer to a call's remote or local video, or detaches it with `null`. The
@@ -526,11 +543,19 @@ public class BaresipEngine(
     /**
      * Stops and frees the engine. Pending operations fail with [BaresipError.Code.INVALID_STATE];
      * [events] delivers the engine's last events and then completes.
+     *
+     * `close` blocks the calling thread until the core has stopped: the operations already queued
+     * on the engine finish first, then calls are hung up and accounts unregister, which takes up to
+     * 3 seconds. The wait is bounded by 10 seconds; after that `close` returns and the core is freed
+     * in the background, and starting another engine before then fails with
+     * [BaresipError.Code.BUSY]. Call it from a background thread, for example with
+     * `withContext(Dispatchers.IO) { engine.close() }`, not from the main thread. Called on the
+     * engine's own thread, it returns at once.
      */
     override fun close() {
         if (!closed.compareAndSet(false, true)) return
         executor.execute {
-            Native.engineDestroy(handle)
+            handleLock.write { Native.engineDestroy(handle) }
             synchronized(videoSinks) { videoSinks.values.toList().also { videoSinks.clear() } }.forEach { it.release() }
             eventsEnded = true
             eventFlow.tryEmit(EndOfEvents)
@@ -550,6 +575,46 @@ public class BaresipEngine(
         logHandler?.log(entry)
     }
 
+    private inline fun <T> withHandle(
+        ifClosed: T,
+        body: (Long) -> T,
+    ): T {
+        val lock = handleLock.readLock()
+        if (!lock.tryLock()) return ifClosed
+        try {
+            return if (closed.get()) ifClosed else body(handle)
+        } finally {
+            lock.unlock()
+        }
+    }
+
+    private inline fun ignoringErrors(body: () -> Unit) {
+        ignoringErrors(Unit, body)
+    }
+
+    private inline fun <T> ignoringErrors(
+        fallback: T,
+        body: () -> T,
+    ): T =
+        try {
+            body()
+        } catch (ignored: BaresipError) {
+            fallback
+        }
+
+    private suspend fun onEngineCreating(
+        create: () -> Long,
+        discard: (Long) -> Unit,
+    ): Long {
+        var created: Long? = null
+        try {
+            return onEngine { create().also { created = it } }
+        } catch (cancelled: CancellationException) {
+            created?.let { id -> withContext(NonCancellable) { ignoringErrors { onEngine { discard(id) } } } }
+            throw cancelled
+        }
+    }
+
     private suspend fun <T> onEngine(body: () -> T): T {
         if (closed.get()) throw BaresipError(BaresipError.Code.INVALID_STATE, detail = "engine is closed")
         return try {
@@ -564,6 +629,7 @@ public class BaresipEngine(
 
     private object EndOfEvents
 
+    /** What the linked core offers without an engine: its version and the `Contact` parameter encoding. */
     public companion object {
         private const val THREAD_NAME = "baresipkit.engine"
         private const val CLOSE_TIMEOUT_SECONDS = 10L

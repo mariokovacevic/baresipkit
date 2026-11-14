@@ -53,6 +53,7 @@ public data class BaresipAudioOutput(
     /** The kind of output. */
     val route: BaresipAudioRoute,
 ) {
+    /** The outputs every phone has. */
     public companion object {
         /** The receiver at the top of the phone. */
         public val EARPIECE: BaresipAudioOutput = BaresipAudioOutput("bsk.earpiece", "Phone", BaresipAudioRoute.Earpiece)

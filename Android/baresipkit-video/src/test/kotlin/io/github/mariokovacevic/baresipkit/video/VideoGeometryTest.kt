@@ -1,5 +1,6 @@
 package io.github.mariokovacevic.baresipkit.video
 
+import android.hardware.camera2.CameraDevice
 import io.github.mariokovacevic.baresipkit.BaresipPixelFormat
 import io.github.mariokovacevic.baresipkit.BaresipVideoFrame
 import org.junit.Assert.assertArrayEquals
@@ -77,5 +78,12 @@ class VideoGeometryTest {
         val pixels = staged.argb()
         assertEquals(0xff000000.toInt(), pixels[0])
         assertEquals(0xffffffff.toInt(), pixels[2])
+    }
+
+    @Test
+    fun aCameraErrorIsReportedByName() {
+        assertEquals("in use", CameraSizes.errorName(CameraDevice.StateCallback.ERROR_CAMERA_IN_USE))
+        assertEquals("disabled by policy", CameraSizes.errorName(CameraDevice.StateCallback.ERROR_CAMERA_DISABLED))
+        assertEquals("error 42", CameraSizes.errorName(42))
     }
 }

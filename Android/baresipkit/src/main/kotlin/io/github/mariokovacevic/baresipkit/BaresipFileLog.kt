@@ -14,11 +14,11 @@ import java.util.concurrent.Executors
  * beyond [maxFileSize] truncated. Lines are written on a background thread straight to the file,
  * so nothing is lost when the process is killed.
  *
- * @param directory Where log files are written, for example `File(context.filesDir, "Logs")`.
  * @param maxFileSize The size, in bytes, beyond which a day's file is truncated and restarted.
  * @param daysToKeep The number of most recent daily files kept; older ones are removed.
  */
 public class BaresipFileLog(
+    /** Where log files are written, for example `File(context.filesDir, "Logs")`. */
     public val directory: File,
     private val maxFileSize: Long = 50L * 1024 * 1024,
     private val daysToKeep: Int = 7,

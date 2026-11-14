@@ -167,6 +167,7 @@ public interface BaresipCameraHost {
         device: String,
     ): Boolean
 
+    /** Installs the camera host of the process. */
     public companion object {
         @Volatile internal var installed: BaresipCameraHost? = null
 

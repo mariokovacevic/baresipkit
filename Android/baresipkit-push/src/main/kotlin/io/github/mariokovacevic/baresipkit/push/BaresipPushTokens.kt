@@ -61,6 +61,7 @@ public data class BaresipPushCall(
     /** The call's UUID, the one the INVITE also carries, if the push names one. */
     val uuid: java.util.UUID?,
 ) {
+    /** Reads pushed calls from push messages. */
     public companion object {
         /**
          * Reads a call from the data of a push message, as `RemoteMessage.data` delivers it.

@@ -1,6 +1,9 @@
 package io.github.mariokovacevic.baresipkit.audio
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.media.AudioAttributes
 import android.media.AudioDeviceCallback
 import android.media.AudioDeviceInfo
@@ -13,6 +16,8 @@ import io.github.mariokovacevic.baresipkit.BaresipEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 
 /**
@@ -27,7 +32,8 @@ import kotlinx.coroutines.launch
  * Losing audio focus, for example to a cellular call, pauses the engine's audio. When focus comes
  * back the engine resumes if [activate] had activated it; with Telecom the audio resumes with
  * the next [didActivateFromTelecom]. A headset or Bluetooth device that connects or disconnects
- * restarts the engine's audio streams.
+ * restarts the engine's audio streams. The engine is told about these changes in the order they
+ * happen.
  *
  * ```kotlin
  * val audio = BaresipAudioController(context, engine)
@@ -46,9 +52,13 @@ public class BaresipAudioController(
 
     internal enum class FocusResponse { PAUSE_ENGINE, RESUME_ENGINE, STAY }
 
+    internal enum class ScoLink { UP, DOWN, PENDING }
+
+    private val appContext = context.applicationContext
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val engineUpdates = Channel<suspend BaresipEngine.() -> Unit>(Channel.UNLIMITED)
 
     @Volatile private var activation = Activation.INACTIVE
     private var focusRequest: AudioFocusRequest? = null
@@ -57,8 +67,8 @@ public class BaresipAudioController(
     private val focusListener =
         AudioManager.OnAudioFocusChangeListener { change ->
             when (focusResponse(change, activation)) {
-                FocusResponse.PAUSE_ENGINE -> scope.launch { engine.audioInterruption(began = true) }
-                FocusResponse.RESUME_ENGINE -> scope.launch { engine.audioInterruption(began = false) }
+                FocusResponse.PAUSE_ENGINE -> tellEngine { audioInterruption(began = true) }
+                FocusResponse.RESUME_ENGINE -> tellEngine { audioInterruption(began = false) }
                 FocusResponse.STAY -> Unit
             }
         }
@@ -79,7 +89,10 @@ public class BaresipAudioController(
             null
         }
 
+    @Volatile private var scoReceiver: BroadcastReceiver? = null
+
     init {
+        scope.launch { for (update in engineUpdates) engine.update() }
         audioManager.registerAudioDeviceCallback(deviceCallback, handler)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             audioManager.addOnCommunicationDeviceChangedListener(
@@ -125,11 +138,15 @@ public class BaresipAudioController(
         return true
     }
 
-    /** Tells the engine, leaves communication mode and gives up audio focus. */
+    /**
+     * Tells the engine, leaves communication mode and gives up audio focus. Before Android 12 it
+     * also stops the Bluetooth SCO link [selectOutput] started.
+     */
     public suspend fun deactivate() {
         activation = Activation.INACTIVE
         engine.audioSessionDidDeactivate()
         clearCommunicationDevice()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) stopSco()
         audioManager.mode = AudioManager.MODE_NORMAL
         focusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
         focusRequest = null
@@ -147,8 +164,15 @@ public class BaresipAudioController(
         engine.audioSessionDidDeactivate()
     }
 
-    /** Stops observing devices and gives up audio focus. */
+    /**
+     * Stops observing devices, gives up audio focus and stops telling the engine about changes.
+     * Before Android 12 it also stops a Bluetooth SCO link [selectOutput] started. Do not use the
+     * controller afterwards.
+     */
     public fun release() {
+        engineUpdates.close()
+        scope.cancel()
+        if (scoReceiver != null) stopSco()
         audioManager.unregisterAudioDeviceCallback(deviceCallback)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             audioManager.removeOnCommunicationDeviceChangedListener(
@@ -179,7 +203,12 @@ public class BaresipAudioController(
     public val currentOutput: BaresipAudioOutput?
         get() = AudioOutputs.current(currentDevice()?.let(::snapshot), availableOutputs)
 
-    /** Plays call audio on the given output, one of [availableOutputs]. */
+    /**
+     * Plays call audio on the given output, one of [availableOutputs].
+     *
+     * Before Android 12 a Bluetooth output starts a SCO link, and the route becomes Bluetooth
+     * once the headset has connected it; [onRouteChange] is called then.
+     */
     public fun selectOutput(output: BaresipAudioOutput) {
         val devices = communicationDevices()
         val device =
@@ -195,21 +224,68 @@ public class BaresipAudioController(
         @Suppress("DEPRECATION")
         when (output.route) {
             BaresipAudioRoute.Speaker -> {
-                audioManager.stopBluetoothSco()
-                audioManager.isBluetoothScoOn = false
+                stopSco()
                 audioManager.isSpeakerphoneOn = true
             }
             BaresipAudioRoute.Bluetooth -> {
                 audioManager.isSpeakerphoneOn = false
-                audioManager.startBluetoothSco()
-                audioManager.isBluetoothScoOn = true
+                startSco()
             }
             else -> {
-                audioManager.stopBluetoothSco()
-                audioManager.isBluetoothScoOn = false
+                stopSco()
                 audioManager.isSpeakerphoneOn = false
             }
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun startSco() {
+        if (scoReceiver == null) {
+            val receiver =
+                object : BroadcastReceiver() {
+                    override fun onReceive(
+                        context: Context,
+                        intent: Intent,
+                    ) {
+                        if (isInitialStickyBroadcast) return
+                        scoStateChanged(intent.getIntExtra(AudioManager.EXTRA_SCO_AUDIO_STATE, AudioManager.SCO_AUDIO_STATE_ERROR))
+                    }
+                }
+            scoReceiver = receiver
+            appContext.registerReceiver(receiver, IntentFilter(AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED), null, handler)
+        }
+        audioManager.startBluetoothSco()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun stopSco() {
+        unregisterScoReceiver()
+        audioManager.stopBluetoothSco()
+        audioManager.isBluetoothScoOn = false
+    }
+
+    @Suppress("DEPRECATION")
+    private fun scoStateChanged(state: Int) {
+        if (scoReceiver == null) return
+        when (scoLinkResponse(state)) {
+            ScoLink.UP -> audioManager.isBluetoothScoOn = true
+            ScoLink.DOWN -> stopSco()
+            ScoLink.PENDING -> return
+        }
+        onRouteChange?.invoke(currentRoute)
+    }
+
+    private fun unregisterScoReceiver() {
+        val receiver = scoReceiver ?: return
+        scoReceiver = null
+        try {
+            appContext.unregisterReceiver(receiver)
+        } catch (ignored: IllegalArgumentException) {
+        }
+    }
+
+    private fun tellEngine(update: suspend BaresipEngine.() -> Unit) {
+        engineUpdates.trySend(update)
     }
 
     private fun clearCommunicationDevice() {
@@ -249,11 +325,18 @@ public class BaresipAudioController(
 
     private fun devicesChanged(devices: Array<out AudioDeviceInfo>) {
         if (!restartsAudio(devices.map { it.type })) return
-        scope.launch { engine.audioRouteDidChange() }
+        tellEngine { audioRouteDidChange() }
         onRouteChange?.invoke(currentRoute)
     }
 
     internal companion object {
+        fun scoLinkResponse(state: Int): ScoLink =
+            when (state) {
+                AudioManager.SCO_AUDIO_STATE_CONNECTED -> ScoLink.UP
+                AudioManager.SCO_AUDIO_STATE_CONNECTING -> ScoLink.PENDING
+                else -> ScoLink.DOWN
+            }
+
         fun focusResponse(
             change: Int,
             activation: Activation,

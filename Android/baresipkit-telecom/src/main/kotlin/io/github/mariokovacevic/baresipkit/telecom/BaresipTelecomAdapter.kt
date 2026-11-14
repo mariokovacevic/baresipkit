@@ -20,7 +20,9 @@ import io.github.mariokovacevic.baresipkit.BaresipHandleStyle
 import io.github.mariokovacevic.baresipkit.SipIdentity
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
@@ -46,15 +49,49 @@ import kotlin.time.Duration.Companion.seconds
 public class BaresipTelecomCall internal constructor(
     /** The Telecom identifier of the call. */
     public val uuid: UUID,
-    /** The caller or callee as shown to the system. */
-    public val remoteUri: String,
-    /** The name to show, if known. */
-    public val displayName: String?,
+    remoteUri: String,
+    displayName: String?,
     /** Whether the call is a video call. */
     public val hasVideo: Boolean,
     /** Whether this device placed the call. */
     public val isOutgoing: Boolean,
 ) {
+    private class Party(
+        val uri: String,
+        val name: String?,
+    )
+
+    @Volatile private var party = Party(remoteUri, displayName)
+
+    /**
+     * The caller or callee as shown to the system.
+     *
+     * For a call announced by a push, this is the push's caller until the INVITE arrives, and the
+     * INVITE's caller once [call] is set.
+     */
+    public val remoteUri: String get() = party.uri
+
+    /**
+     * The name to show, if known.
+     *
+     * For a call announced by a push, this is the push's name until the INVITE arrives. Once [call]
+     * is set, it is the INVITE's display name when the INVITE has one. Without one, the push's name
+     * stays when the INVITE carries the push's UUID or comes from the pushed caller's user and host,
+     * and is replaced by the INVITE's address otherwise, so a push without a caller does not lend
+     * its name to another caller. Telecom keeps the name it was given when the call was added;
+     * show this one in your own notification.
+     */
+    public val displayName: String? get() = party.name
+
+    internal fun adoptInvite(
+        inviteUri: String,
+        inviteDisplayName: String,
+        callerConfirmed: Boolean,
+    ) {
+        val name = PushCallLedger.callerName(inviteUri, inviteDisplayName, replacingAnnouncedName = !callerConfirmed)
+        party = Party(inviteUri, name ?: party.name)
+    }
+
     internal val engineCall = MutableStateFlow<BaresipCallID?>(null)
     internal val endpoint = MutableStateFlow<CallEndpointCompat?>(null)
     internal val endpoints = MutableStateFlow<List<CallEndpointCompat>>(emptyList())
@@ -89,6 +126,9 @@ public class BaresipTelecomCall internal constructor(
  * the INVITE that follows by the UUID in [BaresipTelecomConfiguration.callUuidHeader] or by the
  * caller's SIP URI, exactly as on iOS. The app shows the incoming call screen itself when
  * [onIncomingCall] is called.
+ *
+ * The adapter follows the engine's events from the moment its constructor returns, so a call that
+ * arrives right after it is created is not missed.
  *
  * Declare the `MANAGE_OWN_CALLS` permission (merged from core-telecom) and, for incoming calls
  * while the app is in the background, a foreground service of type `phoneCall`.
@@ -126,7 +166,7 @@ public class BaresipTelecomAdapter(
                 CallsManager.CAPABILITY_BASELINE
             }
         callsManager.registerAppWithTelecom(capabilities)
-        scope.launch { engine.events.collect { event -> attempt { handle(event) } } }
+        scope.launch(start = CoroutineStart.UNDISPATCHED) { engine.events.collect { event -> attempt { handle(event) } } }
     }
 
     /**
@@ -233,7 +273,16 @@ public class BaresipTelecomAdapter(
             }
             return
         }
-        engine.hangUp(call)
+        try {
+            engine.hangUp(call)
+        } catch (error: BaresipError) {
+            withContext(NonCancellable) {
+                attempt { control(telecom, "disconnect").disconnect(DisconnectCause(DisconnectCause.LOCAL)) }
+                forget(telecom.uuid)
+            }
+            if (error.code != BaresipError.Code.NOT_FOUND) throw error
+            return
+        }
         val control = TelecomActions.ready(telecom.ready, configuration.actionTimeout, "disconnect")
         TelecomActions.perform(configuration.actionTimeout, "disconnect") { control.disconnect(DisconnectCause(DisconnectCause.LOCAL)) }
     }
@@ -422,7 +471,11 @@ public class BaresipTelecomAdapter(
                 val resolution = ledger.resolve(info.remoteUri, headerUuid, now())
                 val call =
                     when (resolution) {
-                        is PushCallLedger.Resolution.Announced -> calls[resolution.announcement.uuid]?.also { bind(info.id, it) }
+                        is PushCallLedger.Resolution.Announced ->
+                            calls[resolution.announcement.uuid]?.also {
+                                it.adoptInvite(info.remoteUri, info.remoteDisplayName, resolution.callerConfirmed)
+                                bind(info.id, it)
+                            }
                         PushCallLedger.Resolution.Declined -> null
                         PushCallLedger.Resolution.Unannounced -> {
                             val id = headerUuid?.takeIf { !calls.containsKey(it) && !ledger.knows(it) } ?: UUID.randomUUID()

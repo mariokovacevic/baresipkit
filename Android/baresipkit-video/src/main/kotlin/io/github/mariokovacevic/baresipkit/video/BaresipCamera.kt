@@ -10,13 +10,15 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.OutputConfiguration
 import android.hardware.camera2.params.SessionConfiguration
+import android.hardware.display.DisplayManager
 import android.media.ImageReader
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import android.util.Range
 import android.util.Size
+import android.view.Display
 import android.view.Surface
-import android.view.WindowManager
 import io.github.mariokovacevic.baresipkit.BaresipCameraHost
 import io.github.mariokovacevic.baresipkit.BaresipCameraSource
 import io.github.mariokovacevic.baresipkit.BaresipInternalApi
@@ -33,7 +35,12 @@ import kotlin.time.Duration.Companion.nanoseconds
  * ```
  *
  * The app needs the `CAMERA` permission before a call sends video. Frames are rotated upright for
- * the display's current rotation before they are encoded.
+ * the default display's current rotation before they are encoded.
+ *
+ * When a camera cannot be opened, or the system takes it away during a call (another app opens
+ * it, the camera is disabled, or it fails), the camera is closed and the call sends no more
+ * video; the reason is written to Logcat with the tag `BaresipKit.camera`. Switching the call's
+ * camera, also to the same one, opens it again.
  */
 @OptIn(BaresipInternalApi::class)
 public class BaresipCamera private constructor(
@@ -41,6 +48,7 @@ public class BaresipCamera private constructor(
 ) {
     private val context = context.applicationContext
     private val manager = this.context.getSystemService(CameraManager::class.java)
+    private val displays = this.context.getSystemService(DisplayManager::class.java)
     private val thread = HandlerThread("baresipkit.camera").apply { start() }
     private val handler = Handler(thread.looper)
     private val executor = Executor { handler.post(it) }
@@ -94,14 +102,24 @@ public class BaresipCamera private constructor(
                         startSession(camera, imageReader.surface, range)
                     }
 
-                    override fun onDisconnected(camera: CameraDevice) = camera.close()
+                    override fun onDisconnected(camera: CameraDevice) = lost(camera, "was disconnected")
 
                     override fun onError(
                         camera: CameraDevice,
                         error: Int,
-                    ) = camera.close()
+                    ) = lost(camera, "failed: ${CameraSizes.errorName(error)}")
                 },
             )
+        }
+
+        private fun lost(
+            camera: CameraDevice,
+            reason: String,
+        ) {
+            camera.close()
+            if (camera.id != cameraId || (device != null && device !== camera)) return
+            Log.w(LOG_TAG, "camera ${camera.id} $reason; $source sends no more video")
+            close()
         }
 
         private fun startSession(
@@ -127,7 +145,12 @@ public class BaresipCamera private constructor(
                             captureSession.setRepeatingRequest(request.build(), null, handler)
                         }
 
-                        override fun onConfigureFailed(captureSession: CameraCaptureSession) = captureSession.close()
+                        override fun onConfigureFailed(captureSession: CameraCaptureSession) {
+                            captureSession.close()
+                            if (closed) return
+                            Log.w(LOG_TAG, "camera ${camera.id} could not start capturing; $source sends no more video")
+                            close()
+                        }
                     },
                 )
             camera.createCaptureSession(configuration)
@@ -195,8 +218,20 @@ public class BaresipCamera private constructor(
         val id = cameraId(device) ?: return false
         val capture = Capture(source, width, height, fps)
         captures[source] = capture
-        handler.post { runCatching { capture.open(id) } }
+        handler.post { openOrReport(capture, id) }
         return true
+    }
+
+    private fun openOrReport(
+        capture: Capture,
+        id: String,
+    ) {
+        try {
+            capture.open(id)
+        } catch (error: Exception) {
+            Log.w(LOG_TAG, "camera $id could not be opened; ${capture.source} sends no video", error)
+            capture.close()
+        }
     }
 
     private fun stop(source: BaresipCameraSource) {
@@ -211,8 +246,8 @@ public class BaresipCamera private constructor(
     ): Boolean {
         val capture = captures[source] ?: return false
         val id = cameraId(device) ?: return false
-        if (id == capture.cameraId) return true
-        handler.post { runCatching { capture.open(id) } }
+        if (id == capture.cameraId && !capture.closed) return true
+        handler.post { openOrReport(capture, id) }
         return true
     }
 
@@ -239,16 +274,18 @@ public class BaresipCamera private constructor(
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun displayRotationDegrees(): Int =
-        when (context.getSystemService(WindowManager::class.java)?.defaultDisplay?.rotation) {
+        when (displays?.getDisplay(Display.DEFAULT_DISPLAY)?.rotation) {
             Surface.ROTATION_90 -> 90
             Surface.ROTATION_180 -> 180
             Surface.ROTATION_270 -> 270
             else -> 0
         }
 
+    /** Installs the cameras as the engine's video source. */
     public companion object {
+        private const val LOG_TAG = "BaresipKit.camera"
+
         @Volatile private var shared: BaresipCamera? = null
 
         /** Makes the device cameras the source of the engine's `bskcamera` video source. */
@@ -284,6 +321,16 @@ internal object CameraSizes {
     ): Pair<Int, Int>? =
         ranges.filter { it.second >= fps }.minByOrNull { (low, high) -> (high - fps) * 100 - (fps - low).coerceAtLeast(0) }
             ?: ranges.maxByOrNull { it.second }
+
+    fun errorName(error: Int): String =
+        when (error) {
+            CameraDevice.StateCallback.ERROR_CAMERA_IN_USE -> "in use"
+            CameraDevice.StateCallback.ERROR_MAX_CAMERAS_IN_USE -> "too many cameras in use"
+            CameraDevice.StateCallback.ERROR_CAMERA_DISABLED -> "disabled by policy"
+            CameraDevice.StateCallback.ERROR_CAMERA_DEVICE -> "device error"
+            CameraDevice.StateCallback.ERROR_CAMERA_SERVICE -> "camera service error"
+            else -> "error $error"
+        }
 
     fun rotation(
         sensorOrientation: Int,
