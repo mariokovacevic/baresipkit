@@ -335,9 +335,10 @@ public class BaresipEngine(
         digits: String,
         duration: Duration = 160.milliseconds,
         gap: Duration = 80.milliseconds,
-    ): Unit = onEngine {
-        Native.callSendDtmf(handle, call.rawValue, digits.cString(), duration.wholeMilliseconds(), gap.wholeMilliseconds())
-    }
+    ): Unit =
+        onEngine {
+            Native.callSendDtmf(handle, call.rawValue, digits.cString(), duration.wholeMilliseconds(), gap.wholeMilliseconds())
+        }
 
     /** Transfers a call to another party without consulting them first (blind transfer). */
     public suspend fun blindTransfer(
@@ -469,9 +470,10 @@ public class BaresipEngine(
         call: BaresipCallID,
         renderer: BaresipVideoRenderer?,
         local: Boolean = false,
-    ): Unit = replaceSink(VideoSinkKey(call, local), renderer?.let(::VideoSinkBox)) { box ->
-        Native.callSetVideoSink(handle, call.rawValue, local, box?.pointer ?: 0)
-    }
+    ): Unit =
+        replaceSink(VideoSinkKey(call, local), renderer?.let(::VideoSinkBox)) { box ->
+            Native.callSetVideoSink(handle, call.rawValue, local, box?.pointer ?: 0)
+        }
 
     /**
      * Starts the camera outside a call and sends its frames to a renderer.
@@ -481,9 +483,10 @@ public class BaresipEngine(
     public suspend fun startVideoPreview(
         device: String? = null,
         renderer: BaresipVideoRenderer,
-    ): Unit = replaceSink(VideoSinkKey(null, true), VideoSinkBox(renderer)) { box ->
-        Native.videoPreviewStart(handle, device.cStringOrNull(), box?.pointer ?: 0)
-    }
+    ): Unit =
+        replaceSink(VideoSinkKey(null, true), VideoSinkBox(renderer)) { box ->
+            Native.videoPreviewStart(handle, device.cStringOrNull(), box?.pointer ?: 0)
+        }
 
     /** Stops the camera preview. */
     public suspend fun stopVideoPreview() {

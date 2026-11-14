@@ -435,8 +435,7 @@ public class BaresipAudioConfiguration private constructor(
 }
 
 /** Creates audio settings: the defaults, changed by [block]. */
-public fun BaresipAudioConfiguration(block: BaresipAudioConfiguration.Builder.() -> Unit = {}): BaresipAudioConfiguration =
-    BaresipAudioConfiguration.Builder().apply(block).build()
+public fun BaresipAudioConfiguration(block: BaresipAudioConfiguration.Builder.() -> Unit = {}): BaresipAudioConfiguration = BaresipAudioConfiguration.Builder().apply(block).build()
 
 /**
  * Video settings for the engine, part of [BaresipConfiguration].
@@ -530,8 +529,7 @@ public class BaresipVideoConfiguration private constructor(
 }
 
 /** Creates video settings: the defaults, changed by [block]. */
-public fun BaresipVideoConfiguration(block: BaresipVideoConfiguration.Builder.() -> Unit = {}): BaresipVideoConfiguration =
-    BaresipVideoConfiguration.Builder().apply(block).build()
+public fun BaresipVideoConfiguration(block: BaresipVideoConfiguration.Builder.() -> Unit = {}): BaresipVideoConfiguration = BaresipVideoConfiguration.Builder().apply(block).build()
 
 /**
  * TLS settings for SIP over TLS, part of [BaresipConfiguration].
@@ -636,5 +634,4 @@ public class BaresipTlsConfiguration private constructor(
 }
 
 /** Creates TLS settings: the defaults, changed by [block]. */
-public fun BaresipTlsConfiguration(block: BaresipTlsConfiguration.Builder.() -> Unit = {}): BaresipTlsConfiguration =
-    BaresipTlsConfiguration.Builder().apply(block).build()
+public fun BaresipTlsConfiguration(block: BaresipTlsConfiguration.Builder.() -> Unit = {}): BaresipTlsConfiguration = BaresipTlsConfiguration.Builder().apply(block).build()

@@ -116,5 +116,4 @@ public class BaresipTelecomConfiguration private constructor(
 }
 
 /** Creates Telecom adapter settings: the defaults, changed by [block]. */
-public fun BaresipTelecomConfiguration(block: BaresipTelecomConfiguration.Builder.() -> Unit = {}): BaresipTelecomConfiguration =
-    BaresipTelecomConfiguration.Builder().apply(block).build()
+public fun BaresipTelecomConfiguration(block: BaresipTelecomConfiguration.Builder.() -> Unit = {}): BaresipTelecomConfiguration = BaresipTelecomConfiguration.Builder().apply(block).build()

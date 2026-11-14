@@ -123,16 +123,17 @@ public fun BaresipCallVideo(
     source: BaresipVideoSource = BaresipVideoSource.REMOTE,
     scaleMode: BaresipVideoView.ScaleMode? = null,
     onView: (BaresipVideoView) -> Unit = {},
-): Unit = BaresipCallVideo(
-    engine = call.engine,
-    call = call.id,
-    modifier = modifier,
-    source = source,
-    scaleMode =
-        scaleMode ?: if (source == BaresipVideoSource.LOCAL) BaresipVideoView.ScaleMode.FILL else BaresipVideoView.ScaleMode.FIT,
-    mirrored = source == BaresipVideoSource.LOCAL && call.camera.isMirroredInPreview,
-    onView = onView,
-)
+): Unit =
+    BaresipCallVideo(
+        engine = call.engine,
+        call = call.id,
+        modifier = modifier,
+        source = source,
+        scaleMode =
+            scaleMode ?: if (source == BaresipVideoSource.LOCAL) BaresipVideoView.ScaleMode.FILL else BaresipVideoView.ScaleMode.FIT,
+        mirrored = source == BaresipVideoSource.LOCAL && call.camera.isMirroredInPreview,
+        onView = onView,
+    )
 
 /**
  * The small picture of your own camera that call screens show in a corner while the camera is

@@ -37,8 +37,7 @@ public data class BaresipPushTokens(
                 channel?.let { add(BaresipContactParameter("pn-channel", it)) }
             }
 
-    override fun toString(): String =
-        "BaresipPushTokens(appId=$appId, token=${token?.let { "***" }}, platform=$platform, silent=$silent, timeout=$timeout, channel=$channel)"
+    override fun toString(): String = "BaresipPushTokens(appId=$appId, token=${token?.let { "***" }}, platform=$platform, silent=$silent, timeout=$timeout, channel=$channel)"
 
     internal fun mergedContactParameters(additional: List<BaresipContactParameter>): List<BaresipContactParameter> {
         val push = contactParameters
