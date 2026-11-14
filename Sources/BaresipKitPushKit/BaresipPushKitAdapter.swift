@@ -17,7 +17,7 @@
     ///
     /// LiveCommunicationKit reports calls only asynchronously. With
     /// `BaresipLiveCommunicationAdapter`, create the adapter with
-    /// ``reportingAsynchronously(engine:appID:accountID:additionalContactParameters:onIncomingPush:)``:
+    /// ``reportingAsynchronously(engine:appID:accountID:additionalContactParameters:reportDeadline:onIncomingPush:)``:
     /// the push is completed only after the asynchronous handler returned.
     ///
     /// The adapter owns the `Contact` parameters of the bound account: every update replaces all
