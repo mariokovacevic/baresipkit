@@ -1,5 +1,7 @@
 # Kotlin public API surface (generated)
 
+> Superseded: this is the review-time listing. The enforced baselines are `Android/<library>/api/<library>.api`.
+
 Generated with `javap -public` over `<module>/build/tmp/kotlin-classes/release` after `./gradlew :<module>:compileReleaseKotlin`. Classes under `.internal` packages, classes declared `internal` in source, synthetic `$$` classes, and members with module-mangled names (`name$module`) are left out. This approximates the binary-compatibility-validator's dump; that plugin is not configured in the project.
 
 ## baresipkit

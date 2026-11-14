@@ -1,0 +1,2045 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "BaresipKitPushKit",
+    "printedName": "BaresipKitPushKit",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "BaresipKit",
+        "printedName": "BaresipKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "BaresipKitSystemCall",
+        "printedName": "BaresipKitSystemCall",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "CallKit",
+        "printedName": "CallKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "PushKit",
+        "printedName": "PushKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftOnoneSupport",
+        "printedName": "SwiftOnoneSupport",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "_Concurrency",
+        "printedName": "_Concurrency",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "_StringProcessing",
+        "printedName": "_StringProcessing",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "Import",
+        "name": "_SwiftConcurrencyShims",
+        "printedName": "_SwiftConcurrencyShims",
+        "declKind": "Import",
+        "moduleName": "BaresipKitPushKit"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipPushKitAdapter",
+        "printedName": "BaresipPushKitAdapter",
+        "children": [
+          {
+            "kind": "TypeAlias",
+            "name": "IncomingPushHandler",
+            "printedName": "IncomingPushHandler",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "([Swift.AnyHashable : Any]) throws -> Swift.Void",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "Void",
+                    "printedName": "Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Dictionary",
+                    "printedName": "[Swift.AnyHashable : Any]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "AnyHashable",
+                        "printedName": "Swift.AnyHashable",
+                        "usr": "s:s11AnyHashableV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ProtocolComposition",
+                        "printedName": "Any"
+                      }
+                    ],
+                    "usr": "s:SD"
+                  }
+                ]
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC08IncomingC7Handlera",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC08IncomingC7Handlera",
+            "moduleName": "BaresipKitPushKit"
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "AsyncIncomingPushHandler",
+            "printedName": "AsyncIncomingPushHandler",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "([Swift.AnyHashable : Any]) async throws -> Swift.Void",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "Void",
+                    "printedName": "Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Dictionary",
+                    "printedName": "[Swift.AnyHashable : Any]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "AnyHashable",
+                        "printedName": "Swift.AnyHashable",
+                        "usr": "s:s11AnyHashableV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "ProtocolComposition",
+                        "printedName": "Any"
+                      }
+                    ],
+                    "usr": "s:SD"
+                  }
+                ]
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC013AsyncIncomingC7Handlera",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC013AsyncIncomingC7Handlera",
+            "moduleName": "BaresipKitPushKit"
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "Step",
+            "printedName": "Step",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "contactParameters",
+                "printedName": "contactParameters",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step.Type) -> BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Step",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                        "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Step",
+                            "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                            "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO17contactParametersyA2EmF",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO17contactParametersyA2EmF",
+                "moduleName": "BaresipKitPushKit"
+              },
+              {
+                "kind": "Var",
+                "name": "incomingPush",
+                "printedName": "incomingPush",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step.Type) -> BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Step",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                        "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Step",
+                            "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                            "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO08incomingC0yA2EmF",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO08incomingC0yA2EmF",
+                "moduleName": "BaresipKitPushKit"
+              },
+              {
+                "kind": "Var",
+                "name": "engineWakeUp",
+                "printedName": "engineWakeUp",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step.Type) -> BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Step",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                        "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Step",
+                            "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                            "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO12engineWakeUpyA2EmF",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO12engineWakeUpyA2EmF",
+                "moduleName": "BaresipKitPushKit"
+              },
+              {
+                "kind": "Function",
+                "name": "__derived_enum_equals",
+                "printedName": "__derived_enum_equals(_:_:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Step",
+                    "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                    "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Step",
+                    "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                    "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO21__derived_enum_equalsySbAE_AEtFZ",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO21__derived_enum_equalsySbAE_AEtFZ",
+                "moduleName": "BaresipKitPushKit",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Implements",
+                  "Semantics"
+                ],
+                "funcSelfKind": "NonMutating"
+              },
+              {
+                "kind": "Function",
+                "name": "hash",
+                "printedName": "hash(into:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Hasher",
+                    "printedName": "Swift.Hasher",
+                    "paramValueOwnership": "InOut",
+                    "usr": "s:s6HasherV"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO4hash4intoys6HasherVz_tF",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO4hash4intoys6HasherVz_tF",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "funcSelfKind": "NonMutating"
+              },
+              {
+                "kind": "Var",
+                "name": "hashValue",
+                "printedName": "hashValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO9hashValueSivp",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO9hashValueSivp",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO9hashValueSivg",
+                    "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO9hashValueSivg",
+                    "moduleName": "BaresipKitPushKit",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Enum",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC4StepO",
+            "moduleName": "BaresipKitPushKit",
+            "isEnumExhaustive": true,
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Equatable",
+                "printedName": "Equatable",
+                "usr": "s:SQ",
+                "mangledName": "$sSQ"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Hashable",
+                "printedName": "Hashable",
+                "usr": "s:SH",
+                "mangledName": "$sSH"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Sendable",
+                "printedName": "Sendable",
+                "usr": "s:s8SendableP",
+                "mangledName": "$ss8SendableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "SendableMetatype",
+                "printedName": "SendableMetatype",
+                "usr": "s:s16SendableMetatypeP",
+                "mangledName": "$ss16SendableMetatypeP"
+              }
+            ]
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "ErrorHandler",
+            "printedName": "ErrorHandler",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step, any Swift.Error) -> Swift.Void",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "Void",
+                    "printedName": "Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step, any Swift.Error)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Step",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                        "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Error",
+                        "printedName": "any Swift.Error",
+                        "usr": "s:s5ErrorP"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC12ErrorHandlera",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC12ErrorHandlera",
+            "moduleName": "BaresipKitPushKit"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(engine:appID:accountID:additionalContactParameters:onIncomingPush:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushKitAdapter",
+                "printedName": "BaresipKitPushKit.BaresipPushKitAdapter",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipEngine",
+                "printedName": "BaresipKit.BaresipEngine",
+                "usr": "s:10BaresipKit0A6EngineC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKit.BaresipAccountID?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAccountID",
+                    "printedName": "BaresipKit.BaresipAccountID",
+                    "usr": "s:10BaresipKit0A9AccountIDV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[BaresipKit.BaresipContactParameter]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipContactParameter",
+                    "printedName": "BaresipKit.BaresipContactParameter",
+                    "usr": "s:10BaresipKit0A16ContactParameterV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sa"
+              },
+              {
+                "kind": "TypeNameAlias",
+                "name": "IncomingPushHandler",
+                "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.IncomingPushHandler",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "([Swift.AnyHashable : Any]) throws -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Dictionary",
+                        "printedName": "[Swift.AnyHashable : Any]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "AnyHashable",
+                            "printedName": "Swift.AnyHashable",
+                            "usr": "s:s11AnyHashableV"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          }
+                        ],
+                        "usr": "s:SD"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC6engine5appID07accountG027additionalContactParameters010onIncomingC0AC0aB00A6EngineC_SSAI0a7AccountG0VSgSayAI0aJ9ParameterVGySDys11AnyHashableVypGYbKctcfc",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC6engine5appID07accountG027additionalContactParameters010onIncomingC0AC0aB00A6EngineC_SSAI0a7AccountG0VSgSayAI0aJ9ParameterVGySDys11AnyHashableVypGYbKctcfc",
+            "moduleName": "BaresipKitPushKit",
+            "init_kind": "Convenience"
+          },
+          {
+            "kind": "Function",
+            "name": "reportingAsynchronously",
+            "printedName": "reportingAsynchronously(engine:appID:accountID:additionalContactParameters:reportDeadline:onIncomingPush:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushKitAdapter",
+                "printedName": "BaresipKitPushKit.BaresipPushKitAdapter",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipEngine",
+                "printedName": "BaresipKit.BaresipEngine",
+                "usr": "s:10BaresipKit0A6EngineC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKit.BaresipAccountID?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAccountID",
+                    "printedName": "BaresipKit.BaresipAccountID",
+                    "usr": "s:10BaresipKit0A9AccountIDV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[BaresipKit.BaresipContactParameter]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipContactParameter",
+                    "printedName": "BaresipKit.BaresipContactParameter",
+                    "usr": "s:10BaresipKit0A16ContactParameterV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sa"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Duration",
+                "printedName": "Swift.Duration",
+                "hasDefaultArg": true,
+                "usr": "s:s8DurationV"
+              },
+              {
+                "kind": "TypeNameAlias",
+                "name": "AsyncIncomingPushHandler",
+                "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.AsyncIncomingPushHandler",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "([Swift.AnyHashable : Any]) async throws -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Dictionary",
+                        "printedName": "[Swift.AnyHashable : Any]",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "AnyHashable",
+                            "printedName": "Swift.AnyHashable",
+                            "usr": "s:s11AnyHashableV"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "ProtocolComposition",
+                            "printedName": "Any"
+                          }
+                        ],
+                        "usr": "s:SD"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC23reportingAsynchronously6engine5appID07accountI027additionalContactParameters14reportDeadline010onIncomingC0AC0aB00A6EngineC_SSAK0a7AccountI0VSgSayAK0aL9ParameterVGs8DurationVySDys11AnyHashableVypGYaYbKctFZ",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC23reportingAsynchronously6engine5appID07accountI027additionalContactParameters14reportDeadline010onIncomingC0AC0aB00A6EngineC_SSAK0a7AccountI0VSgSayAK0aL9ParameterVGs8DurationVySDys11AnyHashableVypGYaYbKctFZ",
+            "moduleName": "BaresipKitPushKit",
+            "static": true,
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setErrorHandler",
+            "printedName": "setErrorHandler(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.ErrorHandler?",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "ErrorHandler",
+                    "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.ErrorHandler",
+                    "children": [
+                      {
+                        "kind": "TypeFunc",
+                        "name": "Function",
+                        "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step, any Swift.Error) -> Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNameAlias",
+                            "name": "Void",
+                            "printedName": "Swift.Void",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "Void",
+                                "printedName": "()"
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Tuple",
+                            "printedName": "(BaresipKitPushKit.BaresipPushKitAdapter.Step, any Swift.Error)",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "Step",
+                                "printedName": "BaresipKitPushKit.BaresipPushKitAdapter.Step",
+                                "usr": "s:014BaresipKitPushB00acB7AdapterC4StepO"
+                              },
+                              {
+                                "kind": "TypeNominal",
+                                "name": "Error",
+                                "printedName": "any Swift.Error",
+                                "usr": "s:s5ErrorP"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC15setErrorHandleryyyAC4StepO_s0F0_ptYbcSgF",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC15setErrorHandleryyyAC4StepO_s0F0_ptYbcSgF",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "bind",
+            "printedName": "bind(accountID:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAccountID",
+                "printedName": "BaresipKit.BaresipAccountID",
+                "usr": "s:10BaresipKit0A9AccountIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC4bind9accountIDy0aB00a7AccountG0V_tF",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC4bind9accountIDy0aB00a7AccountG0V_tF",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "updateAppID",
+            "printedName": "updateAppID(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC11updateAppIDyySSF",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC11updateAppIDyySSF",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "updateRemoteToken",
+            "printedName": "updateRemoteToken(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Data",
+                "printedName": "Foundation.Data",
+                "usr": "s:10Foundation4DataV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC17updateRemoteTokenyy10Foundation4DataVF",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC17updateRemoteTokenyy10Foundation4DataVF",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "updateAdditionalContactParameters",
+            "printedName": "updateAdditionalContactParameters(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[BaresipKit.BaresipContactParameter]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipContactParameter",
+                    "printedName": "BaresipKit.BaresipContactParameter",
+                    "usr": "s:10BaresipKit0A16ContactParameterV"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC33updateAdditionalContactParametersyySay0aB00aG9ParameterVGF",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC33updateAdditionalContactParametersyySay0aB00aG9ParameterVGF",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "currentTokens",
+            "printedName": "currentTokens",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushTokens",
+                "printedName": "BaresipKitPushKit.BaresipPushTokens",
+                "usr": "s:014BaresipKitPushB00aC6TokensV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00acB7AdapterC13currentTokensAA0acF0Vvp",
+            "mangledName": "$s014BaresipKitPushB00acB7AdapterC13currentTokensAA0acF0Vvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "Final"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipPushTokens",
+                    "printedName": "BaresipKitPushKit.BaresipPushTokens",
+                    "usr": "s:014BaresipKitPushB00aC6TokensV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00acB7AdapterC13currentTokensAA0acF0Vvg",
+                "mangledName": "$s014BaresipKitPushB00acB7AdapterC13currentTokensAA0acF0Vvg",
+                "moduleName": "BaresipKitPushKit",
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:014BaresipKitPushB00acB7AdapterC",
+        "mangledName": "$s014BaresipKitPushB00acB7AdapterC",
+        "moduleName": "BaresipKitPushKit",
+        "declAttributes": [
+          "Final"
+        ],
+        "hasMissingDesignatedInitializers": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipPushKitError",
+        "printedName": "BaresipPushKitError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "reportTimedOut",
+            "printedName": "reportTimedOut",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitPushKit.BaresipPushKitError.Type) -> BaresipKitPushKit.BaresipPushKitError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipPushKitError",
+                    "printedName": "BaresipKitPushKit.BaresipPushKitError",
+                    "usr": "s:014BaresipKitPushB00acB5ErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitPushKit.BaresipPushKitError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipPushKitError",
+                        "printedName": "BaresipKitPushKit.BaresipPushKitError",
+                        "usr": "s:014BaresipKitPushB00acB5ErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:014BaresipKitPushB00acB5ErrorO14reportTimedOutyA2CmF",
+            "mangledName": "$s014BaresipKitPushB00acB5ErrorO14reportTimedOutyA2CmF",
+            "moduleName": "BaresipKitPushKit"
+          },
+          {
+            "kind": "Function",
+            "name": "__derived_enum_equals",
+            "printedName": "__derived_enum_equals(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushKitError",
+                "printedName": "BaresipKitPushKit.BaresipPushKitError",
+                "usr": "s:014BaresipKitPushB00acB5ErrorO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushKitError",
+                "printedName": "BaresipKitPushKit.BaresipPushKitError",
+                "usr": "s:014BaresipKitPushB00acB5ErrorO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB5ErrorO21__derived_enum_equalsySbAC_ACtFZ",
+            "mangledName": "$s014BaresipKitPushB00acB5ErrorO21__derived_enum_equalsySbAC_ACtFZ",
+            "moduleName": "BaresipKitPushKit",
+            "static": true,
+            "implicit": true,
+            "declAttributes": [
+              "Implements",
+              "Semantics"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00acB5ErrorO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s014BaresipKitPushB00acB5ErrorO4hash4intoys6HasherVz_tF",
+            "moduleName": "BaresipKitPushKit",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00acB5ErrorO9hashValueSivp",
+            "mangledName": "$s014BaresipKitPushB00acB5ErrorO9hashValueSivp",
+            "moduleName": "BaresipKitPushKit",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00acB5ErrorO9hashValueSivg",
+                "mangledName": "$s014BaresipKitPushB00acB5ErrorO9hashValueSivg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:014BaresipKitPushB00acB5ErrorO",
+        "mangledName": "$s014BaresipKitPushB00acB5ErrorO",
+        "moduleName": "BaresipKitPushKit",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipPushTokens",
+        "printedName": "BaresipPushTokens",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "appID",
+            "printedName": "appID",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV5appIDSSvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV5appIDSSvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV5appIDSSvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV5appIDSSvg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV5appIDSSvs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV5appIDSSvs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "remoteToken",
+            "printedName": "remoteToken",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Data?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV11remoteToken10Foundation4DataVSgvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV11remoteToken10Foundation4DataVSgvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Data?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV11remoteToken10Foundation4DataVSgvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV11remoteToken10Foundation4DataVSgvg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Data?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV11remoteToken10Foundation4DataVSgvs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV11remoteToken10Foundation4DataVSgvs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "voipToken",
+            "printedName": "voipToken",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Data?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV9voipToken10Foundation4DataVSgvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV9voipToken10Foundation4DataVSgvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Data?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV9voipToken10Foundation4DataVSgvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV9voipToken10Foundation4DataVSgvg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Data?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV9voipToken10Foundation4DataVSgvs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV9voipToken10Foundation4DataVSgvs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "platform",
+            "printedName": "platform",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV8platformSSvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV8platformSSvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV8platformSSvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV8platformSSvg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV8platformSSvs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV8platformSSvs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "silent",
+            "printedName": "silent",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV6silentSbvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV6silentSbvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV6silentSbvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV6silentSbvg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV6silentSbvs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV6silentSbvs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "timeout",
+            "printedName": "timeout",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV7timeoutSivp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV7timeoutSivp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV7timeoutSivg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV7timeoutSivg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV7timeoutSivs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV7timeoutSivs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "channel",
+            "printedName": "channel",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV7channelSSSgvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV7channelSSSgvp",
+            "moduleName": "BaresipKitPushKit",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV7channelSSSgvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV7channelSSSgvg",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV7channelSSSgvs",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV7channelSSSgvs",
+                "moduleName": "BaresipKitPushKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(appID:remoteToken:voipToken:platform:silent:timeout:channel:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushTokens",
+                "printedName": "BaresipKitPushKit.BaresipPushTokens",
+                "usr": "s:014BaresipKitPushB00aC6TokensV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Data?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Data?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "hasDefaultArg": true,
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:014BaresipKitPushB00aC6TokensV5appID11remoteToken04voipH08platform6silent7timeout7channelACSS_10Foundation4DataVSgANSSSbSiSSSgtcfc",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV5appID11remoteToken04voipH08platform6silent7timeout7channelACSS_10Foundation4DataVSgANSSSbSiSSSgtcfc",
+            "moduleName": "BaresipKitPushKit",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Var",
+            "name": "combinedToken",
+            "printedName": "combinedToken",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV13combinedTokenSSvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV13combinedTokenSSvp",
+            "moduleName": "BaresipKitPushKit",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV13combinedTokenSSvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV13combinedTokenSSvg",
+                "moduleName": "BaresipKitPushKit",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "contactParameters",
+            "printedName": "contactParameters",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[BaresipKit.BaresipContactParameter]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipContactParameter",
+                    "printedName": "BaresipKit.BaresipContactParameter",
+                    "usr": "s:10BaresipKit0A16ContactParameterV"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:014BaresipKitPushB00aC6TokensV17contactParametersSay0aB00A16ContactParameterVGvp",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV17contactParametersSay0aB00A16ContactParameterVGvp",
+            "moduleName": "BaresipKitPushKit",
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[BaresipKit.BaresipContactParameter]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipContactParameter",
+                        "printedName": "BaresipKit.BaresipContactParameter",
+                        "usr": "s:10BaresipKit0A16ContactParameterV"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:014BaresipKitPushB00aC6TokensV17contactParametersSay0aB00A16ContactParameterVGvg",
+                "mangledName": "$s014BaresipKitPushB00aC6TokensV17contactParametersSay0aB00A16ContactParameterVGvg",
+                "moduleName": "BaresipKitPushKit",
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "__derived_struct_equals",
+            "printedName": "__derived_struct_equals(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushTokens",
+                "printedName": "BaresipKitPushKit.BaresipPushTokens",
+                "usr": "s:014BaresipKitPushB00aC6TokensV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipPushTokens",
+                "printedName": "BaresipKitPushKit.BaresipPushTokens",
+                "usr": "s:014BaresipKitPushB00aC6TokensV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:014BaresipKitPushB00aC6TokensV23__derived_struct_equalsySbAC_ACtFZ",
+            "mangledName": "$s014BaresipKitPushB00aC6TokensV23__derived_struct_equalsySbAC_ACtFZ",
+            "moduleName": "BaresipKitPushKit",
+            "static": true,
+            "implicit": true,
+            "declAttributes": [
+              "Implements"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:014BaresipKitPushB00aC6TokensV",
+        "mangledName": "$s014BaresipKitPushB00aC6TokensV",
+        "moduleName": "BaresipKitPushKit",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8,
+    "tool_arguments": [
+      "-dump-sdk",
+      "-module",
+      "BaresipKitPushKit",
+      "-o",
+      "\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/swift-api\/dumps\/BaresipKitPushKit.json",
+      "-avoid-location",
+      "-sdk",
+      "\/Applications\/Xcode_26.6.app\/Contents\/Developer\/Platforms\/iPhoneSimulator.platform\/Developer\/SDKs\/iPhoneSimulator26.5.sdk",
+      "-target",
+      "arm64-apple-ios16.0-simulator",
+      "-I",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-F",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Sources\/BaresipKitBridge\/include",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/BaresipKitCore.xcframework\/ios-arm64-simulator\/Headers",
+      "-sdk-version",
+      "23F81a"
+    ]
+  }
+}

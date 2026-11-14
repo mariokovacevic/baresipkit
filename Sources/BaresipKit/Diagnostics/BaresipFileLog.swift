@@ -78,7 +78,7 @@ public final class BaresipFileLog: @unchecked Sendable {
     }
 
     /// Returns a log handler for ``BaresipEngine/setLogHandler(_:)`` that writes to the file
-    /// and passes each entry on to `next`, for example ``BaresipOSLog/handler(subsystem:)``.
+    /// and passes each entry on to `next`, for example ``BaresipOSLog/handler(subsystem:publicMessages:)``.
     ///
     /// - Parameter next: A handler to forward every entry to, or `nil`.
     public func handler(forwardingTo next: BaresipLogHandler? = nil) -> BaresipLogHandler {

@@ -48,6 +48,17 @@ makes other incompatible changes, or raises a minimum OS version.
 - **Implementing protocols and interfaces that the SDK implements**, such as
   `BaresipCallController`. Requirements may be added to them in a minor release.
 
+## How compatibility is checked
+
+- **Swift:** `API/Swift` holds a `swift-api-digester` dump of every product module. CI compares
+  the API of each build with it, reports breaking changes, and fails when a declaration was added
+  or removed without updating the dump.
+- **Kotlin:** `Android/<library>/api/<library>.api` holds the binary ABI of every library, written
+  by the Kotlin Gradle plugin's ABI validation. CI runs `checkKotlinAbi` and fails on any
+  difference. The libraries are compiled in explicit API mode.
+- A pull request that changes either baseline is an API change, reviewed against this page and
+  listed in `CHANGELOG.md`.
+
 ## Enumerations and events that grow
 
 New cases can be added to enumerations and new subtypes to sealed hierarchies in a **minor**

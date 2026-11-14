@@ -1,5 +1,7 @@
 # Swift public API surface (generated)
 
+> Superseded: this is the review-time listing. The enforced baselines are `API/Swift/*.json`.
+
 Generated from source with: grep -rnE '^\s*(@[A-Za-z]+\s+)*(public|open)\b' Sources --include=*.swift (declarations only; extensions listed with their members).
 Not a compiler-generated digest: no Swift toolchain was available. Regenerate with swift-api-digester or swift package diagnose-api-breaking-changes on macOS.
 

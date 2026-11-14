@@ -41,7 +41,26 @@ by URL. See [Releasing.md](Releasing.md#how-swiftpm-resolves-the-core).
 
 ## Public API baselines
 
-CI fails when the public Kotlin API of a library changes without its baseline. The baselines are
+CI fails when the public API changes without its baseline, on both platforms.
+
+### Swift
+
+The baselines are the `swift-api-digester` dumps in `API/Swift`, one per product module, made
+from an iOS Simulator build so the iOS-only adapters are included. On macOS, after building the
+XCFramework:
+
+```bash
+Scripts/swift-api.sh check
+Scripts/swift-api.sh dump
+```
+
+`check` reports breaking changes and every declaration added or removed; `dump` rewrites the
+baselines. CI uploads the dumps it made as the `swift-api` artifact, so a baseline can also be
+taken from there.
+
+### Kotlin
+
+CI also fails when the public Kotlin API of a library changes without its baseline. The baselines are
 the ABI dumps in `Android/<library>/api/<library>.api`, written by the Kotlin Gradle plugin's ABI
 validation. They cover binary compatibility, so a changed signature, a removed overload or a new
 constructor parameter all show up. In `Android/`:
