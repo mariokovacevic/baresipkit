@@ -39,6 +39,7 @@ struct bsk_jni_arena {
 };
 
 JNIEnv *bsk_jni_env(void);
+bool bsk_jni_video_load(JNIEnv *env, jclass native);
 jstring bsk_jni_string(JNIEnv *env, const char *text);
 jstring bsk_jni_string_n(JNIEnv *env, const char *text, size_t len);
 jclass bsk_jni_bytes_class(void);

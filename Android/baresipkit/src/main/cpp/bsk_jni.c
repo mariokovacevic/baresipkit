@@ -80,7 +80,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 	utf8 = (*env)->NewGlobalRef(
 		env, (*env)->GetStaticObjectField(env, charsets, field));
 
-	if (!on_event || !on_log || !make_error || !string_init || !utf8)
+	if (!on_event || !on_log || !make_error || !string_init || !utf8 ||
+	    !bsk_jni_video_load(env, native_class))
 		return JNI_ERR;
 	return JNI_VERSION_1_6;
 }

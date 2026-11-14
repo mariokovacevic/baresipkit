@@ -26,15 +26,9 @@ static jmethodID camera_stop;
 static jmethodID camera_switch;
 #endif
 
-static bool load_methods(JNIEnv *env)
+bool bsk_jni_video_load(JNIEnv *env, jclass native)
 {
-	if (native_class)
-		return true;
-	jclass local = (*env)->FindClass(
-		env, "io/github/mariokovacevic/baresipkit/internal/Native");
-	if (!local)
-		return false;
-	native_class = (*env)->NewGlobalRef(env, local);
+	native_class = native;
 	on_frame = (*env)->GetStaticMethodID(
 		env, native_class, "onFrame",
 		"(Ljava/lang/Object;IIILjava/nio/ByteBuffer;Ljava/nio/"
@@ -49,7 +43,16 @@ static bool load_methods(JNIEnv *env)
 	camera_switch = (*env)->GetStaticMethodID(
 		env, native_class, "cameraSwitch", "(JLjava/lang/String;)I");
 #endif
+#ifdef __ANDROID__
+	if (!camera_start || !camera_stop || !camera_switch)
+		return false;
+#endif
 	return on_frame && on_frame_size;
+}
+
+static bool methods_loaded(void)
+{
+	return native_class != NULL;
 }
 
 static size_t plane_size(const bsk_video_frame *frame, int plane)
@@ -72,7 +75,7 @@ static void sink_frame(bsk_engine *engine, bsk_call_id call, bool local,
 	(void)call;
 	(void)local;
 
-	if (!env || !sink || !frame || !load_methods(env))
+	if (!env || !sink || !frame || !methods_loaded())
 		return;
 	if ((*env)->PushLocalFrame(env, 8) != 0)
 		return;
@@ -102,7 +105,7 @@ static void sink_size(bsk_engine *engine, bsk_call_id call, bool local,
 	(void)call;
 	(void)local;
 
-	if (!env || !sink || !load_methods(env))
+	if (!env || !sink || !methods_loaded())
 		return;
 	(*env)->CallStaticVoidMethod(env, native_class, on_frame_size,
 				     sink->box, (jint)width, (jint)height);
@@ -132,7 +135,7 @@ static bsk_video_sink make_sink(jlong ptr)
 JNIEXPORT jlong JNICALL JNI_FN(sinkCreate)(JNIEnv *env, jclass cls, jobject box)
 {
 	(void)cls;
-	if (!load_methods(env))
+	if (!methods_loaded())
 		return 0;
 	struct bsk_jni_sink *sink = calloc(1, sizeof(*sink));
 	if (!sink)
@@ -199,7 +202,7 @@ static int host_start(void *source, const char *device, uint32_t width,
 {
 	JNIEnv *env = bsk_jni_env();
 	(void)user;
-	if (!env || !load_methods(env))
+	if (!env || !methods_loaded())
 		return ENODEV;
 	jstring name = bsk_jni_string(env, device);
 	jint result = (*env)->CallStaticIntMethod(
@@ -217,7 +220,7 @@ static void host_stop(void *source, void *user)
 {
 	JNIEnv *env = bsk_jni_env();
 	(void)user;
-	if (!env || !load_methods(env))
+	if (!env || !methods_loaded())
 		return;
 	(*env)->CallStaticVoidMethod(env, native_class, camera_stop,
 				     (jlong)(intptr_t)source);
@@ -229,7 +232,7 @@ static int host_switch(void *source, const char *device, void *user)
 {
 	JNIEnv *env = bsk_jni_env();
 	(void)user;
-	if (!env || !load_methods(env))
+	if (!env || !methods_loaded())
 		return ENODEV;
 	jstring name = bsk_jni_string(env, device);
 	jint result =
@@ -246,10 +249,11 @@ static int host_switch(void *source, const char *device, void *user)
 JNIEXPORT void JNICALL JNI_FN(cameraInstallHost)(JNIEnv *env, jclass cls,
 						 jboolean install)
 {
+	(void)env;
 	(void)cls;
 	bsk_camera_host host;
 	memset(&host, 0, sizeof(host));
-	if (install && load_methods(env)) {
+	if (install && methods_loaded()) {
 		host.start = host_start;
 		host.stop = host_stop;
 		host.switch_device = host_switch;
