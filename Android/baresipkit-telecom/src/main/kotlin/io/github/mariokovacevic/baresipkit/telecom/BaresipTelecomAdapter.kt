@@ -22,6 +22,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import java.util.UUID
 import java.util.concurrent.CancellationException
 import java.util.concurrent.ConcurrentHashMap
@@ -237,7 +239,16 @@ public class BaresipTelecomAdapter(
             }
             return
         }
-        engine.hangUp(call)
+        try {
+            engine.hangUp(call)
+        } catch (error: BaresipError) {
+            withContext(NonCancellable) {
+                attempt { control(telecom, "disconnect").disconnect(DisconnectCause(DisconnectCause.LOCAL)) }
+                forget(telecom.uuid)
+            }
+            if (error.code != BaresipError.Code.NOT_FOUND) throw error
+            return
+        }
         val control = TelecomActions.ready(telecom.ready, configuration.actionTimeout, "disconnect")
         TelecomActions.perform(configuration.actionTimeout, "disconnect") { control.disconnect(DisconnectCause(DisconnectCause.LOCAL)) }
     }
