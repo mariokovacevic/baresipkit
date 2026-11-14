@@ -4,6 +4,7 @@ import android.media.AudioDeviceInfo
 import android.media.AudioManager
 import io.github.mariokovacevic.baresipkit.audio.BaresipAudioController.Activation
 import io.github.mariokovacevic.baresipkit.audio.BaresipAudioController.FocusResponse
+import io.github.mariokovacevic.baresipkit.audio.BaresipAudioController.ScoLink
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -66,5 +67,13 @@ class AudioControllerTest {
         assertTrue(BaresipAudioController.restartsAudio(listOf(AudioDeviceInfo.TYPE_WIRED_HEADPHONES)))
         assertFalse(BaresipAudioController.restartsAudio(listOf(AudioDeviceInfo.TYPE_BUILTIN_SPEAKER)))
         assertFalse(BaresipAudioController.restartsAudio(listOf(AudioDeviceInfo.TYPE_HDMI)))
+    }
+
+    @Test
+    fun bluetoothIsTheRouteOnlyOnceTheScoLinkIsConnected() {
+        assertEquals(ScoLink.PENDING, BaresipAudioController.scoLinkResponse(AudioManager.SCO_AUDIO_STATE_CONNECTING))
+        assertEquals(ScoLink.UP, BaresipAudioController.scoLinkResponse(AudioManager.SCO_AUDIO_STATE_CONNECTED))
+        assertEquals(ScoLink.DOWN, BaresipAudioController.scoLinkResponse(AudioManager.SCO_AUDIO_STATE_DISCONNECTED))
+        assertEquals(ScoLink.DOWN, BaresipAudioController.scoLinkResponse(AudioManager.SCO_AUDIO_STATE_ERROR))
     }
 }
