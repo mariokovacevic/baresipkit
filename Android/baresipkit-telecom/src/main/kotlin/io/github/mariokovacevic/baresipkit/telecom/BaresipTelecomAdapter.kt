@@ -20,6 +20,7 @@ import io.github.mariokovacevic.baresipkit.BaresipHandleStyle
 import io.github.mariokovacevic.baresipkit.SipIdentity
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
@@ -90,6 +91,9 @@ public class BaresipTelecomCall internal constructor(
  * caller's SIP URI, exactly as on iOS. The app shows the incoming call screen itself when
  * [onIncomingCall] is called.
  *
+ * The adapter follows the engine's events from the moment its constructor returns, so a call that
+ * arrives right after it is created is not missed.
+ *
  * Declare the `MANAGE_OWN_CALLS` permission (merged from core-telecom) and, for incoming calls
  * while the app is in the background, a foreground service of type `phoneCall`.
  *
@@ -126,7 +130,7 @@ public class BaresipTelecomAdapter(
                 CallsManager.CAPABILITY_BASELINE
             }
         callsManager.registerAppWithTelecom(capabilities)
-        scope.launch { engine.events.collect { event -> attempt { handle(event) } } }
+        scope.launch(start = CoroutineStart.UNDISPATCHED) { engine.events.collect { event -> attempt { handle(event) } } }
     }
 
     /**
