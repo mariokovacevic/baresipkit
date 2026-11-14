@@ -108,6 +108,8 @@ struct bsk_engine {
 	mtx_t log_mtx;
 	cnd_t log_cnd;
 	unsigned log_inflight;
+	unsigned log_inflight_old;
+	uint64_t log_gen;
 
 	char *user_agent;
 	char *instance_uuid;

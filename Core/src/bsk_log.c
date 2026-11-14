@@ -134,6 +134,7 @@ void bsk_log_emit(bsk_engine *engine, bsk_log_level level,
 	static _Thread_local char buf[BSK_LOG_LINE_MAX];
 	bsk_log_handler handler;
 	void *user;
+	uint64_t gen;
 	bool tracked;
 	size_t n;
 
@@ -143,6 +144,7 @@ void bsk_log_emit(bsk_engine *engine, bsk_log_level level,
 	mtx_lock(&engine->log_mtx);
 	handler = engine->logh;
 	user = engine->log_user;
+	gen = engine->log_gen;
 	if (handler)
 		engine->log_inflight++;
 	mtx_unlock(&engine->log_mtx);
@@ -165,8 +167,12 @@ void bsk_log_emit(bsk_engine *engine, bsk_log_level level,
 		engine->emit_depth--;
 
 	mtx_lock(&engine->log_mtx);
-	if (--engine->log_inflight == 0)
+	if (gen == engine->log_gen) {
+		--engine->log_inflight;
+	} else {
+		--engine->log_inflight_old;
 		cnd_broadcast(&engine->log_cnd);
+	}
 	mtx_unlock(&engine->log_mtx);
 }
 
@@ -179,7 +185,10 @@ void bsk_log_set_handler(bsk_engine *engine, bsk_log_handler handler,
 	mtx_lock(&engine->log_mtx);
 	engine->logh = handler;
 	engine->log_user = user;
-	while (wait && engine->log_inflight > log_depth)
+	engine->log_inflight_old += engine->log_inflight;
+	engine->log_inflight = 0;
+	engine->log_gen++;
+	while (wait && engine->log_inflight_old > log_depth)
 		cnd_wait(&engine->log_cnd, &engine->log_mtx);
 	mtx_unlock(&engine->log_mtx);
 }

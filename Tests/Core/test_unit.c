@@ -1137,6 +1137,84 @@ static void test_log_callback_calls_engine(void)
 }
 
 
+struct log_load {
+	bsk_engine *engine;
+	int stop;
+	int running_old;
+	int calls_after_swap;
+	int swapped;
+};
+
+static struct log_load load;
+
+
+static void load_log(bsk_log_level level, bsk_log_domain domain,
+		     const char *line, size_t len, void *user)
+{
+	(void)level;
+	(void)domain;
+	(void)line;
+	(void)len;
+
+	if (user == &load && __atomic_load_n(&load.swapped, __ATOMIC_SEQ_CST))
+		__atomic_add_fetch(&load.calls_after_swap, 1, __ATOMIC_SEQ_CST);
+	usleep(2000);
+}
+
+
+static void *log_load_thread(void *arg)
+{
+	static const char line[] = "load: line";
+	(void)arg;
+
+	while (!__atomic_load_n(&load.stop, __ATOMIC_SEQ_CST))
+		bsk_log_emit(load.engine, BSK_LOG_WARNING, BSK_LOG_DOMAIN_MEDIA,
+			     line, sizeof(line) - 1);
+	return NULL;
+}
+
+
+static void test_log_handler_swap_under_load(void)
+{
+	bsk_engine_config cfg;
+	bsk_error err;
+	struct timespec start, end;
+	pthread_t t[3];
+	double elapsed;
+	int i;
+
+	memset(&load, 0, sizeof(load));
+	base_config(&cfg);
+	cfg.log_level = BSK_LOG_WARNING;
+	CHECK_OK(bsk_engine_create(&cfg, NULL, NULL, &load.engine, &err), &err);
+	bsk_engine_set_log_handler(load.engine, load_log, NULL);
+
+	for (i = 0; i < 3; i++)
+		CHECK(0 == pthread_create(&t[i], NULL, log_load_thread, NULL));
+	usleep(20000);
+
+	clock_gettime(CLOCK_MONOTONIC, &start);
+	for (i = 0; i < 20; i++)
+		bsk_engine_set_log_handler(load.engine, load_log,
+					   (i % 2) ? NULL : (void *)&load);
+	bsk_engine_set_log_handler(load.engine, load_log, &load);
+	bsk_engine_set_log_handler(load.engine, load_log, NULL);
+	__atomic_store_n(&load.swapped, 1, __ATOMIC_SEQ_CST);
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	elapsed = (double)(end.tv_sec - start.tv_sec) +
+		  (double)(end.tv_nsec - start.tv_nsec) / 1e9;
+	usleep(20000);
+
+	__atomic_store_n(&load.stop, 1, __ATOMIC_SEQ_CST);
+	for (i = 0; i < 3; i++)
+		CHECK(0 == pthread_join(t[i], NULL));
+
+	CHECK(elapsed < 2.0);
+	CHECK(__atomic_load_n(&load.calls_after_swap, __ATOMIC_SEQ_CST) == 0);
+	CHECK(BSK_OK == bsk_engine_destroy(load.engine));
+}
+
+
 static int h264_put(struct bsk_h264_depack *d, const uint8_t *payload,
 		    size_t len, uint16_t seq, bool marker, bool *complete)
 {
@@ -1370,6 +1448,7 @@ int main(void)
 	test_concurrent_stop();
 	test_engine_thread_guards();
 	test_log_callback_calls_engine();
+	test_log_handler_swap_under_load();
 	test_status_strings();
 	test_engine_lifecycle_without_network();
 	test_config_size_compat();
