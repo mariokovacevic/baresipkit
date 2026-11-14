@@ -60,6 +60,7 @@ public class BaresipAudioController(
     private val audioManager = context.getSystemService(AudioManager::class.java)
     private val handler = Handler(Looper.getMainLooper())
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
     private class EngineUpdate(
         val apply: suspend BaresipEngine.() -> Unit,
         val done: CompletableDeferred<Unit>? = null,

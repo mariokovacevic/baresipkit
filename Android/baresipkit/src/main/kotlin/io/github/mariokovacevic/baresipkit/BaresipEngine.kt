@@ -474,8 +474,7 @@ public class BaresipEngine(
     ): BaresipMessageID = BaresipMessageID(onEngine { Native.messageSend(handle, account?.rawValue ?: 0, peerUri.cString(), text.cString()) })
 
     /** The names of the cameras the video source offers. */
-    public suspend fun videoDevices(): List<String> =
-        ignoringErrors(emptyList()) { onEngine { Native.videoDevices(handle).split('\n').filter { it.isNotEmpty() } } }
+    public suspend fun videoDevices(): List<String> = ignoringErrors(emptyList()) { onEngine { Native.videoDevices(handle).split('\n').filter { it.isNotEmpty() } } }
 
     /**
      * Attaches a renderer to a call's remote or local video, or detaches it with `null`. The
