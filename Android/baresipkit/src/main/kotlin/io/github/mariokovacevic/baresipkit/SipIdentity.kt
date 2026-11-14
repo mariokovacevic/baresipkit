@@ -79,6 +79,10 @@ public enum class BaresipHandleStyle {
  * With Telecom, an app must not answer, end, hold or mute a call on the engine directly: the
  * system would show a different state. A controller takes these actions instead and performs
  * them on the engine once the system agrees. `BaresipTelecomAdapter` is a controller.
+ *
+ * The SDK's adapters implement this interface; apps use it and do not implement it. Members may
+ * be added to it in a minor release, so a class outside BaresipKit that implements it can stop
+ * compiling.
  */
 public interface BaresipCallController {
     /** Whether the call is known to the system call interface, so its actions go through the controller. */
