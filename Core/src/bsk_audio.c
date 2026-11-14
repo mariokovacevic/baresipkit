@@ -38,7 +38,6 @@ static bool audio_live(const bsk_engine *e)
 }
 
 
-/* The call whose audio object allocates a source. */
 static struct bsk_call_ctx *call_of_audio(bsk_engine *e, const void *audio)
 {
 	struct le *le;
@@ -71,9 +70,6 @@ static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 	if (!st)
 		return ENOMEM;
 
-	/* baresip makes a new source when the codec changes, also during a
-	 * hold: a held call with music on hold gets the music, never the
-	 * microphone. */
 	if (e && bsk_call_hold_music(e, call_of_audio(e, arg)))
 		err = ausrc_alloc(&st->inner, baresip_ausrcl(), BSK_HOLD_MODULE,
 				  prm, NULL, rh, errh, arg);

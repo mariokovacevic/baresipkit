@@ -257,8 +257,6 @@ void bsk_call_apply_audio_activation(bsk_engine *e, struct bsk_call_ctx *c)
 	}
 
 	if (bsk_call_hold_music(e, c)) {
-		/* The music replaces the source first, so the microphone never
-		 * sends while the call is on hold. */
 		if (!c->hold_music &&
 		    0 == audio_set_source(au, BSK_HOLD_MODULE, NULL))
 			c->hold_music = true;

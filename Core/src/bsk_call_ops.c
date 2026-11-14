@@ -54,8 +54,6 @@ static void emit_steady(bsk_engine *e, struct bsk_call_ctx *c,
 static void modify_timer(void *arg);
 
 
-/* Switches the source between the microphone and the music on hold when the
- * engine has music; without it a hold leaves the source alone. */
 static void apply_hold_music(bsk_engine *e, struct bsk_call_ctx *c)
 {
 	if (e->hold_pcm)

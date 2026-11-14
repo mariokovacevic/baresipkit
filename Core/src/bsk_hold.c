@@ -55,7 +55,6 @@ static void downmix(int16_t *pcm, size_t *n, size_t frames, const int16_t *buf,
 }
 
 
-/* Reads a 16-bit PCM WAV file, mono or stereo, into mono samples. */
 int bsk_hold_music_load(bsk_engine *e, const char *path)
 {
 	struct aufile_prm prm;
