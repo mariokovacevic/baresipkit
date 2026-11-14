@@ -626,6 +626,7 @@ public class BaresipEngine(
 
     private object EndOfEvents
 
+    /** What the linked core offers without an engine: its version and the `Contact` parameter encoding. */
     public companion object {
         private const val THREAD_NAME = "baresipkit.engine"
         private const val CLOSE_TIMEOUT_SECONDS = 10L

@@ -282,6 +282,7 @@ public class BaresipCamera private constructor(
             else -> 0
         }
 
+    /** Installs the cameras as the engine's video source. */
     public companion object {
         private const val LOG_TAG = "BaresipKit.camera"
 

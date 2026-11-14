@@ -248,6 +248,7 @@ public class BaresipConfiguration private constructor(
         public fun build(): BaresipConfiguration = BaresipConfiguration(this)
     }
 
+    /** The defaults of [BaresipConfiguration]. */
     public companion object {
         /**
          * The modules loaded by default: G.711, Opus, L16, ICE, TURN, STUN, SRTP, DTLS-SRTP,
@@ -425,6 +426,7 @@ public class BaresipAudioConfiguration private constructor(
         public fun build(): BaresipAudioConfiguration = BaresipAudioConfiguration(this)
     }
 
+    /** The defaults of [BaresipAudioConfiguration]. */
     public companion object {
         /**
          * The codecs offered when an account configures none: Opus, G.722, then G.711 µ-law and
