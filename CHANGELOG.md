@@ -370,11 +370,25 @@ Beta, not released yet. The SDK is in active development, and the API can still 
 - Android: `BaresipCallVideo` and `BaresipCameraPreview` attach and detach in one coroutine, so
   leaving the screen quickly no longer leaves the camera running, and a composable that leaves
   no longer stops the preview or renderer of the one that replaced it.
+- Core: replacing or removing the log handler waited until no log line was being delivered at
+  all, also to the new handler, so with steady logging (SIP trace, several media threads) the
+  call could block for a long time. It now waits only for lines that the old handler is still
+  handling.
+- Swift: when the last reference to a `BaresipEngine` was released inside an engine callback,
+  `deinit` ran on the engine thread, where the core refuses to destroy itself, and the engine
+  kept running with no owner. The engine is now destroyed from another thread in that case.
+- Android: `activate()`, `deactivate()` and the Telecom activation calls of
+  `BaresipAudioController` go through the same ordered queue as focus changes, so a focus
+  change queued before `deactivate()` can no longer turn the engine's audio back on after it.
+- Android: the JNI video bridge looked up its Java methods lazily from whichever thread came
+  first, without synchronization, so a video or camera callback could use a method ID before it
+  was set. The methods are now looked up once when the library loads.
 - Android: SIP over TLS verified the server only against the configured CAs, because OpenSSL's
   default certificate locations do not exist on Android, so a server with a certificate from a
   public CA was rejected unless its CA was configured. The core now also reads Android's system
   CAs from `/apex/com.android.conscrypt/cacerts` or `/system/etc/security/cacerts`. CAs the user
   installed or turned off and the app's network security configuration still do not apply.
+  The store is built once and reused for later connections.
 - Android: `BaresipEngine.close()` could free the native engine while `state`,
   `registrationState` or the engine thread check read it from another thread; the handle is now
   guarded by a lock.
