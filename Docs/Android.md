@@ -11,8 +11,8 @@ sample app, building from source, tests and releases. How the two platforms shar
 differ where they must is in [Platforms.md](Platforms.md).
 
 > [!IMPORTANT]
-> **Beta.** There is no release yet, and the API can still change. The Android SDK has run in
-> CI, on the JVM and on an emulator, but not yet on a physical device. Test it with your own
+> **Release candidate.** The API is frozen for 1.0 and follows [STABILITY.md](STABILITY.md). The
+> Android SDK has run in CI, on the JVM and on emulators, but not yet on a physical device. Test it with your own
 > devices and SIP server before relying on it.
 
 ## Modules

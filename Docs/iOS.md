@@ -10,9 +10,9 @@ articles are in the DocC catalog (Product > Build Documentation in Xcode), and t
 integration guide is [Integration.md](Integration.md).
 
 > [!IMPORTANT]
-> **Beta.** There is no release yet, and the API can still change. The Swift package runs in CI
-> on the simulator and macOS, and CallKit, PushKit and the camera have been tested on an iPhone.
-> Test it with your own devices and SIP server before relying on it.
+> **Release candidate.** The API is frozen for 1.0 and follows [STABILITY.md](STABILITY.md). The
+> Swift package runs in CI on the simulator and macOS, and CallKit, PushKit and the camera have
+> been tested on an iPhone. Test it with your own devices and SIP server before relying on it.
 
 ## Modules
 

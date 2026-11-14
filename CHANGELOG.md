@@ -6,7 +6,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-Beta, not released yet. The SDK is in active development, and the API can still change.
+## [1.0.0-rc.1] - 2026-11-14
+
+Release candidate for 1.0.0, the first stable release. The public Swift and Kotlin API is frozen
+and follows [Docs/STABILITY.md](Docs/STABILITY.md).
 
 ### Added
 
@@ -452,4 +455,5 @@ Beta, not released yet. The SDK is in active development, and the API can still 
   is gone too. Code that names them no longer compiles; the remaining values keep their numbers.
   C ABI 0.11.
 
-[Unreleased]: https://github.com/mariokovacevic/baresipkit/commits/main
+[Unreleased]: https://github.com/mariokovacevic/baresipkit/compare/v1.0.0-rc.1...main
+[1.0.0-rc.1]: https://github.com/mariokovacevic/baresipkit/commits/v1.0.0-rc.1

@@ -4,7 +4,8 @@ SIP voice and video calls on iOS, built on baresip.
 
 ## Overview
 
-> Important: BaresipKit is in beta. It has no release yet, and the API can still change.
+> Important: BaresipKit 1.0.0 is a release candidate. The public API is frozen for 1.0 and follows
+> Semantic Versioning; test it with your own devices and SIP server before relying on it.
 
 BaresipKit runs the baresip user agent on its own thread and exposes it as ``BaresipEngine``:
 an `async` API for accounts, calls and media, and an `AsyncStream` of ``BaresipEvent`` values

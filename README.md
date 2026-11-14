@@ -3,7 +3,7 @@
 **A SIP kit for voice and video calls in mobile apps: Swift on iOS and macOS, Kotlin on Android,
 one C core.**
 
-![Status: beta](https://img.shields.io/badge/status-beta-orange)
+![Status: release candidate](https://img.shields.io/badge/status-release%20candidate-yellow)
 ![iOS 16+ | macOS 13+](https://img.shields.io/badge/iOS%2016%2B%20%7C%20macOS%2013%2B-Swift%206-F05138)
 ![Android 9+](https://img.shields.io/badge/Android%209%2B-Kotlin-3DDC84)
 ![License: BSD-3-Clause](https://img.shields.io/badge/license-BSD--3--Clause-green)
@@ -23,9 +23,9 @@ On either platform an app goes from "register an account" to "answer a pushed vi
 lock screen" with a few dozen lines of code.
 
 > [!IMPORTANT]
-> **Beta.** BaresipKit is in active development and has no release yet. The API can still
-> change, and it is tested on a limited set of devices and SIP servers. Test it with your own
-> setup before relying on it.
+> **Release candidate.** BaresipKit 1.0.0 is in its release-candidate phase. The public API is
+> frozen and follows [Docs/STABILITY.md](Docs/STABILITY.md), but it is tested on a limited set of
+> devices and SIP servers. Test it with your own setup before relying on it.
 
 <p align="center">
   <img src="Docs/Images/doors.png" width="200" alt="Zvono's Doors screen: the front door with its last picture and an Open button, the garage gate, and today's rings">
