@@ -33,7 +33,7 @@ final class RegistrationCallUITests: XCTestCase {
         openAccount()
         let clear = app.buttons["account.pins.clear"]
         scrollTo(clear)
-        clear.tap()
+        XCTAssertTrue(tap(clear, untilGone: 5), "pins not cleared in:\n\(app.debugDescription)")
         save()
         waitForRegistration(containing: "registered", timeout: 30)
 
@@ -178,6 +178,23 @@ final class RegistrationCallUITests: XCTestCase {
                 element.tap()
             }
             if shown.waitForExistence(timeout: timeout) {
+                return true
+            }
+            dismissSystemPrompts()
+        }
+        return false
+    }
+
+    private func tap(_ element: XCUIElement, untilGone timeout: TimeInterval) -> Bool {
+        let gone = NSPredicate(format: "exists == false")
+        let maximumAttempts = 3
+        for _ in 0 ..< maximumAttempts {
+            waitUntilHittable(element)
+            if element.isHittable {
+                element.tap()
+            }
+            let disappeared = XCTNSPredicateExpectation(predicate: gone, object: element)
+            if XCTWaiter().wait(for: [disappeared], timeout: timeout) == .completed {
                 return true
             }
             dismissSystemPrompts()
