@@ -2,6 +2,7 @@
     import CallKit
     import Foundation
     import BaresipKit
+    import BaresipKitSystemCall
 
     /// Connects a `BaresipEngine` to CallKit.
     ///
@@ -15,27 +16,26 @@
     /// let callKit = BaresipCallKitAdapter(engine: engine, configuration: BaresipCallKitConfiguration())
     /// let uuid = try await callKit.startOutgoingCall(to: "sip:bob@example.com")
     /// ```
-    public final class BaresipCallKitAdapter: NSObject, @unchecked Sendable {
-        // SAFETY: the mutable dictionaries, sets and `pushCalls` are read and written only while
+    public final class BaresipCallKitAdapter: @unchecked Sendable {
+        // SAFETY: `book`, the waiters and the mute handlers are read and written only while
         // holding `lock`; CXProvider and CXCallController are thread-safe.
 
         let engine: BaresipEngine
         let provider: CXProvider
         let controller = CXCallController()
+        let providerDelegate = ProviderDelegate()
         let pushInviteTimeout: Duration
         let sendsCameraOnAnswer: Bool
+        let callUUIDHeader: String?
+        let handleStyle: BaresipHandleStyle
         let lock = NSLock()
-        var uuidByCall: [BaresipCallID: UUID] = [:]
-        var callByUUID: [UUID: BaresipCallID] = [:]
-        var pendingAnswers: Set<UUID> = []
-        var outgoing: Set<UUID> = []
-        var pushCalls: PushCallLedger
+        static let systemActionDeadline: Duration = .seconds(60)
+        var book: SystemCallBook
         var muteHandler: (@Sendable (BaresipCallID, Bool) -> Void)?
+        var audioSessionHandler: AudioSessionHandler?
         var muteObservers: [@Sendable (BaresipCallID, Bool) -> Void] = []
         /// Callers of `placeCall(to:video:)` waiting for the engine call of their start action.
         var placedCallWaiters: [UUID: CheckedContinuation<BaresipCallID, Error>] = [:]
-        /// Whether to send the camera, for answers the app requested with `answer(_:video:)`.
-        var answerVideo: [UUID: Bool] = [:]
         /// Callers waiting until the provider carried out their action, by action UUID.
         var actionWaiters: [UUID: CheckedContinuation<Void, Error>] = [:]
         private var eventTask: Task<Void, Never>?
@@ -52,17 +52,20 @@
             self.engine = engine
             pushInviteTimeout = configuration.pushInviteTimeout
             sendsCameraOnAnswer = configuration.sendsCameraOnAnswer
-            pushCalls = PushCallLedger(matchesPushWithoutCaller: configuration.matchesPushWithoutCaller)
+            callUUIDHeader = configuration.callUUIDHeader
+            handleStyle = configuration.handleStyle
+            book = SystemCallBook(matchesPushWithoutCaller: configuration.matchesPushWithoutCaller)
             let providerConfiguration = CXProviderConfiguration()
             providerConfiguration.supportsVideo = configuration.supportsVideo
             providerConfiguration.maximumCallsPerCallGroup = configuration.maximumCallsPerCallGroup
             providerConfiguration.supportedHandleTypes = [.generic, .phoneNumber]
+            providerConfiguration.includesCallsInRecents = configuration.includesCallsInRecents
             providerConfiguration.iconTemplateImageData = configuration.iconTemplateImageData
             providerConfiguration.ringtoneSound = configuration.ringtoneSound
             provider = CXProvider(configuration: providerConfiguration)
             let events = engine.events
-            super.init()
-            provider.setDelegate(self, queue: nil)
+            providerDelegate.adapter = self
+            provider.setDelegate(providerDelegate, queue: nil)
             eventTask = Task { [weak self] in
                 for await event in events {
                     await self?.handle(event)
@@ -75,12 +78,62 @@
             provider.invalidate()
         }
 
+        /// Changes the ringtone of the calls reported from now on, for example after the user
+        /// picked one in the app's settings.
+        ///
+        /// - Parameter sound: The name of a sound file in the app's main bundle, or `nil` for the
+        ///   ringtone chosen in the iOS Settings app. CallKit ignores a file it cannot find there.
+        public func setRingtoneSound(_ sound: String?) {
+            let configuration = provider.configuration
+            configuration.ringtoneSound = sound
+            provider.configuration = configuration
+        }
+
+        /// Called when the system activates (`true`) or deactivates (`false`) the audio session of
+        /// the calls.
+        public typealias AudioSessionHandler = @Sendable (_ active: Bool) async -> Void
+
+        /// Sends the system's audio session activation to a handler instead of to the engine.
+        ///
+        /// Use it to tell a `BaresipAudioSessionController` that CallKit owns the session, so the
+        /// controller handles interruptions and resets of the media services accordingly:
+        ///
+        /// ```swift
+        /// callKit.setAudioSessionHandler { active in
+        ///     if active {
+        ///         await audio.didActivateFromCallKit()
+        ///     } else {
+        ///         await audio.didDeactivateFromCallKit()
+        ///     }
+        /// }
+        /// ```
+        ///
+        /// The handler must tell the engine, as the controller does. Without a handler, the
+        /// adapter calls `audioSessionDidActivate()` and `audioSessionDidDeactivate()` on the engine
+        /// itself.
+        ///
+        /// - Parameter handler: The handler, or `nil` to tell the engine directly.
+        public func setAudioSessionHandler(_ handler: AudioSessionHandler?) {
+            lock.withLock { audioSessionHandler = handler }
+        }
+
+        func audioSessionChanged(active: Bool) async {
+            let handler = lock.withLock { audioSessionHandler }
+            if let handler {
+                await handler(active)
+            } else if active {
+                await engine.audioSessionDidActivate()
+            } else {
+                await engine.audioSessionDidDeactivate()
+            }
+        }
+
         /// The CallKit UUID of an engine call, if the call is known to CallKit.
         ///
         /// - Parameter call: The engine call.
         /// - Returns: The UUID used with CallKit, or `nil`.
         public func uuid(for call: BaresipCallID) -> UUID? {
-            lock.withLock { uuidByCall[call] }
+            lock.withLock { book.uuid(for: call) }
         }
 
         /// Starts an outgoing call through CallKit.
@@ -103,10 +156,16 @@
 
         func requestOutgoingCall(uuid: UUID, to destination: String, displayName: String?,
                                  video: Bool) async throws {
-            let action = CXStartCallAction(call: uuid, handle: CXHandle(type: .generic, value: destination))
+            let action = CXStartCallAction(call: uuid, handle: handle(for: destination))
             action.isVideo = video
             action.contactIdentifier = displayName
-            try await controller.request(CXTransaction(action: action))
+            lock.withLock { book.willStart(uuid, destination: destination) }
+            do {
+                try await controller.request(CXTransaction(action: action))
+            } catch {
+                lock.withLock { book.startNotRequested(uuid) }
+                throw error
+            }
         }
 
         /// Answers an incoming call through CallKit.
@@ -142,7 +201,7 @@
         ///   - uuid: The CallKit UUID of the call.
         /// - Throws: The CallKit error when the system refuses the request, or the engine's error when
         ///   the action fails on the call.
-        public func setHeld(_ onHold: Bool, uuid: UUID) async throws {
+        public func setOnHold(_ onHold: Bool, uuid: UUID) async throws {
             try await requestAndWait(CXSetHeldCallAction(call: uuid, onHold: onHold))
         }
 
@@ -180,6 +239,10 @@
                         takeActionWaiter(id)?.resume(throwing: error)
                     }
                 }
+                Task { [weak self] in
+                    try? await Task.sleep(for: BaresipCallKitAdapter.systemActionDeadline)
+                    self?.takeActionWaiter(id)?.resume(throwing: BaresipCallKitError.actionTimedOut)
+                }
             }
         }
 
@@ -198,26 +261,20 @@
             }
         }
 
-        func bind(_ call: BaresipCallID, _ uuid: UUID) {
-            lock.withLock {
-                uuidByCall[call] = uuid
-                callByUUID[uuid] = call
+        /// The CallKit handle of a SIP URI, user name or number, as `BaresipHandleStyle` says.
+        func handle(for address: String) -> CXHandle {
+            if handleStyle == .phoneNumberWhenNumeric, let number = SIPIdentity(address).phoneNumber {
+                return CXHandle(type: .phoneNumber, value: number)
             }
+            return CXHandle(type: .generic, value: address)
         }
 
         func unbind(_ call: BaresipCallID) -> UUID? {
-            lock.withLock {
-                guard let uuid = uuidByCall.removeValue(forKey: call) else { return nil }
-                callByUUID[uuid] = nil
-                pendingAnswers.remove(uuid)
-                outgoing.remove(uuid)
-                answerVideo[uuid] = nil
-                return uuid
-            }
+            lock.withLock { book.unbind(call) }
         }
 
         func callID(for uuid: UUID) -> BaresipCallID? {
-            lock.withLock { callByUUID[uuid] }
+            lock.withLock { book.call(for: uuid) }
         }
     }
 #endif

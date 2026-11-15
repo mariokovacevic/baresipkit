@@ -38,6 +38,21 @@ static bool audio_live(const bsk_engine *e)
 }
 
 
+static struct bsk_call_ctx *call_of_audio(bsk_engine *e, const void *audio)
+{
+	struct le *le;
+
+	for (le = e->calls.head; le; le = le->next) {
+		struct bsk_call_ctx *c = le->data;
+
+		if (c->call && (const void *)call_audio(c->call) == audio)
+			return c;
+	}
+
+	return NULL;
+}
+
+
 static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 		     struct ausrc_prm *prm, const char *device,
 		     ausrc_read_h *rh, ausrc_error_h *errh, void *arg)
@@ -55,7 +70,10 @@ static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 	if (!st)
 		return ENOMEM;
 
-	if (audio_live(e))
+	if (e && bsk_call_hold_music(e, call_of_audio(e, arg)))
+		err = ausrc_alloc(&st->inner, baresip_ausrcl(), BSK_HOLD_MODULE,
+				  prm, NULL, rh, errh, arg);
+	else if (audio_live(e))
 		err = ausrc_alloc(&st->inner, baresip_ausrcl(),
 				  e->audio_src_mod, prm, e->audio_src_dev, rh,
 				  errh, arg);
@@ -115,6 +133,10 @@ int bsk_audio_init(void)
 	if (err)
 		return err;
 
+	err = bsk_hold_init();
+	if (err)
+		return err;
+
 	str_ncpy(cfg->src_mod, BSK_AUDIO_MODULE, sizeof(cfg->src_mod));
 	cfg->src_dev[0] = '\0';
 	str_ncpy(cfg->play_mod, BSK_AUDIO_MODULE, sizeof(cfg->play_mod));
@@ -128,4 +150,5 @@ void bsk_audio_close(void)
 {
 	bsk_ausrc = mem_deref(bsk_ausrc);
 	bsk_auplay = mem_deref(bsk_auplay);
+	bsk_hold_close();
 }

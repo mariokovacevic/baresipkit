@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #define BSK_ABI_VERSION_MAJOR 0
-#define BSK_ABI_VERSION_MINOR 8
+#define BSK_ABI_VERSION_MINOR 13
 
 typedef struct bsk_engine bsk_engine;
 
@@ -128,6 +128,13 @@ typedef enum bsk_call_state {
 	BSK_CALL_RELEASED = 13
 } bsk_call_state;
 
+typedef enum bsk_call_end_reason {
+	BSK_END_NORMAL = 0,
+	BSK_END_ANSWERED_ELSEWHERE = 1,
+	BSK_END_DECLINED_ELSEWHERE = 2,
+	BSK_END_REPLACED = 3
+} bsk_call_end_reason;
+
 typedef enum bsk_media_direction {
 	BSK_DIR_INACTIVE = 0,
 	BSK_DIR_SENDONLY = 1,
@@ -156,10 +163,8 @@ typedef enum bsk_pixel_format {
 	BSK_PIX_BGRA = 2
 } bsk_pixel_format;
 
-typedef enum bsk_video_codec {
-	BSK_VCODEC_H264 = 0,
-	BSK_VCODEC_VP8 = 1
-} bsk_video_codec;
+#define BSK_TLS_VERSION_1_2 0x0303
+#define BSK_TLS_VERSION_1_3 0x0304
 
 typedef struct bsk_tls_config {
 	const char *ca_pem;
@@ -169,6 +174,9 @@ typedef struct bsk_tls_config {
 	const char *const *pinned_spki_sha256_base64;
 	size_t pinned_count;
 	const char *cipher_list;
+	/* The lowest TLS version accepted: BSK_TLS_VERSION_1_2 or
+	 * BSK_TLS_VERSION_1_3, the version numbers of the TLS wire format.
+	 * 0 means TLS 1.2. bsk_engine_create rejects any other value. */
 	int min_version;
 	bool insecure_skip_verify;
 } bsk_tls_config;
@@ -233,6 +241,20 @@ typedef struct bsk_engine_config {
 	bool ice_relay_only;
 	bool video_adaptive_bitrate;
 	uint32_t video_min_bitrate_bps;
+	/* A 16-bit PCM WAV file, mono or stereo, 8 to 48 kHz, that a held call
+	 * plays to the other side in a loop instead of the microphone. NULL
+	 * sends nothing while on hold. */
+	const char *hold_music_path;
+	/* The RFC 4028 session timer in seconds that calls offer and accept:
+	 * the refresher renews the session with UPDATE or re-INVITE, the
+	 * other side hangs up with BYE when it is not renewed. 0 keeps
+	 * session timers off. */
+	uint32_t session_expires;
+	/* The smallest session interval accepted in seconds: at least 90,
+	 * the minimum of RFC 4028, and at most session_expires; 0 means 90.
+	 * bsk_engine_create rejects other values, so session_expires is
+	 * 0 or at least 90 too. */
+	uint32_t session_min_se;
 } bsk_engine_config;
 
 typedef struct bsk_contact_param {
@@ -285,6 +307,11 @@ typedef struct bsk_call_info {
 	uint32_t setup_ms;
 	uint32_t duration_s;
 	bool microphone_muted;
+	/* The call this one takes over, or BSK_ID_NONE: an incoming call whose
+	 * INVITE replaced an established call (RFC 3891), or the outgoing call
+	 * that follows a transfer of that call (RFC 3515). The call it takes
+	 * over ends with BSK_END_REPLACED. */
+	bsk_call_id replaces;
 } bsk_call_info;
 
 typedef struct bsk_stream_statistics {
@@ -292,6 +319,9 @@ typedef struct bsk_stream_statistics {
 	uint32_t rx_packets;
 	uint64_t tx_bytes;
 	uint64_t rx_bytes;
+	/* Packets lost since the stream started, never negative: the
+	 * cumulative loss of RTCP (RFC 3550) counts duplicates against
+	 * losses and can drop below zero, which is reported as 0. */
 	int32_t rx_lost;
 	uint32_t rx_fraction_lost_permille;
 	uint32_t rx_jitter_ms;
@@ -327,6 +357,7 @@ typedef enum bsk_event_type {
 	BSK_EVENT_ICE = 8,
 	BSK_EVENT_NETWORK = 9,
 	BSK_EVENT_AUDIO = 10,
+	/* Reserved for diagnostics; this revision never emits it. */
 	BSK_EVENT_DIAGNOSTIC = 11,
 	BSK_EVENT_MESSAGE = 12,
 	BSK_EVENT_MESSAGE_STATUS = 13
@@ -334,13 +365,9 @@ typedef enum bsk_event_type {
 
 typedef enum bsk_media_event {
 	BSK_MEDIA_AUDIO_STARTED = 0,
-	BSK_MEDIA_AUDIO_STOPPED = 1,
-	BSK_MEDIA_VIDEO_STARTED = 2,
-	BSK_MEDIA_VIDEO_STOPPED = 3,
 	BSK_MEDIA_REMOTE_HOLD = 4,
 	BSK_MEDIA_REMOTE_RESUME = 5,
 	BSK_MEDIA_ENCRYPTION_ESTABLISHED = 6,
-	BSK_MEDIA_RTP_TIMEOUT = 7,
 	BSK_MEDIA_KEYFRAME_REQUESTED = 8,
 	BSK_MEDIA_EARLY_VIDEO_AVAILABLE = 9,
 	BSK_MEDIA_RECORDING_STARTED = 10,
@@ -365,6 +392,12 @@ typedef struct bsk_event {
 		struct {
 			bsk_call_state state;
 			bsk_error error;
+			/* For BSK_CALL_ENDED of an incoming call that rang: whether
+			 * another device answered or declined it, as the Reason
+			 * header of the CANCEL says (RFC 3326). BSK_END_REPLACED
+			 * when a call with this call's id in
+			 * bsk_call_info.replaces takes it over. */
+			bsk_call_end_reason end_reason;
 		} call_state;
 		struct {
 			bsk_call_info info;
@@ -467,7 +500,10 @@ BSK_EXPORT bsk_status bsk_engine_create(const bsk_engine_config *config,
 					bsk_event_handler handler, void *user,
 					bsk_engine **out_engine,
 					bsk_error *err);
-BSK_EXPORT void bsk_engine_destroy(bsk_engine *engine);
+/* Stops the engine if needed and frees it. On the engine thread (from an
+ * event, log or remote video frame callback) it does nothing and returns
+ * BSK_ERR_INVALID_STATE. See Docs/C-ABI.md for the threading rules. */
+BSK_EXPORT bsk_status bsk_engine_destroy(bsk_engine *engine);
 BSK_EXPORT void bsk_engine_set_log_handler(bsk_engine *engine,
 					   bsk_log_handler handler, void *user);
 BSK_EXPORT void bsk_engine_set_event_handler(bsk_engine *engine,
@@ -480,6 +516,9 @@ BSK_EXPORT bsk_engine_state bsk_engine_get_state(const bsk_engine *engine);
 BSK_EXPORT bool bsk_engine_is_engine_thread(const bsk_engine *engine);
 BSK_EXPORT bsk_status bsk_engine_prepare_for_push_wakeup(bsk_engine *engine,
 							 bsk_error *err);
+/* Has no effect in this revision and returns BSK_OK: transports,
+ * registrations and calls stay as they are. bsk_engine_resume resets the
+ * transports and re-registers whether or not suspend was called. */
 BSK_EXPORT bsk_status bsk_engine_suspend(bsk_engine *engine, bsk_error *err);
 BSK_EXPORT bsk_status bsk_engine_resume(bsk_engine *engine, bsk_error *err);
 BSK_EXPORT bsk_status bsk_engine_network_changed(bsk_engine *engine,

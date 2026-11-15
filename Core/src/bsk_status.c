@@ -88,6 +88,8 @@ bsk_status bsk_status_from_errno(int err)
 	case EPROTONOSUPPORT: return BSK_ERR_UNSUPPORTED;
 	case EBUSY: return BSK_ERR_BUSY;
 	case EALREADY: return BSK_ERR_INVALID_STATE;
+	case ECANCELED: return BSK_ERR_INVALID_STATE;
+	case EOVERFLOW: return BSK_ERR_BUFFER_TOO_SMALL;
 	case ETIMEDOUT: return BSK_ERR_TIMEOUT;
 	case EAUTH: return BSK_ERR_AUTH;
 	case ECONNREFUSED:
@@ -140,6 +142,15 @@ int bsk_first_error(int err, int next)
 }
 
 
+#if defined(__APPLE__)
+#define BSK_CAPS_H264 "video.h264.videotoolbox "
+#elif defined(__ANDROID__)
+#define BSK_CAPS_H264 "video.h264.mediacodec "
+#else
+#define BSK_CAPS_H264 ""
+#endif
+
+
 size_t bsk_capabilities(char *buf, size_t buf_len)
 {
 	static const char caps[] =
@@ -148,16 +159,17 @@ size_t bsk_capabilities(char *buf, size_t buf_len)
 		"reg.outbound reg.contact-params "
 		"call.hold call.transfer.blind call.transfer.attended "
 		"call.early-media call.recording call.no-audio call.headers "
+		"call.session-timer "
 		"message.sip "
 		"dtmf.rfc4733 dtmf.sip-info "
 		"nat.ice nat.stun nat.turn-udp nat.turn-tcp nat.turn-tls "
 		"nat.rtcp-mux nat.pinhole "
 		"ice.restart ice.trickle:unsupported "
 		"media.srtp media.dtls-srtp "
-		"codec.opus codec.g722 codec.g711 "
-		"video.h264.videotoolbox video.vp8:optional "
+		"codec.opus codec.g722 codec.g711 " BSK_CAPS_H264
+		"video.vp8:optional "
 		"video.adaptive-bitrate video.picture-update.sip-info "
-		"tls.pinning";
+		"audio.hold-music tls.pinning";
 	size_t len = sizeof(caps) - 1;
 
 	if (buf && buf_len) {

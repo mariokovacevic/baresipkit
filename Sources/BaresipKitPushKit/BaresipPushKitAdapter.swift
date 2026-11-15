@@ -3,6 +3,7 @@
     import Foundation
     import PushKit
     import BaresipKit
+    import BaresipKitSystemCall
 
     /// Registers for VoIP pushes and keeps the account's push `Contact` parameters current.
     ///
@@ -14,18 +15,23 @@
     /// the handler throws, the adapter reports and ends a placeholder call before the delegate
     /// method returns. Afterwards the adapter wakes the engine so the INVITE can arrive.
     ///
+    /// LiveCommunicationKit reports calls only asynchronously. With
+    /// `BaresipLiveCommunicationAdapter`, create the adapter with
+    /// ``reportingAsynchronously(engine:appID:accountID:additionalContactParameters:reportDeadline:onIncomingPush:)``:
+    /// the push is completed only after the asynchronous handler returned.
+    ///
     /// The adapter owns the `Contact` parameters of the bound account: every update replaces all
     /// of them, including those from `BaresipAccountConfiguration.contactParameters`. Pass the
     /// parameters the account needs besides the push ones as `additionalContactParameters`.
     ///
     /// ```swift
     /// let push = BaresipPushKitAdapter(engine: engine, appID: "com.example.app") { payload in
-    ///     callKit.reportIncomingCallFromPush(uuid: UUID(), remoteURI: payload["from"] as? String,
+    ///     callKit.reportIncomingCallFromPush(uuid: nil, remoteURI: payload["from"] as? String,
     ///                                        displayName: nil, hasVideo: false) { _ in }
     /// }
     /// push.bind(accountID: account)
     /// ```
-    public final class BaresipPushKitAdapter: NSObject, PKPushRegistryDelegate, @unchecked Sendable {
+    public final class BaresipPushKitAdapter: @unchecked Sendable {
         // SAFETY: `tokens`, `additionalParameters`, `accountID`, `updates` and `errorHandler` are
         // accessed only while holding `lock`; the other properties are immutable.
 
@@ -36,13 +42,27 @@
         /// throw when it cannot report one.
         public typealias IncomingPushHandler = @Sendable (_ payload: [AnyHashable: Any]) throws -> Void
 
+        /// Called for each VoIP push with the push payload, for system call interfaces that report
+        /// calls asynchronously, such as LiveCommunicationKit.
+        ///
+        /// The adapter completes the push only after the handler returned. The handler must have
+        /// reported a call by then, and throw when it cannot report one.
+        public typealias AsyncIncomingPushHandler = @Sendable (_ payload: [AnyHashable: Any]) async throws -> Void
+
+        private enum PushHandler {
+            case immediate(IncomingPushHandler)
+            case awaited(AsyncIncomingPushHandler)
+        }
+
         /// What the adapter was doing when an error occurred; see
         /// ``BaresipPushKitAdapter/setErrorHandler(_:)``.
         public enum Step: Sendable {
             /// Sending the `Contact` parameters to the engine. The account keeps its previous
             /// parameters until the next update.
             case contactParameters
-            /// Reporting a push to CallKit. The handler threw, and a placeholder call was reported.
+            /// Reporting a push to the system. The handler threw, or an asynchronous handler did not
+            /// return before its deadline (``BaresipPushKitError/reportTimedOut``), and a
+            /// placeholder call was reported.
             case incomingPush
             /// Waking the engine after a push. The INVITE may not arrive.
             case engineWakeUp
@@ -54,13 +74,15 @@
 
         private let engine: BaresipEngine
         private let registry: PKPushRegistry
+        private let registryDelegate = PushRegistryDelegate()
         private let lock = NSLock()
         private var tokens: BaresipPushTokens
         private var additionalParameters: [BaresipContactParameter]
         private var accountID: BaresipAccountID?
         private var updates = ContactParameterUpdates()
         private var errorHandler: ErrorHandler?
-        private let onIncomingPush: IncomingPushHandler
+        private let onIncomingPush: PushHandler
+        private let reportDeadline: Duration
 
         /// Creates the adapter and registers for VoIP pushes.
         ///
@@ -71,17 +93,60 @@
         ///   - additionalContactParameters: `Contact` parameters sent together with the push ones. A
         ///     parameter with the name of a push parameter is left out.
         ///   - onIncomingPush: The handler that reports each push call to CallKit before it returns.
-        public init(engine: BaresipEngine, appID: String, accountID: BaresipAccountID? = nil,
-                    additionalContactParameters: [BaresipContactParameter] = [],
-                    onIncomingPush: @escaping IncomingPushHandler) {
+        public convenience init(engine: BaresipEngine, appID: String, accountID: BaresipAccountID? = nil,
+                                additionalContactParameters: [BaresipContactParameter] = [],
+                                onIncomingPush: @escaping IncomingPushHandler) {
+            self.init(engine: engine, appID: appID, accountID: accountID,
+                      additionalContactParameters: additionalContactParameters, handler: .immediate(onIncomingPush),
+                      reportDeadline: .seconds(5))
+        }
+
+        /// Creates an adapter for a system call interface that reports calls asynchronously, such
+        /// as LiveCommunicationKit, and registers for VoIP pushes.
+        ///
+        /// ```swift
+        /// let push = BaresipPushKitAdapter.reportingAsynchronously(engine: engine, appID: appID) { payload in
+        ///     try await calls.reportIncomingCallFromPush(uuid: nil, remoteURI: payload["from"] as? String,
+        ///                                                displayName: nil, hasVideo: false)
+        /// }
+        /// ```
+        ///
+        /// - Parameters:
+        ///   - engine: The engine to wake for push calls.
+        ///   - appID: The app's bundle identifier, sent as `app-id`.
+        ///   - accountID: The account whose `Contact` parameters carry the tokens, if known yet.
+        ///   - additionalContactParameters: `Contact` parameters sent together with the push ones. A
+        ///     parameter with the name of a push parameter is left out.
+        ///   - reportDeadline: How long the handler may take. iOS ends an app that does not report a
+        ///     call for a VoIP push in time, and eventually stops delivering pushes to it, so a
+        ///     handler that has not returned by then is cancelled, a placeholder call is reported
+        ///     and ended, and the error handler gets ``BaresipPushKitError/reportTimedOut``.
+        ///   - onIncomingPush: The handler that reports each push call; the push is completed after
+        ///     it returned.
+        /// - Returns: The adapter.
+        public static func reportingAsynchronously(engine: BaresipEngine, appID: String,
+                                                   accountID: BaresipAccountID? = nil,
+                                                   additionalContactParameters: [BaresipContactParameter] = [],
+                                                   reportDeadline: Duration = .seconds(5),
+                                                   onIncomingPush: @escaping AsyncIncomingPushHandler)
+            -> BaresipPushKitAdapter {
+            BaresipPushKitAdapter(engine: engine, appID: appID, accountID: accountID,
+                                  additionalContactParameters: additionalContactParameters,
+                                  handler: .awaited(onIncomingPush), reportDeadline: reportDeadline)
+        }
+
+        private init(engine: BaresipEngine, appID: String, accountID: BaresipAccountID?,
+                     additionalContactParameters: [BaresipContactParameter], handler: PushHandler,
+                     reportDeadline: Duration) {
             self.engine = engine
             tokens = BaresipPushTokens(appID: appID)
             additionalParameters = additionalContactParameters
             self.accountID = accountID
-            self.onIncomingPush = onIncomingPush
+            onIncomingPush = handler
+            self.reportDeadline = reportDeadline
             registry = PKPushRegistry(queue: nil)
-            super.init()
-            registry.delegate = self
+            registryDelegate.adapter = self
+            registry.delegate = registryDelegate
             registry.desiredPushTypes = [.voIP]
         }
 
@@ -150,8 +215,8 @@
         ///   - registry: The push registry.
         ///   - pushCredentials: The new credentials.
         ///   - type: The push type.
-        public func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials,
-                                 for type: PKPushType) {
+        func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials,
+                          for type: PKPushType) {
             guard type == .voIP else { return }
             let token = pushCredentials.token
             updateTokens { $0.voipToken = token }
@@ -162,40 +227,62 @@
         /// - Parameters:
         ///   - registry: The push registry.
         ///   - type: The push type.
-        public func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
+        func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
             guard type == .voIP else { return }
             updateTokens { $0.voipToken = nil }
         }
 
-        /// Calls the push handler before returning, then wakes the engine for the INVITE.
+        /// Calls the push handler, then wakes the engine for the INVITE.
         ///
-        /// When the handler throws, a placeholder call is reported and ended before this method
-        /// returns, so iOS always sees a reported call for the push.
+        /// A synchronous handler runs before this method returns, an asynchronous one before the
+        /// completion handler runs. When the handler throws, a placeholder call is reported and
+        /// ended, so iOS always sees a reported call for the push.
         ///
         /// - Parameters:
         ///   - registry: The push registry.
         ///   - payload: The push payload.
         ///   - type: The push type.
         ///   - completion: Called after the call was reported and the engine woken.
-        public func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload,
-                                 for type: PKPushType, completion: @escaping () -> Void) {
+        func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload,
+                          for type: PKPushType, completion: @escaping () -> Void) {
             guard type == .voIP else {
                 completion()
                 return
             }
-            let failure = IncomingPushReport.deliver(payload.dictionaryPayload, to: onIncomingPush,
-                                                     orReportPlaceholder: Self.reportPlaceholderCall)
-            if let failure {
-                report(.incomingPush, failure)
-            }
             let done = UncheckedSendable(value: completion)
-            Task {
-                do {
-                    try await engine.prepareForPushWakeUp()
-                } catch {
-                    report(.engineWakeUp, error)
+            switch onIncomingPush {
+            case .immediate(let handler):
+                let failure = IncomingPushReport.deliver(payload.dictionaryPayload, to: handler,
+                                                         orReportPlaceholder: Self.reportPlaceholderCall)
+                if let failure {
+                    report(.incomingPush, failure)
                 }
-                done.value()
+                Task {
+                    await wakeEngine()
+                    done.value()
+                }
+            case .awaited(let handler):
+                let dictionary = UncheckedSendable(value: payload.dictionaryPayload)
+                let deadline = reportDeadline
+                Task {
+                    let failure = await IncomingPushReport.deliver(within: deadline) {
+                        try await handler(dictionary.value)
+                    }
+                    if let failure {
+                        Self.reportPlaceholderCall()
+                        report(.incomingPush, failure.error)
+                    }
+                    await wakeEngine()
+                    done.value()
+                }
+            }
+        }
+
+        private func wakeEngine() async {
+            do {
+                try await engine.prepareForPushWakeUp()
+            } catch {
+                report(.engineWakeUp, error)
             }
         }
 

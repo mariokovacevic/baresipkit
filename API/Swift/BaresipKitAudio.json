@@ -1,0 +1,1369 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "BaresipKitAudio",
+    "printedName": "BaresipKitAudio",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "AVFoundation",
+        "printedName": "AVFoundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "BaresipKit",
+        "printedName": "BaresipKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftOnoneSupport",
+        "printedName": "SwiftOnoneSupport",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "_Concurrency",
+        "printedName": "_Concurrency",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "_StringProcessing",
+        "printedName": "_StringProcessing",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "Import",
+        "name": "_SwiftConcurrencyShims",
+        "printedName": "_SwiftConcurrencyShims",
+        "declKind": "Import",
+        "moduleName": "BaresipKitAudio"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipAudioOutput",
+        "printedName": "BaresipAudioOutput",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "id",
+            "printedName": "id",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC6OutputV2idSSvp",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV2idSSvp",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC6OutputV2idSSvg",
+                "mangledName": "$s15BaresipKitAudio0aC6OutputV2idSSvg",
+                "moduleName": "BaresipKitAudio",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "name",
+            "printedName": "name",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC6OutputV4nameSSvp",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV4nameSSvp",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC6OutputV4nameSSvg",
+                "mangledName": "$s15BaresipKitAudio0aC6OutputV4nameSSvg",
+                "moduleName": "BaresipKitAudio",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "route",
+            "printedName": "route",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioRoute",
+                "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                "usr": "s:15BaresipKitAudio0aC5RouteO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC6OutputV5routeAA0aC5RouteOvp",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV5routeAA0aC5RouteOvp",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioRoute",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                    "usr": "s:15BaresipKitAudio0aC5RouteO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC6OutputV5routeAA0aC5RouteOvg",
+                "mangledName": "$s15BaresipKitAudio0aC6OutputV5routeAA0aC5RouteOvg",
+                "moduleName": "BaresipKitAudio",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "earpiece",
+            "printedName": "earpiece",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioOutput",
+                "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                "usr": "s:15BaresipKitAudio0aC6OutputV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC6OutputV8earpieceACvpZ",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV8earpieceACvpZ",
+            "moduleName": "BaresipKitAudio",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioOutput",
+                    "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                    "usr": "s:15BaresipKitAudio0aC6OutputV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC6OutputV8earpieceACvgZ",
+                "mangledName": "$s15BaresipKitAudio0aC6OutputV8earpieceACvgZ",
+                "moduleName": "BaresipKitAudio",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "speaker",
+            "printedName": "speaker",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioOutput",
+                "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                "usr": "s:15BaresipKitAudio0aC6OutputV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC6OutputV7speakerACvpZ",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV7speakerACvpZ",
+            "moduleName": "BaresipKitAudio",
+            "static": true,
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "isLet": true,
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioOutput",
+                    "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                    "usr": "s:15BaresipKitAudio0aC6OutputV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC6OutputV7speakerACvgZ",
+                "mangledName": "$s15BaresipKitAudio0aC6OutputV7speakerACvgZ",
+                "moduleName": "BaresipKitAudio",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "ID",
+            "printedName": "ID",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:15BaresipKitAudio0aC6OutputV2IDa",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV2IDa",
+            "moduleName": "BaresipKitAudio",
+            "implicit": true
+          },
+          {
+            "kind": "Function",
+            "name": "__derived_struct_equals",
+            "printedName": "__derived_struct_equals(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioOutput",
+                "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                "usr": "s:15BaresipKitAudio0aC6OutputV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioOutput",
+                "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                "usr": "s:15BaresipKitAudio0aC6OutputV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC6OutputV23__derived_struct_equalsySbAC_ACtFZ",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV23__derived_struct_equalsySbAC_ACtFZ",
+            "moduleName": "BaresipKitAudio",
+            "static": true,
+            "implicit": true,
+            "declAttributes": [
+              "Implements"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC6OutputV4hash4intoys6HasherVz_tF",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV4hash4intoys6HasherVz_tF",
+            "moduleName": "BaresipKitAudio",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC6OutputV9hashValueSivp",
+            "mangledName": "$s15BaresipKitAudio0aC6OutputV9hashValueSivp",
+            "moduleName": "BaresipKitAudio",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC6OutputV9hashValueSivg",
+                "mangledName": "$s15BaresipKitAudio0aC6OutputV9hashValueSivg",
+                "moduleName": "BaresipKitAudio",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:15BaresipKitAudio0aC6OutputV",
+        "mangledName": "$s15BaresipKitAudio0aC6OutputV",
+        "moduleName": "BaresipKitAudio",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Identifiable",
+            "printedName": "Identifiable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "ID",
+                "printedName": "ID",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:s12IdentifiableP",
+            "mangledName": "$ss12IdentifiableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipAudioRoute",
+        "printedName": "BaresipAudioRoute",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "earpiece",
+            "printedName": "earpiece",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitAudio.BaresipAudioRoute.Type) -> BaresipKitAudio.BaresipAudioRoute",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioRoute",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                    "usr": "s:15BaresipKitAudio0aC5RouteO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:15BaresipKitAudio0aC5RouteO8earpieceyA2CmF",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO8earpieceyA2CmF",
+            "moduleName": "BaresipKitAudio"
+          },
+          {
+            "kind": "Var",
+            "name": "speaker",
+            "printedName": "speaker",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitAudio.BaresipAudioRoute.Type) -> BaresipKitAudio.BaresipAudioRoute",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioRoute",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                    "usr": "s:15BaresipKitAudio0aC5RouteO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:15BaresipKitAudio0aC5RouteO7speakeryA2CmF",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO7speakeryA2CmF",
+            "moduleName": "BaresipKitAudio"
+          },
+          {
+            "kind": "Var",
+            "name": "bluetooth",
+            "printedName": "bluetooth",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitAudio.BaresipAudioRoute.Type) -> BaresipKitAudio.BaresipAudioRoute",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioRoute",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                    "usr": "s:15BaresipKitAudio0aC5RouteO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:15BaresipKitAudio0aC5RouteO9bluetoothyA2CmF",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO9bluetoothyA2CmF",
+            "moduleName": "BaresipKitAudio"
+          },
+          {
+            "kind": "Var",
+            "name": "wiredHeadset",
+            "printedName": "wiredHeadset",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitAudio.BaresipAudioRoute.Type) -> BaresipKitAudio.BaresipAudioRoute",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioRoute",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                    "usr": "s:15BaresipKitAudio0aC5RouteO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:15BaresipKitAudio0aC5RouteO12wiredHeadsetyA2CmF",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO12wiredHeadsetyA2CmF",
+            "moduleName": "BaresipKitAudio"
+          },
+          {
+            "kind": "Var",
+            "name": "other",
+            "printedName": "other",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitAudio.BaresipAudioRoute.Type) -> (Swift.String) -> BaresipKitAudio.BaresipAudioRoute",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.String) -> BaresipKitAudio.BaresipAudioRoute",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:15BaresipKitAudio0aC5RouteO5otheryACSScACmF",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO5otheryACSScACmF",
+            "moduleName": "BaresipKitAudio"
+          },
+          {
+            "kind": "Function",
+            "name": "__derived_enum_equals",
+            "printedName": "__derived_enum_equals(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioRoute",
+                "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                "usr": "s:15BaresipKitAudio0aC5RouteO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioRoute",
+                "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                "usr": "s:15BaresipKitAudio0aC5RouteO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC5RouteO21__derived_enum_equalsySbAC_ACtFZ",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO21__derived_enum_equalsySbAC_ACtFZ",
+            "moduleName": "BaresipKitAudio",
+            "static": true,
+            "implicit": true,
+            "declAttributes": [
+              "Implements",
+              "Semantics"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC5RouteO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO4hash4intoys6HasherVz_tF",
+            "moduleName": "BaresipKitAudio",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC5RouteO9hashValueSivp",
+            "mangledName": "$s15BaresipKitAudio0aC5RouteO9hashValueSivp",
+            "moduleName": "BaresipKitAudio",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC5RouteO9hashValueSivg",
+                "mangledName": "$s15BaresipKitAudio0aC5RouteO9hashValueSivg",
+                "moduleName": "BaresipKitAudio",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:15BaresipKitAudio0aC5RouteO",
+        "mangledName": "$s15BaresipKitAudio0aC5RouteO",
+        "moduleName": "BaresipKitAudio",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipAudioSessionController",
+        "printedName": "BaresipAudioSessionController",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(engine:session:onRouteChange:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioSessionController",
+                "printedName": "BaresipKitAudio.BaresipAudioSessionController",
+                "usr": "s:15BaresipKitAudio0aC17SessionControllerC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipEngine",
+                "printedName": "BaresipKit.BaresipEngine",
+                "usr": "s:10BaresipKit0A6EngineC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "AVAudioSession",
+                "printedName": "AVFAudio.AVAudioSession",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)AVAudioSession"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((BaresipKitAudio.BaresipAudioRoute) -> Swift.Void)?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitAudio.BaresipAudioRoute) -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioRoute",
+                        "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                        "usr": "s:15BaresipKitAudio0aC5RouteO"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC6engine7session13onRouteChangeAC0aB00A6EngineC_So07AVAudioD0CyAA0acI0OYbScMYccSgtcfc",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC6engine7session13onRouteChangeAC0aB00A6EngineC_So07AVAudioD0CyAA0acI0OYbScMYccSgtcfc",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Custom"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "voipCategoryOptions",
+            "printedName": "voipCategoryOptions(allowBluetooth:defaultToSpeaker:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "CategoryOptions",
+                "printedName": "AVFAudio.AVAudioSession.CategoryOptions",
+                "usr": "c:@E@AVAudioSessionCategoryOptions"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC19voipCategoryOptions14allowBluetooth16defaultToSpeakerSo07AVAudiodgH0VSb_SbtFZ",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC19voipCategoryOptions14allowBluetooth16defaultToSpeakerSo07AVAudiodgH0VSb_SbtFZ",
+            "moduleName": "BaresipKitAudio",
+            "static": true,
+            "declAttributes": [
+              "Final",
+              "Nonisolated"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "configureForVoIP",
+            "printedName": "configureForVoIP(allowBluetooth:defaultToSpeaker:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC16configureForVoIP14allowBluetooth16defaultToSpeakerySb_SbtKF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC16configureForVoIP14allowBluetooth16defaultToSpeakerySb_SbtKF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "activate",
+            "printedName": "activate()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC8activateyyYaKF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC8activateyyYaKF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "deactivate",
+            "printedName": "deactivate()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC10deactivateyyYaF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC10deactivateyyYaF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didActivateFromCallKit",
+            "printedName": "didActivateFromCallKit()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC019didActivateFromCallB0yyYaF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC019didActivateFromCallB0yyYaF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didDeactivateFromCallKit",
+            "printedName": "didDeactivateFromCallKit()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC021didDeactivateFromCallB0yyYaF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC021didDeactivateFromCallB0yyYaF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setSpeakerEnabled",
+            "printedName": "setSpeakerEnabled(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC17setSpeakerEnabledyySbKF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC17setSpeakerEnabledyySbKF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "currentRoute",
+            "printedName": "currentRoute",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioRoute",
+                "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                "usr": "s:15BaresipKitAudio0aC5RouteO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC12currentRouteAA0acG0Ovp",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC12currentRouteAA0acG0Ovp",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioRoute",
+                    "printedName": "BaresipKitAudio.BaresipAudioRoute",
+                    "usr": "s:15BaresipKitAudio0aC5RouteO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC17SessionControllerC12currentRouteAA0acG0Ovg",
+                "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC12currentRouteAA0acG0Ovg",
+                "moduleName": "BaresipKitAudio",
+                "declAttributes": [
+                  "Final"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "availableOutputs",
+            "printedName": "availableOutputs",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Array",
+                "printedName": "[BaresipKitAudio.BaresipAudioOutput]",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioOutput",
+                    "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                    "usr": "s:15BaresipKitAudio0aC6OutputV"
+                  }
+                ],
+                "usr": "s:Sa"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC16availableOutputsSayAA0aC6OutputVGvp",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC16availableOutputsSayAA0aC6OutputVGvp",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Array",
+                    "printedName": "[BaresipKitAudio.BaresipAudioOutput]",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioOutput",
+                        "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                        "usr": "s:15BaresipKitAudio0aC6OutputV"
+                      }
+                    ],
+                    "usr": "s:Sa"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC17SessionControllerC16availableOutputsSayAA0aC6OutputVGvg",
+                "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC16availableOutputsSayAA0aC6OutputVGvg",
+                "moduleName": "BaresipKitAudio",
+                "declAttributes": [
+                  "Final"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "currentOutput",
+            "printedName": "currentOutput",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKitAudio.BaresipAudioOutput?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipAudioOutput",
+                    "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                    "usr": "s:15BaresipKitAudio0aC6OutputV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC13currentOutputAA0acG0VSgvp",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC13currentOutputAA0acG0VSgvp",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "isFromExtension": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "BaresipKitAudio.BaresipAudioOutput?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipAudioOutput",
+                        "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                        "usr": "s:15BaresipKitAudio0aC6OutputV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitAudio0aC17SessionControllerC13currentOutputAA0acG0VSgvg",
+                "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC13currentOutputAA0acG0VSgvg",
+                "moduleName": "BaresipKitAudio",
+                "declAttributes": [
+                  "Final"
+                ],
+                "isFromExtension": true,
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "selectOutput",
+            "printedName": "selectOutput(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipAudioOutput",
+                "printedName": "BaresipKitAudio.BaresipAudioOutput",
+                "usr": "s:15BaresipKitAudio0aC6OutputV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitAudio0aC17SessionControllerC12selectOutputyyAA0acG0VKF",
+            "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC12selectOutputyyAA0acG0VKF",
+            "moduleName": "BaresipKitAudio",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:15BaresipKitAudio0aC17SessionControllerC",
+        "mangledName": "$s15BaresipKitAudio0aC17SessionControllerC",
+        "moduleName": "BaresipKitAudio",
+        "declAttributes": [
+          "Final",
+          "Custom"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8,
+    "tool_arguments": [
+      "-dump-sdk",
+      "-module",
+      "BaresipKitAudio",
+      "-o",
+      "\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/swift-api\/dumps\/BaresipKitAudio.json",
+      "-avoid-location",
+      "-sdk",
+      "\/Applications\/Xcode_26.6.app\/Contents\/Developer\/Platforms\/iPhoneSimulator.platform\/Developer\/SDKs\/iPhoneSimulator26.5.sdk",
+      "-target",
+      "arm64-apple-ios16.0-simulator",
+      "-I",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-F",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Sources\/BaresipKitBridge\/include",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/BaresipKitCore.xcframework\/ios-arm64-simulator\/Headers",
+      "-sdk-version",
+      "23F81a"
+    ]
+  }
+}

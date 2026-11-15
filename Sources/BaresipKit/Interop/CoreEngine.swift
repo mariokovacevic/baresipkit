@@ -1,4 +1,5 @@
 import BaresipKitCore
+import Dispatch
 
 struct CoreEngine: @unchecked Sendable {
     // SAFETY: the C engine handle is thread-safe: every bsk_* function may be called from any
@@ -39,7 +40,10 @@ struct CoreEngine: @unchecked Sendable {
     func destroy() {
         bsk_engine_set_event_handler(raw, nil, nil)
         bsk_engine_set_log_handler(raw, nil, nil)
-        bsk_engine_destroy(raw)
+        guard bsk_engine_destroy(raw) == BSK_ERR_INVALID_STATE else { return }
+        DispatchQueue.global(qos: .utility).async {
+            _ = bsk_engine_destroy(raw)
+        }
     }
 
     func installCallbacks(for owner: BaresipEngine) {

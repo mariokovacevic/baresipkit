@@ -11,7 +11,7 @@ CC="${CC:-clang}"
 
 MODE="${FUZZ_MODE:-libfuzzer}"
 SRCS=("$HERE/fuzz_parsers.c" "$ROOT/Core/src/bsk_account.c" "$ROOT/Core/src/bsk_log.c"
-      "$ROOT/Core/src/bsk_call.c" "$ROOT/Core/src/bsk_call_media.c" "$ROOT/Core/src/bsk_call_ops.c" "$ROOT/Core/src/bsk_engine.c" "$ROOT/Core/src/bsk_engine_control.c" "$ROOT/Core/src/bsk_config.c" "$ROOT/Core/src/bsk_status.c" "$ROOT/Core/src/bsk_video.c" "$ROOT/Core/src/bsk_tls.c" "$ROOT/Core/src/bsk_rate.c" "$ROOT/Core/src/bsk_message.c" "$ROOT/Core/src/bsk_record.c" "$ROOT/Core/src/bsk_audio.c" "$ROOT/Core/src/bsk_g722.c" "$ROOT/Core/src/bsk_h264.c" "$ROOT/Core/third_party/g722/g722_encode.c" "$ROOT/Core/third_party/g722/g722_decode.c")
+      "$ROOT/Core/src/bsk_call.c" "$ROOT/Core/src/bsk_call_media.c" "$ROOT/Core/src/bsk_call_ops.c" "$ROOT/Core/src/bsk_engine.c" "$ROOT/Core/src/bsk_engine_control.c" "$ROOT/Core/src/bsk_config.c" "$ROOT/Core/src/bsk_status.c" "$ROOT/Core/src/bsk_video.c" "$ROOT/Core/src/bsk_tls.c" "$ROOT/Core/src/bsk_rate.c" "$ROOT/Core/src/bsk_reason.c" "$ROOT/Core/src/bsk_message.c" "$ROOT/Core/src/bsk_record.c" "$ROOT/Core/src/bsk_audio.c" "$ROOT/Core/src/bsk_hold.c" "$ROOT/Core/src/bsk_g722.c" "$ROOT/Core/src/bsk_h264.c" "$ROOT/Core/third_party/g722/g722_encode.c" "$ROOT/Core/third_party/g722/g722_decode.c")
 LIBS=("$PREFIX/lib/libbaresip.a" "$PREFIX/lib/libre.a")
 [ -f "$PREFIX/lib/libvpx.a" ] && LIBS+=("$PREFIX/lib/libvpx.a")
 LIBS+=("$PREFIX/lib/libopus.a" "$PREFIX/lib/libssl.a" "$PREFIX/lib/libcrypto.a" -lz -lresolv -lpthread -lm -ldl)
@@ -19,6 +19,7 @@ INCS=(-I "$ROOT/Core/include" -I "$ROOT/Core/src" -I "$ROOT/Core/third_party/g72
 DEFS=(-DDEBUG_MODULE='"bsk"' -DDEBUG_LEVEL=5)
 
 mkdir -p "$OUT/corpus"
+cp "$HERE"/corpus/* "$OUT/corpus/"
 printf 'app-id=com.example\npn-tok=abc:remote&def:voip\n' > "$OUT/corpus/contact"
 printf 'Authorization: Digest response="deadbeef", pn-tok=0123456789abcdef' > "$OUT/corpus/redact"
 printf 'ice,connected,sdpm=0x1234 ltype=host rtype=relay laddr=192.0.2.1:5000 raddr=192.0.2.2:6000' > "$OUT/corpus/ice"
@@ -36,5 +37,5 @@ fi
   "${INCS[@]}" "${DEFS[@]}" \
   "${SRCS[@]}" -o "$OUT/fuzz_parsers" "${LIBS[@]}"
 
-"$OUT/fuzz_parsers" -runs="$RUNS" -max_len=512 "$OUT/corpus"
+"$OUT/fuzz_parsers" -runs="$RUNS" -max_len=4096 "$OUT/corpus"
 echo "fuzz: PASS ($RUNS runs)"

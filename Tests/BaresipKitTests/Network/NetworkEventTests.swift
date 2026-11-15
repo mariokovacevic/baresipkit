@@ -16,9 +16,9 @@ final class NetworkEventTests: XCTestCase {
     }
 
     func testEngineThreadAndABI() throws {
-        let engine = try BaresipEngine(configuration: BaresipConfiguration())
+        let engine = try BaresipEngine(configuration: BaresipConfiguration(instanceUUID: UUID()))
         XCTAssertFalse(engine.isEngineThread)
         XCTAssertEqual(BaresipEngine.abiVersion.major, 0)
-        XCTAssertEqual(BaresipEngine.abiVersion.minor, 8)
+        XCTAssertEqual(BaresipEngine.abiVersion.minor, 13)
     }
 }

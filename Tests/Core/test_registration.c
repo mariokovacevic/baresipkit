@@ -10,10 +10,6 @@ static void on_event(bsk_engine *engine, const bsk_event *ev, void *user)
 	record_event(&w, ev);
 }
 
-static int registered(struct waiter *x)
-{
-	return x->reg_state == BSK_REG_REGISTERED;
-}
 static int registered_twice(struct waiter *x)
 {
 	return x->reg_count >= 2;
@@ -30,33 +26,6 @@ static int unregistered(struct waiter *x)
 {
 	return x->reg_state == BSK_REG_NONE;
 }
-static int running(struct waiter *x)
-{
-	return x->engine_state == BSK_ENGINE_RUNNING;
-}
-
-static char *read_file(const char *path, size_t *len)
-{
-	FILE *f = fopen(path, "rb");
-	char *buf;
-	long n;
-
-	if (!f)
-		return NULL;
-	fseek(f, 0, SEEK_END);
-	n = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	buf = calloc(1, (size_t)n + 1);
-	if (fread(buf, 1, (size_t)n, f) != (size_t)n) {
-		free(buf);
-		fclose(f);
-		return NULL;
-	}
-	fclose(f);
-	*len = (size_t)n;
-	return buf;
-}
-
 
 int main(int argc, char **argv)
 {
@@ -75,6 +44,7 @@ int main(int argc, char **argv)
 	char *ca_pem = NULL;
 	size_t ca_len = 0;
 	const char *pins[1] = { getenv("BSK_TEST_PIN") };
+	const char *appended_pins[1] = { getenv("BSK_TEST_PIN_APPENDED") };
 	const char *bad_pins[1] = {
 		"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
 	};
@@ -136,6 +106,11 @@ int main(int argc, char **argv)
 		cfg.tls.pinned_spki_sha256_base64 = bad_pins;
 		cfg.tls.pinned_count = 1;
 	}
+	if (0 == strcmp(mode, "tls-system-pin-appended")) {
+		CHECK(appended_pins[0] != NULL);
+		cfg.tls.pinned_spki_sha256_base64 = appended_pins;
+		cfg.tls.pinned_count = 1;
+	}
 
 	CHECK_OK(bsk_engine_create(&cfg, on_event, NULL, &e, &err), &err);
 	bsk_engine_set_log_handler(e, test_log, "reg ");
@@ -171,7 +146,7 @@ int main(int argc, char **argv)
 		CHECK_OK(bsk_engine_network_changed(e, true, true, &err), &err);
 		CHECK(wait_until(&w, registered, 5000));
 		usleep(1500 * 1000);
-		CHECK(w.reg_state == BSK_REG_REGISTERED);
+		CHECK(waiter_int(&w, &w.reg_state) == BSK_REG_REGISTERED);
 		CHECK_OK(bsk_account_unregister(e, acc, &err), &err);
 		CHECK(wait_until(&w, unregistered, 3000));
 		usleep(600 * 1000);
@@ -190,7 +165,7 @@ int main(int argc, char **argv)
 			 &err);
 		CHECK_OK(bsk_account_register(e, acc, &err), &err);
 		usleep(2500 * 1000);
-		CHECK(w.reg_state == BSK_REG_REGISTERED);
+		CHECK(waiter_int(&w, &w.reg_state) == BSK_REG_REGISTERED);
 		CHECK_OK(bsk_account_unregister(e, acc, &err), &err);
 		CHECK(wait_until(&w, unregistered, 3000));
 		usleep(600 * 1000);
@@ -200,7 +175,8 @@ int main(int argc, char **argv)
 	}
 
 	if (0 == strcmp(mode, "tls-pin-bad") || 0 == strcmp(mode, "tls-noca") ||
-	    0 == strcmp(mode, "tls-system-pin-bad")) {
+	    0 == strcmp(mode, "tls-system-pin-bad") ||
+	    0 == strcmp(mode, "tls-system-pin-appended")) {
 		CHECK(wait_until(&w, failed, 15000));
 		CHECK(w.last_error.sip_status == 0);
 		CHECK(w.last_error.status == BSK_ERR_TLS);
@@ -218,7 +194,7 @@ int main(int argc, char **argv)
 		CHECK(wait_until(&w, registered_twice, 10000));
 		CHECK_OK(bsk_account_unregister(e, acc, &err), &err);
 		CHECK(wait_until(&w, unregistered, 2000));
-		count = w.reg_count;
+		count = waiter_int(&w, &w.reg_count);
 		CHECK_OK(bsk_engine_network_changed(e, true, true, &err), &err);
 		CHECK_OK(bsk_engine_resume(e, &err), &err);
 		CHECK_OK(bsk_engine_prepare_for_push_wakeup(e, &err), &err);
@@ -226,7 +202,8 @@ int main(int argc, char **argv)
 		CHECK(BSK_OK ==
 		      bsk_account_get_registration_state(e, acc, &state));
 		CHECK(state == BSK_REG_NONE);
-		CHECK(w.reg_state == BSK_REG_NONE && w.reg_count == count);
+		CHECK(waiter_int(&w, &w.reg_state) == BSK_REG_NONE &&
+		      waiter_int(&w, &w.reg_count) == count);
 		printf("registration tls: PASS (registered over TLS, again "
 		       "after a network change, stays unregistered)\n");
 		goto done;

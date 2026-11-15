@@ -11,12 +11,15 @@ struct SIPSettings: Codable, Equatable {
     var outboundProxy = ""
     var mediaEncryption: BaresipMediaEncryption = .srtpOptional
     var pins = ""
-    var verifyServer = true
     var natMode: BaresipNATTraversal = .none
     var stunURI = ""
     var turnURI = ""
     var turnUser = ""
     var previewAudio = true
+    /// Whether the account stays registered in the background, so a VoIP push can announce a call.
+    var reachableInBackground = false
+    /// Whether a call that rings with video in the background shows a notification with its picture.
+    var ringPicture = true
     var rtcpMux = true
     var pinhole = true
     var pictureUpdateOverInfo = true
@@ -142,12 +145,13 @@ extension SIPSettings {
         try read(.outboundProxy, &outboundProxy)
         try read(.mediaEncryption, &mediaEncryption)
         try read(.pins, &pins)
-        try read(.verifyServer, &verifyServer)
         try read(.natMode, &natMode)
         try read(.stunURI, &stunURI)
         try read(.turnURI, &turnURI)
         try read(.turnUser, &turnUser)
         try read(.previewAudio, &previewAudio)
+        try read(.reachableInBackground, &reachableInBackground)
+        try read(.ringPicture, &ringPicture)
         try read(.rtcpMux, &rtcpMux)
         try read(.pinhole, &pinhole)
         try read(.pictureUpdateOverInfo, &pictureUpdateOverInfo)

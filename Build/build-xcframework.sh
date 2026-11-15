@@ -9,15 +9,19 @@
 #   MODULE_SET=minimal Build/build-xcframework.sh
 #   SLICES="ios-arm64" Build/build-xcframework.sh
 #   PLATFORM=host Build/build-xcframework.sh  # native build for CI / sanitizers
+#   PLATFORM=android Build/build-xcframework.sh  # arm64-v8a and x86_64 for the AAR
 #
 # Environment:
 #   MODULE_SET     minimal | default | full            (default: default)
 #   SLICES         space separated subset of:
 #                  ios-arm64 ios-arm64-simulator ios-x86_64-simulator macos-arm64
-#   PLATFORM       ios | host                         (default: ios)
+#                  android-arm64-v8a android-x86_64
+#   PLATFORM       ios | host | android               (default: ios)
+#   ANDROID_NDK_HOME  the NDK of ANDROID_NDK_VERSION   (android only)
 #   DEPS_DIR       where pinned sources are cloned    (default: Build/.deps)
 #   OUT_DIR        build output                       (default: Build/out)
-#   SANITIZE       address,undefined (host only)
+#   SANITIZE       address,undefined or thread (host only; thread uses
+#                  pthreads instead of C11 threads, which TSan does not see)
 #   JOBS           parallel jobs                      (default: nproc / sysctl)
 #
 set -euo pipefail
@@ -25,6 +29,11 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT/Build/versions.env"
 source "$ROOT/Build/module-sets.env"
+
+SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(git -C "$ROOT" log -1 --format=%ct 2>/dev/null || echo 315532800)}"
+export SOURCE_DATE_EPOCH
+export ZERO_AR_DATE=1
+PREFIX_MAP="-ffile-prefix-map=$ROOT=."
 
 MODULE_SET="${MODULE_SET:-default}"
 PLATFORM="${PLATFORM:-ios}"
@@ -35,6 +44,8 @@ OPENSSL_CONFIG_DIR=/etc/ssl
 OPENSSL_PLUGIN_DIR=/usr/lib/ossl-modules
 if [[ "$PLATFORM" == "ios" ]]; then
   SLICES="${SLICES:-ios-arm64 ios-arm64-simulator macos-arm64}"
+elif [[ "$PLATFORM" == "android" ]]; then
+  SLICES="${SLICES:-android-arm64-v8a android-x86_64}"
 else
   SLICES="host"
 fi
@@ -44,9 +55,14 @@ fi
 
 modules_var="MODULES_${MODULE_SET}"
 MODULES="${!modules_var:?unknown MODULE_SET '$MODULE_SET'}"
-if [[ "$PLATFORM" == "host" ]]; then
+if [[ "$PLATFORM" == "host" || "$PLATFORM" == "android" ]]; then
   MODULES="${MODULES//;audiounit/}"
   MODULES="${MODULES//;avcapture/}"
+fi
+if [[ "$PLATFORM" == "android" ]]; then
+  MODULES="${MODULES};aaudio"
+  : "${ANDROID_NDK_HOME:?set ANDROID_NDK_HOME to NDK $ANDROID_NDK_VERSION}"
+  NDK_BIN="$(echo "$ANDROID_NDK_HOME"/toolchains/llvm/prebuilt/*/bin)"
 fi
 
 log() { printf '\n==> %s\n' "$*"; }
@@ -101,6 +117,12 @@ slice_flags() {
       OPENSSL_TARGET=darwin64-arm64-cc ;;
     host)
       SDK=""; ARCH=""; MIN_FLAG=""; OPENSSL_TARGET="" ;;
+    android-arm64-v8a)
+      SDK=android; ARCH=arm64-v8a; MIN_FLAG="-D__ANDROID_API__=$ANDROID_MIN_SDK"
+      OPENSSL_TARGET=android-arm64; ANDROID_TRIPLE=aarch64-linux-android ;;
+    android-x86_64)
+      SDK=android; ARCH=x86_64; MIN_FLAG="-D__ANDROID_API__=$ANDROID_MIN_SDK"
+      OPENSSL_TARGET=android-x86_64; ANDROID_TRIPLE=x86_64-linux-android ;;
     *) die "unknown slice $1" ;;
   esac
 }
@@ -108,11 +130,19 @@ slice_flags() {
 cmake_common() {
   local prefix="$1"; shift
   local args=(-DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$prefix"
-              -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_FIND_ROOT_PATH="$prefix")
+              -DCMAKE_PREFIX_PATH="$prefix" -DCMAKE_FIND_ROOT_PATH="$prefix"
+              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+              -DCMAKE_PROJECT_INCLUDE="$ROOT/Build/cmake/reproducible.cmake"
+              -DBARESIPKIT_PREFIX_MAP="$PREFIX_MAP")
   if [[ "$SDK" == "macosx" ]]; then
     args+=(-DCMAKE_OSX_SYSROOT=macosx
            -DCMAKE_OSX_ARCHITECTURES="$ARCH"
            -DCMAKE_OSX_DEPLOYMENT_TARGET="$MACOS_DEPLOYMENT_TARGET")
+  elif [[ "$SDK" == "android" ]]; then
+    args+=(-DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake"
+           -DANDROID_ABI="$ARCH" -DANDROID_PLATFORM="android-$ANDROID_MIN_SDK"
+           -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=BOTH -DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=BOTH
+           -DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=BOTH)
   elif [[ "$PLATFORM" == "ios" ]]; then
     args+=(-DCMAKE_TOOLCHAIN_FILE="$ROOT/Build/cmake/ios.toolchain.cmake"
            -DBARESIPKIT_SDK="$SDK"
@@ -121,6 +151,9 @@ cmake_common() {
   elif [[ -n "$SANITIZE" ]]; then
     args+=(-DCMAKE_C_FLAGS="-fsanitize=$SANITIZE -fno-omit-frame-pointer"
            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=$SANITIZE")
+    if [[ ",$SANITIZE," == *,thread,* ]]; then
+      args+=(-DHAVE_THREADS_FUN=OFF -DBSK_HAVE_THREADS_FUN=OFF)
+    fi
   fi
   printf '%s\n' "${args[@]}"
 }
@@ -141,14 +174,18 @@ build_openssl() {
       *) die "cannot pick a host OpenSSL target for $(uname -s)-$(uname -m)" ;;
     esac
   fi
-  (cd "$bdir" && "$src/Configure" "$target" --prefix="$prefix" --libdir=lib \
+  local ndk_env=()
+  if [[ "$SDK" == "android" ]]; then
+    ndk_env=(env ANDROID_NDK_ROOT="$ANDROID_NDK_HOME" PATH="$NDK_BIN:$PATH")
+  fi
+  (cd "$bdir" && ${ndk_env[@]+"${ndk_env[@]}"} "$src/Configure" "$target" --prefix="$prefix" --libdir=lib \
       --openssldir="$OPENSSL_CONFIG_DIR" \
       no-shared no-dso no-engine no-module no-apps no-tests no-docs no-legacy \
       no-comp no-ssl3 no-weak-ssl-ciphers no-ui-console no-autoload-config \
-      no-async $MIN_FLAG >/dev/null)
+      no-async no-quic $MIN_FLAG "$PREFIX_MAP" >/dev/null)
   local plugin_dirs=(ENGINESDIR="$OPENSSL_PLUGIN_DIR" MODULESDIR="$OPENSSL_PLUGIN_DIR")
-  make -C "$bdir" -j"$JOBS" "${plugin_dirs[@]}" build_libs >/dev/null
-  make -C "$bdir" "${plugin_dirs[@]}" install_dev >/dev/null
+  ${ndk_env[@]+"${ndk_env[@]}"} make -C "$bdir" -j"$JOBS" "${plugin_dirs[@]}" build_libs >/dev/null
+  ${ndk_env[@]+"${ndk_env[@]}"} make -C "$bdir" "${plugin_dirs[@]}" install_dev >/dev/null
 }
 
 build_opus() {
@@ -176,13 +213,26 @@ build_libvpx() {
     macos-arm64) target=arm64-darwin20-gcc ;;
     ios-arm64-simulator) target=arm64-iphonesimulator-gcc ;;
     ios-x86_64-simulator) target=x86_64-iphonesimulator-gcc ;;
+    android-arm64-v8a) target=arm64-android-gcc ;;
+    android-x86_64) target=x86_64-android-gcc ;;
     host) target="" ;;
   esac
-  (cd "$bdir" && "$src/configure" ${target:+--target=$target} --prefix="$prefix" \
+  local tools=() as
+  if [[ "$SDK" == "android" ]]; then
+    as="$NDK_BIN/$ANDROID_TRIPLE$ANDROID_MIN_SDK-clang"
+    [[ "$ARCH" == "x86_64" ]] && as=nasm
+    tools=(env CC="$NDK_BIN/$ANDROID_TRIPLE$ANDROID_MIN_SDK-clang"
+           CXX="$NDK_BIN/$ANDROID_TRIPLE$ANDROID_MIN_SDK-clang++"
+           AR="$NDK_BIN/llvm-ar" AS="$as"
+           LD="$NDK_BIN/$ANDROID_TRIPLE$ANDROID_MIN_SDK-clang" STRIP="$NDK_BIN/llvm-strip"
+           NM="$NDK_BIN/llvm-nm" RANLIB="$NDK_BIN/llvm-ranlib")
+  fi
+  (cd "$bdir" && ${tools[@]+"${tools[@]}"} "$src/configure" ${target:+--target=$target} --prefix="$prefix" \
       --disable-examples --disable-tools --disable-docs --disable-unit-tests \
-      --enable-vp8 --disable-vp9 --enable-pic --disable-shared --enable-static >/dev/null)
-  make -C "$bdir" -j"$JOBS" >/dev/null
-  make -C "$bdir" install >/dev/null
+      --enable-vp8 --disable-vp9 --enable-pic --disable-shared --enable-static \
+      --extra-cflags="$PREFIX_MAP" >/dev/null)
+  ${tools[@]+"${tools[@]}"} make -C "$bdir" -j"$JOBS" >/dev/null
+  ${tools[@]+"${tools[@]}"} make -C "$bdir" install >/dev/null
 }
 
 build_libre() {
@@ -234,7 +284,11 @@ merge_slice() {
               "$prefix/lib/libre.a" "$prefix/lib/libopus.a"
               "$prefix/lib/libssl.a" "$prefix/lib/libcrypto.a")
   [[ -f "$prefix/lib/libvpx.a" ]] && libs+=("$prefix/lib/libvpx.a")
-  if [[ "$PLATFORM" == "ios" || "$(uname -s)" == Darwin ]]; then
+  local ar=ar ranlib=ranlib
+  if [[ "$SDK" == "android" ]]; then
+    ar="$NDK_BIN/llvm-ar"; ranlib="$NDK_BIN/llvm-ranlib"
+  fi
+  if [[ "$PLATFORM" == "ios" || ( "$PLATFORM" == "host" && "$(uname -s)" == Darwin ) ]]; then
     xcrun libtool -static -no_warning_for_no_symbols -o "$out/libBaresipKitCore.a" "${libs[@]}"
   else
     rm -f "$out/libBaresipKitCore.a"
@@ -242,12 +296,12 @@ merge_slice() {
       printf 'CREATE %s\n' "$out/libBaresipKitCore.a"
       for l in "${libs[@]}"; do printf 'ADDLIB %s\n' "$l"; done
       printf 'SAVE\nEND\n'
-    } | ar -M
-    ranlib "$out/libBaresipKitCore.a"
+    } | "$ar" -M
+    "$ranlib" "$out/libBaresipKitCore.a"
   fi
   mkdir -p "$OUT_DIR/$slice/Headers"
   cp "$ROOT/Core/include/baresip_kit.h" "$OUT_DIR/$slice/Headers/"
-  cat > "$OUT_DIR/$slice/Headers/module.modulemap" <<MM
+  [[ "$SDK" == "android" ]] || cat > "$OUT_DIR/$slice/Headers/module.modulemap" <<MM
 module BaresipKitCore {
     umbrella header "baresip_kit.h"
     export *
@@ -272,7 +326,7 @@ MM
       printf '%s %s %s bytes=%s text+data=%s\n' "$MODULE_SET" "$slice" "$(basename "$a")" \
         "$(stat -f%z "$a")" "$(text_data "$a")" >> "$OUT_DIR/sizes.txt"
     done
-  elif [[ "$(uname -s)" == Darwin ]]; then
+  elif [[ "$PLATFORM" == "host" && "$(uname -s)" == Darwin ]]; then
     printf '%s %s %s bytes=%s\n' "$MODULE_SET" "$slice" libBaresipKitCore.a \
       "$(stat -f%z "$out/libBaresipKitCore.a")" >> "$OUT_DIR/sizes.txt"
   else
@@ -295,7 +349,11 @@ create_xcframework() {
   done
   rm -rf "$OUT_DIR/BaresipKitCore.xcframework" "$OUT_DIR/BaresipKitCore.xcframework.zip"
   xcodebuild -create-xcframework "${args[@]}" -output "$OUT_DIR/BaresipKitCore.xcframework" >/dev/null
-  (cd "$OUT_DIR" && ditto -c -k --keepParent BaresipKitCore.xcframework BaresipKitCore.xcframework.zip)
+  local stamp
+  stamp="$(TZ=UTC date -r "$SOURCE_DATE_EPOCH" +%Y%m%d%H%M.%S)"
+  find "$OUT_DIR/BaresipKitCore.xcframework" -exec env TZ=UTC touch -h -t "$stamp" {} +
+  (cd "$OUT_DIR" && ditto -c -k --norsrc --noextattr --noqtn --keepParent BaresipKitCore.xcframework \
+    BaresipKitCore.xcframework.zip)
   (cd "$OUT_DIR" && swift package compute-checksum BaresipKitCore.xcframework.zip > checksum.txt)
   printf '%s xcframework.zip bytes=%s checksum=%s\n' "$MODULE_SET" \
     "$(stat -f%z "$OUT_DIR/BaresipKitCore.xcframework.zip")" "$(cat "$OUT_DIR/checksum.txt")" >> "$OUT_DIR/sizes.txt"

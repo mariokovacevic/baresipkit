@@ -4,7 +4,7 @@ public struct BaresipCallInfo: Sendable, Equatable {
     /// The call.
     public let id: BaresipCallID
     /// The account the call belongs to.
-    public let account: BaresipAccountID
+    public let accountID: BaresipAccountID
     /// The call state when the snapshot was taken.
     public let state: BaresipCallState
     /// Whether the call was placed by this device.
@@ -33,4 +33,9 @@ public struct BaresipCallInfo: Sendable, Equatable {
     public let duration: Duration
     /// Whether the microphone of this call is muted.
     public let isMicrophoneMuted: Bool
+    /// The call this one takes over, or `nil`: an incoming call whose INVITE replaced an
+    /// established call (`Replaces`, RFC 3891), or the outgoing call that follows when the other
+    /// side transfers a call (REFER, RFC 3515). The call it takes over ends with
+    /// ``BaresipCallEndReason/replaced``, and the conversation goes on in this call.
+    public let replacesCallID: BaresipCallID?
 }

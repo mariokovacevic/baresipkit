@@ -6,7 +6,10 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
-Beta, not released yet. The SDK is in active development, and the API can still change.
+## [1.0.0-rc.1] - 2026-11-14
+
+Release candidate for 1.0.0, the first stable release. The public Swift and Kotlin API is frozen
+and follows [Docs/STABILITY.md](Docs/STABILITY.md).
 
 ### Added
 
@@ -28,9 +31,45 @@ Beta, not released yet. The SDK is in active development, and the API can still 
 - H.264 video calls through VideoToolbox with zero-copy decoded frames, recovering after the app
   returns from the background; VP8 in the `full` module set. Snapshots with
   `BaresipVideoFrame.makeImage()` and `BaresipVideoView.snapshot()`.
+- SIP session timers (RFC 4028), on by default with `BaresipConfiguration.sessionTimer` (30
+  minutes) and `minimumSessionTimer` (90 seconds): offered in every INVITE, accepted from callers
+  that support them, refreshed with UPDATE (or a re-INVITE without an offer) at half the
+  interval, and a call that is not refreshed is ended with BYE. A 422 raises the interval to the
+  peer's `Min-SE`, an interval below `minimumSessionTimer` is answered with 422, an INVITE with
+  `Require: timer` is accepted, and a refresher that cannot send its refresh ends the call itself
+  when the interval runs out. libre and baresip have none; patches 0024 and 0025 add them. C ABI 0.10:
+  `bsk_engine_config.session_expires` and `session_min_se`; capability `call.session-timer`.
+- Calls answered or declined on another phone: when several phones ring for one call and one
+  answers, the server cancels the others with `Reason: SIP;cause=200` (RFC 3326). The ended
+  event's `BaresipError.endReason` then says `answeredElsewhere` (or `declinedElsewhere` for
+  cause 600 or 603), with the cause and text in `sipStatus` and `sipReason`, and the CallKit and
+  LiveCommunicationKit adapters report the call as answered or declined elsewhere instead of
+  missed. C ABI 0.11: `bsk_event.u.call_state.end_reason`. The sample lists such calls as
+  "Answered on another phone" and leaves no missed ring notification.
+- Calls that go on in another call keep their system call: when the server replaces an
+  established call with an INVITE carrying `Replaces` (RFC 3891), as call pickup, queues, parking
+  and attended transfers do, or when the other side transfers a call with REFER (RFC 3515) and
+  the engine follows it, the new call's `BaresipCallInfo.replacesCallID` names the old call and
+  the old call ends with `BaresipCallEndReason.replaced`. The CallKit, LiveCommunicationKit and
+  Telecom adapters move the system call to the new call instead of ending it and ringing again,
+  so the call screen, the audio session and Bluetooth stay as they were; if no call replaces it
+  within five seconds the system call ends. C ABI 0.12: `bsk_call_info.replaces` and
+  `BSK_END_REPLACED`.
 - Hold, resume, mute (`BaresipCallInfo.isMicrophoneMuted`), DTMF over RFC 4733 and SIP INFO,
   several calls with switching, blind and attended transfer (REFER with Replaces), and following
   incoming transfers.
+- Music on hold from the phone, from a WAV file: with
+  `BaresipAudioConfiguration.holdMusicFile` (a 16-bit PCM WAV file) a held call plays it to the
+  other side in a loop instead of the microphone, also while iOS has deactivated the audio
+  session, and also when baresip renews the audio source during the hold. baresip drops every
+  RTP packet of a held stream; patch 0023 lets the core send the music. Without the file a held
+  call sends nothing, as before. The file is read with libre's WAV reader and resampled with its
+  filtered resampler when its rate is a whole multiple or fraction of the call's (linear
+  interpolation otherwise, for example 44.1 kHz); muting a held call keeps the music playing. A
+  file that is missing fails with `notFound`, one in another format with `unsupported`, one that
+  is too short or too long with `invalidArgument`. C ABI 0.9: `bsk_engine_config.hold_music_path`.
+- `BaresipCallKitAdapter.setRingtoneSound(_:)` changes the ringtone of the running CallKit
+  provider, for a ringtone the user picks in the app's settings.
 - Door stations and intercoms: every call negotiates video, so the other side's picture is shown
   in audio calls too, and `video` only decides whether the camera is sent; calls without audio
   (`makeCall(…audio:)`, `answer(callID:video:audio:)`); a video-only early media preview
@@ -60,6 +99,33 @@ Beta, not released yet. The SDK is in active development, and the API can still 
   without suspending, for use inside the PushKit delegate method, and a pushed call that CallKit
   refuses leaves nothing behind. A pushed call declined before its INVITE arrives rejects that
   INVITE with 486, and a push for a call that already rings does not ring a second time.
+- `BaresipCallKitAdapter` binds a pushed call to its INVITE by a UUID from the server instead
+  of by the caller when `BaresipCallKitConfiguration.callUUIDHeader` names the INVITE header
+  that carries it: the UUID from the push payload identifies the call, an INVITE that arrives
+  first keeps the UUID from its header, and a push repeated for a call CallKit already shows is
+  reported under a new UUID and ended at once. `reportIncomingCallFromPush(uuid:…)` takes `nil`
+  when the payload has no UUID; such a push is matched by its caller, also with an INVITE that
+  carries a UUID, instead of ringing as a second call. A start action that CallKit times out
+  while the engine is placing the call no longer leaves the call running without a CallKit
+  call. `includesCallsInRecents` controls the Recents
+  list of the Phone app, and `BaresipRedialRequest` reads the request to call again that a tap
+  there sends to the app. `handleStyle` reports callers with a numeric user as phone numbers,
+  so iOS shows the matching contact. An action CallKit times out fails its caller with
+  `BaresipCallKitError.actionTimedOut`, and the call whose start or answer timed out is ended
+  on the engine too.
+- `BaresipPhone.call(withPeer:)` finds the established call with the sender of a SIP MESSAGE,
+  and `BaresipPhoneCall.isPeer(_:)` and `samePeer(_:_:)` compare SIP addresses by user and host,
+  ignoring display names, ports and parameters. The sample shows a message from the call's
+  other side as a caption over the call's video and opens the conversation over the call with
+  a chat button that counts the unread messages.
+- LiveCommunicationKit, CallKit's successor, from iOS 17.4: `BaresipLiveCommunicationAdapter`
+  in the new `BaresipKitLiveCommunication` product reports calls as conversations, carries out
+  join, end, pause, mute and keypad tones on the engine, and matches pushes to INVITEs like the
+  CallKit adapter. `BaresipPushKitAdapter.reportingAsynchronously` takes an `async` push handler
+  and completes the push after it returned, because LiveCommunicationKit reports calls only
+  asynchronously. `BaresipRedialRequest` and the handle style (now `BaresipHandleStyle`) moved
+  to `BaresipKit` so both adapters use them. The sample app chooses between CallKit and
+  LiveCommunicationKit under Settings, Call screen.
 - `BaresipPushKitAdapter` calls its handler inside the PushKit delegate method, so the call is
   reported to CallKit before that method returns; when the handler throws, a placeholder call is
   reported and ended in place. Token updates are sent in order and coalesced,
@@ -139,6 +205,21 @@ Beta, not released yet. The SDK is in active development, and the API can still 
 - `Scripts/dev-pbx.sh`: the integration tests' Asterisk and coturn as a local server for manual
   testing on a phone, with a random TURN password and without relaying to the computer's
   loopback interface.
+- The sample app has a prototype of a preview for a call that rings while the app is in the
+  background: a notification with the caller's picture, Answer, Decline and Open door, and a
+  notification content extension that follows the picture while the call rings. It has not been
+  tried on a device yet; see the sample's README.
+- `Tools/DoorStack`: a PBX, a push gateway and a door station simulator in Docker, for trying the
+  sample app as a video intercom. A ring wakes a suspended phone with a VoIP push and reaches it
+  once it has registered again; a scripted phone checks the whole path without Apple's servers.
+- The sample app looks like a video intercom, Zvono: a dark design with brass for ringing and
+  opening, a bell with a keyhole as its icon and logo, Barlow Semi Condensed for titles, and the
+  tabs Doors, Activity, Keypad, Messages and Settings. Saved doors carry their own SIP user,
+  code, camera and opening options; Open calls the door, sends the code and hangs up, and the
+  ringing, in-call and notification screens offer Open door for a saved door. The door code in
+  Account is gone, the ring notification's picture can be turned off, and the registration time
+  goes up to a week. The call screen moves transfer, recording, sound output and call quality to
+  More; the engine state and the log are in Settings, Diagnostics.
 - A SwiftUI sample app with call history, DTMF codes, a file log and local profiles, and a UI
   test that runs in CI. SIP messages are logged only when turned on in the Log screen (off in
   release builds), stored certificates can be read after the first unlock and are deleted only
@@ -149,9 +230,10 @@ Beta, not released yet. The SDK is in active development, and the API can still 
   size, frame rate, bitrate and adaptive bitrate. Saved settings from earlier versions are kept.
 - DocC documentation for every public symbol, with Getting Started, Audio Session, Video,
   CallKit, PushKit and Push Contact Parameters articles.
-- Built on baresip and libre 4.12.0, with the patches in `Patches/` rebased onto it.
+- Built on baresip and libre 4.13.0, with the patches in `Patches/` rebased onto it, and patch
+  0026 for a 4.13.0 regression that kept music on hold from replacing the microphone.
 - iOS 16 or later, Swift 6 language mode with strict concurrency; Swift and C sources build
-  without warnings. C ABI 0.8.
+  without warnings. C ABI 0.9.
 - Lint and format scripts, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, and issue and pull request
   templates.
 - CI builds libre and baresip with ASan and UBSan on Linux for the core tests, the fuzzer and
@@ -164,4 +246,214 @@ Beta, not released yet. The SDK is in active development, and the API can still 
   it pushes the commit and the tag in one atomic push, and can be run again after a failure.
 - OpenSSL is built with `no-autoload-config` and without the build path in the library.
 
-[Unreleased]: https://github.com/mariokovacevic/baresip-swift/commits/main
+### Changed
+
+- `BaresipCallKitAdapter` and `BaresipLiveCommunicationAdapter` have `setAudioSessionHandler(_:)`,
+  which sends the system's audio session activation to a handler, such as a
+  `BaresipAudioSessionController`, instead of to the engine. Until now the controller could not
+  learn that CallKit owned the session while an adapter was in use, so after an interruption it
+  resumed the engine without waiting for CallKit, and its CallKit path was unreachable.
+
+- `Docs/STABILITY.md` states what Semantic Versioning covers from 1.0 on: the public Swift and
+  Kotlin API, documented behaviour and the minimum OS versions. The C ABI, internal modules, log
+  formats and the samples are not covered. Enumerations and sealed types can gain cases in a minor
+  release, so `switch` and `when` over them need a `default` / `else` branch.
+- `Docs/C-ABI.md` is no longer a proposal: it states that the C ABI is shipped in lockstep with the
+  SDKs, that output structs grow at their end, that bindings ignore unknown values, and corrects
+  what it said about wiping passwords, re-entrant events, `bsk_engine_destroy` and
+  `BSK_EVENT_DIAGNOSTIC`.
+- Swift API, before the 1.0 freeze (BREAKING):
+  - `BaresipEngine.hangup(callID:)` is `hangUp(callID:)`, and the system call adapters'
+    `setHeld(_:uuid:)` is `setOnHold(_:uuid:)`.
+  - `BaresipCallInfo.account` is `accountID`.
+  - `BaresipConfiguration.init` takes `instanceUUID` as its first, required parameter. A random
+    default gave every launch a new `+sip.instance`, which left stale bindings on the registrar
+    that incoming calls were forked to; store the UUID once per installation and pass it every
+    time.
+  - `BaresipCallKitAdapter`, `BaresipLiveCommunicationAdapter` and `BaresipPushKitAdapter` no
+    longer conform to `CXProviderDelegate`, `ConversationManagerDelegate` and
+    `PKPushRegistryDelegate` themselves, and the first and last are no longer `NSObject`
+    subclasses. The system callbacks go to private objects, so an app can no longer call them or
+    replace the adapter as the delegate by mistake.
+  - Plumbing is internal: `BaresipEngine.isEngineThread`, `abiVersion` and `capabilities`,
+    `BaresipNetworkEvent.init`, and `BaresipPhoneCall.refresh()`, `userPart(of:)` and
+    `samePeer`.
+  - `BaresipCallController` is documented as implemented by the SDK's adapters only.
+- Kotlin API, before the 1.0 freeze (BREAKING):
+  - The configuration types (`BaresipConfiguration`, `BaresipAudioConfiguration`,
+    `BaresipVideoConfiguration`, `BaresipTlsConfiguration`, `BaresipAccountConfiguration`,
+    `BaresipNatConfiguration`, `BaresipTurnServer` and `BaresipTelecomConfiguration`) are no longer
+    data classes. Create them with a factory and a builder block, for example
+    `BaresipConfiguration(instanceUuid) { userAgent = "MyApp" }`, and change them with
+    `copy { … }`. New settings can then be added without breaking binary compatibility. Their
+    `toString` hides passwords, the client certificate and key, and push tokens.
+  - `BaresipConfiguration.instanceUuid` is required and `BaresipEngine` has no default
+    configuration, as in Swift.
+  - `BaresipEngine.hangup(call)` is `hangUp(call)`, and the call is the first argument of
+    `setMicrophoneMuted`, `setAudioDirection`, `setVideoDirection`, `setVideoEnabled`,
+    `setCamera`, `setVideoMaxBitrate`, `incomingHeader` and `setVideoRenderer`.
+  - `BaresipCallInfo.account` and `BaresipMessage.account` are `accountId`.
+  - `BaresipEngine.events` is a `Flow` that completes after the engine's last event once
+    `close()` freed the core, instead of a `SharedFlow` that never completed.
+  - Plumbing is internal: `BaresipEngine.isEngineThread`, `abiVersion`, `capabilities` and
+    `AbiVersion`, `BaresipAudioRoute.of(int)`, `BaresipPhoneCall.refresh()`, `userPart` and
+    `samePeer`, and `BaresipCamera`'s `start`, `stop` and `switchDevice`. `BaresipCameraSource`,
+    `BaresipCameraHost` and `BaresipCertificates.split` need `@OptIn(BaresipInternalApi::class)`.
+  - `baresipkit-telecom` exposes core-telecom and `baresipkit-compose` exposes Compose UI and the
+    Compose BOM as `api` dependencies, because their public API uses them.
+  - The libraries can be used from Kotlin 2.1 projects (`apiVersion` and `languageVersion` 2.1).
+- The version comes from the `VERSION` file: the core reports it in `bsk_version_string()` and in
+  the default `User-Agent` (`BaresipKit/<version>` instead of `BaresipKit/beta`).
+- Releases: `Package.swift` uses a local `Build/out` XCFramework only on the default branch, where
+  no release URL is set, or with `BARESIPKIT_LOCAL_CORE=1`; a stale local build no longer
+  replaces the published binary at a release tag. The release workflow defaults to a dry run,
+  checks `VERSION` and `CHANGELOG.md`, publishes the XCFramework that CI built and tested instead
+  of a new build, adds an SPDX SBOM, `SHA256SUMS` and provenance attestations, and tags a release
+  commit without pushing it to the default branch.
+- `THIRD_PARTY_NOTICES.md` has the upstream copyright lines of libre and baresip, the Android
+  sample's fonts, and no longer says that OpenSSL's NOTICE must ship (OpenSSL 3 has none). The
+  license texts of the pinned sources are in `LICENSES/`, checked against the sources in CI.
+- Android: the libraries take their version from `VERSION` (overridable with `-PVERSION_NAME`)
+  instead of `0.1.0-SNAPSHOT`; the `baresipkit` AAR carries the license texts and notices in
+  `META-INF/baresipkit/`, and its POM lists Apache-2.0 (OpenSSL) and BSD-2-Clause (G.722) next to
+  BSD-3-Clause.
+- `Docs/STABILITY.md` also states that creating output types yourself (initializers, Kotlin
+  constructors, `copy` and `componentN`) and implementing SDK protocols are not covered.
+- Android: `baresipkit` declares `INTERNET` and `ACCESS_NETWORK_STATE`, and `baresipkit-audio`
+  `MODIFY_AUDIO_SETTINGS`, so they are merged into the app's manifest; an app that did not list
+  them failed at run time. `baresipkit-video` also declares the camera features
+  (`android.hardware.camera.any` and the ones `CAMERA` implies) with `required="false"`, so no
+  device is filtered out for lacking a back or autofocus camera. The consumer R8 rule for
+  `BaresipEngine.deliver`, which matched no member, is gone.
+- Android: `Docs/Android.md` has sections on TLS and certificates, NAT traversal, incoming calls
+  on Android 14 and later, and what each library adds to the merged manifest; every public
+  declaration has KDoc.
+
+### Fixed
+
+- Core threading: logging has its own lock, so a log callback on a media thread that calls into
+  the engine no longer deadlocks, and audio threads no longer wait for a slow event handler. Log
+  callbacks may now run on several threads at once. `bsk_engine_destroy` called on the engine
+  thread does nothing and returns `BSK_ERR_INVALID_STATE` instead of freeing the engine while it
+  runs; calls into the engine from the `STOPPED` event, or from the engine thread while it starts
+  or stops, fail with `BSK_ERR_INVALID_STATE` instead of running against a closed stack. Remote
+  video frame callbacks defer a hangup, reject or account removal as event callbacks do.
+- Native input validation: malformed camera frames (a stride above 65 535, shorter than a row,
+  or a missing plane) and buffers too small for their stride are rejected; MediaCodec output whose
+  crop rectangle or size would read out of bounds is dropped; the decoder's output frame was too
+  small for odd sizes; JNI configuration readers stop at the first pending exception and release
+  the array references they create.
+- `ECANCELED` and `EOVERFLOW` from the stack map to `BSK_ERR_INVALID_STATE` and
+  `BSK_ERR_BUFFER_TOO_SMALL` instead of `BSK_ERR_INTERNAL`; a too long codec list is
+  `BSK_ERR_INVALID_ARGUMENT`.
+- A negative cumulative RTCP loss no longer gives negative loss and wrong MOS figures.
+- `bsk_capabilities` lists `video.h264.videotoolbox` only on Apple platforms and
+  `video.h264.mediacodec` on Android.
+- A session timer minimum (`session_min_se`) below RFC 4028's 90 seconds is rejected; the SDK
+  defaults (90 seconds and 30 minutes) are unchanged.
+- PushKit: an asynchronous push handler (`reportingAsynchronously`) that never returned kept the
+  push open until iOS ended the app. It now has a deadline, `reportDeadline` (5 seconds by
+  default): the handler is cancelled, a placeholder call is reported and ended, and the error
+  handler gets `BaresipPushKitError.reportTimedOut`.
+- CallKit and LiveCommunicationKit: a request the system accepted but never carried out kept
+  `placeCall(to:video:)` and the action methods waiting forever; they now fail with
+  `actionTimedOut` after a minute. A reset of the provider or conversation manager fails pending
+  requests with the new `BaresipCallKitError.providerReset` or
+  `BaresipLiveCommunicationError.managerReset` instead of `CancellationError`.
+- iOS video: the front camera was mirrored at capture, so the other side saw a mirrored picture
+  and the self view, mirrored again by `mirrored: true`, was not mirrored. The camera is no
+  longer mirrored at capture. On iOS 16, `BaresipVideoView` flushes a failed display layer, so
+  video recovers after the app returns from the background, and shows only the newest frame
+  when the main thread falls behind, instead of starting a task for every frame.
+- Android: a pushed call answered as audio-only from the system UI before its INVITE arrived no
+  longer sends the camera.
+- Android: an exception while the Telecom adapter handles one event, for example a call Telecom
+  never added, no longer stops it from handling every later call, and no wait for Telecom blocks
+  the events behind it longer than `actionTimeout`.
+- Android: `BaresipCallVideo` and `BaresipCameraPreview` attach and detach in one coroutine, so
+  leaving the screen quickly no longer leaves the camera running, and a composable that leaves
+  no longer stops the preview or renderer of the one that replaced it.
+- Core: replacing or removing the log handler waited until no log line was being delivered at
+  all, also to the new handler, so with steady logging (SIP trace, several media threads) the
+  call could block for a long time. It now waits only for lines that the old handler is still
+  handling.
+- Swift: when the last reference to a `BaresipEngine` was released inside an engine callback,
+  `deinit` ran on the engine thread, where the core refuses to destroy itself, and the engine
+  kept running with no owner. The engine is now destroyed from another thread in that case.
+- Android: `activate()`, `deactivate()` and the Telecom activation calls of
+  `BaresipAudioController` go through the same ordered queue as focus changes, so a focus
+  change queued before `deactivate()` can no longer turn the engine's audio back on after it.
+- Android: the JNI video bridge looked up its Java methods lazily from whichever thread came
+  first, without synchronization, so a video or camera callback could use a method ID before it
+  was set. The methods are now looked up once when the library loads.
+- Android: SIP over TLS verified the server only against the configured CAs, because OpenSSL's
+  default certificate locations do not exist on Android, so a server with a certificate from a
+  public CA was rejected unless its CA was configured. The core now also reads Android's system
+  CAs from `/apex/com.android.conscrypt/cacerts` or `/system/etc/security/cacerts`. CAs the user
+  installed or turned off and the app's network security configuration still do not apply.
+  The store is built once and reused for later connections.
+- Android: `BaresipEngine.close()` could free the native engine while `state`,
+  `registrationState` or the engine thread check read it from another thread; the handle is now
+  guarded by a lock.
+- Android: a coroutine cancelled after `makeCall` or `addAccount` reached the core left the call
+  or account in the core; the call is now hung up and the account removed before the
+  cancellation is thrown. `accounts()`, `activeCalls()`, `videoDevices()`, `stop()`,
+  `networkDidChange()` and the audio notifications swallowed `CancellationException` and
+  unexpected errors through `runCatching`; they now ignore only `BaresipError`.
+- Android: `BaresipTelecomAdapter` and `BaresipAppLifecycle.start()` subscribe to events before
+  they return, so an INVITE or a released call right after them is no longer missed.
+- Android: `BaresipTelecomAdapter.end()` no longer leaves the Telecom call in the system when the
+  engine cannot hang up, and no longer throws `NOT_FOUND` for a call the engine no longer knows.
+- Android: a pushed call bound to its INVITE takes the INVITE's address, and its name as on iOS:
+  the INVITE's display name, else the push's name when the INVITE confirmed the pushed caller,
+  else the INVITE's address. Before, a push without a caller could keep its name for an INVITE
+  from another caller.
+- Android: `BaresipAudioController` hands focus and route changes to the engine in the order
+  they happened (a loss and the following gain could arrive reversed and leave audio paused),
+  and stops calling the engine after `release()`. Before Android 12, Bluetooth SCO is turned on
+  only once the headset has connected the link, `onRouteChange` follows the link, and
+  `deactivate()` and `release()` stop the link the controller started.
+- Android: a camera that Camera2 disconnects or reports an error for closes its capture and is
+  logged under `BaresipKit.camera` instead of silently stopping video; switching to the same
+  camera opens it again. The display rotation comes from `DisplayManager` instead of the
+  deprecated `WindowManager.defaultDisplay`.
+
+### Security
+
+- The TLS minimum version accepts only TLS 1.2 and 1.3 (`BSK_TLS_VERSION_1_2`,
+  `BSK_TLS_VERSION_1_3`); other values, such as TLS 1.0, are rejected. The SDKs already offered
+  only these two. C ABI 0.13, which also makes `bsk_engine_destroy` return a
+  `bsk_status`.
+- The core logs a warning when an account uses SDES-SRTP over UDP or TCP signaling, where the
+  media keys can be read; `Docs/C-ABI.md` describes the encryption defaults.
+- `BaresipOSLog.handler` logs engine messages with private privacy by default, so Console shows
+  `<private>` unless a debugger is attached. The core redacts passwords, digest responses and
+  push tokens, but messages still contain SIP URIs, IP addresses, display names and headers.
+  `publicMessages: true` logs them in full, as the sample app does.
+- OpenSSL is built without QUIC (`no-quic`), which BaresipKit never used. This removes the code of
+  two of the four OpenSSL 3.5.9 vulnerabilities published on 10 November 2026 (CVE-2026-88822,
+  CVE-2026-95691); the other two (CVE-2026-88823, CVE-2026-95692) are in AES-GCM-SIV, which
+  neither TLS nor SRTP uses. OpenSSL 3.5.10, which fixes all four, is not released yet.
+- SPKI pins are checked against the certificate chain the system trust store validated, not
+  against every certificate the server sent. Before, a server with any chain the system trusts
+  for the host could append the pinned certificate and pass the pin check. Pins with a private
+  CA (`caCertificatesPEM`) were already checked against the verified chain.
+- Server certificate verification can no longer be turned off. `insecureSkippingServerVerification()`
+  is gone from the Swift API (where it existed in DEBUG builds, so every Debug build of an app had
+  it) and from the Kotlin API (where it existed in every build), with `verifyServer` on both. The C
+  field `insecure_skip_verify` is rejected unless the core is built with
+  `BARESIPKIT_ALLOW_INSECURE_TLS`, which no released binary is, and `extra_config` may not set the
+  TLS keys (`sip_verify_server`, `sip_cafile`, `sip_capath`, `sip_certificate`,
+  `sip_verify_client`). A test server with a self-signed certificate goes in `caCertificatesPEM`.
+  The sample apps lose their debug-only "verify server" switch.
+
+### Removed
+
+- Media events the core never emitted: `BSK_MEDIA_AUDIO_STOPPED`, `BSK_MEDIA_VIDEO_STARTED`,
+  `BSK_MEDIA_VIDEO_STOPPED` and `BSK_MEDIA_RTP_TIMEOUT` in C, and `BaresipMediaEvent.audioStopped`,
+  `.videoStarted`, `.videoStopped` and `.rtpTimeout` in Swift. The unused `bsk_video_codec` enum
+  is gone too. Code that names them no longer compiles; the remaining values keep their numbers.
+  C ABI 0.11.
+
+[Unreleased]: https://github.com/mariokovacevic/baresipkit/compare/v1.0.0-rc.1...main
+[1.0.0-rc.1]: https://github.com/mariokovacevic/baresipkit/commits/v1.0.0-rc.1

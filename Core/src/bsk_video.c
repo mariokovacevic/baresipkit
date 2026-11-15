@@ -3,6 +3,9 @@
 #ifdef BSK_HAVE_APPLE_VIDEO
 #include "vidtoolbox.h"
 #endif
+#ifdef BSK_HAVE_ANDROID_VIDEO
+#include "bsk_android.h"
+#endif
 
 struct vidisp_st {
 	const struct vidisp *vd;
@@ -69,6 +72,7 @@ static void deliver(bsk_engine *e, bsk_call_id call, bool local,
 	struct bsk_video_sink sink;
 	bsk_video_frame frame;
 	bool have = false;
+	bool tracked;
 
 	if (!to_bsk_frame(vf, timestamp, &frame))
 		return;
@@ -91,6 +95,9 @@ static void deliver(bsk_engine *e, bsk_call_id call, bool local,
 	if (!have)
 		return;
 
+	tracked = bsk_on_engine_thread(e);
+	if (tracked)
+		e->emit_depth++;
 	delivering++;
 	if (sink.on_size &&
 	    (*last_w != frame.width || *last_h != frame.height)) {
@@ -102,6 +109,8 @@ static void deliver(bsk_engine *e, bsk_call_id call, bool local,
 
 	sink.on_frame(e, call, local, &frame, sink.user);
 	delivering--;
+	if (tracked)
+		e->emit_depth--;
 
 	mtx_lock(&e->video_mtx);
 	e->video_inflight--;
@@ -244,6 +253,14 @@ int bsk_video_init(bsk_engine *e)
 	if (err)
 		return err;
 #endif
+#ifdef BSK_HAVE_ANDROID_VIDEO
+	err = mediacodec_init();
+	if (err)
+		return err;
+	err = bskcamera_init();
+	if (err)
+		return err;
+#endif
 
 	err = vidisp_register(&bsk_vidisp, baresip_vidispl(), "bsk", disp_alloc,
 			      NULL, disp_display, NULL);
@@ -277,6 +294,10 @@ void bsk_video_close(bsk_engine *e)
 #ifdef BSK_HAVE_APPLE_VIDEO
 	bskcapture_close();
 	vidtoolbox_close();
+#endif
+#ifdef BSK_HAVE_ANDROID_VIDEO
+	bskcamera_close();
+	mediacodec_close();
 #endif
 }
 

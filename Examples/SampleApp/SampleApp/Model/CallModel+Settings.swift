@@ -88,7 +88,7 @@ extension CallModel {
     }
 
     func applySaved() async {
-        if savedTLS != engineTLS || SettingsStore.load().engine != engineOptions {
+        if savedTLS != engineTLS || SettingsStore.load().engine != engineOptions || needsNewCallScreen {
             await restartEngine()
         }
         await register()
@@ -129,18 +129,10 @@ extension CallModel {
     var savedTLS: TLSSnapshot {
         let settings = SettingsStore.load()
         return TLSSnapshot(ca: SettingsStore.caCertificates, client: SettingsStore.clientCertificate,
-                           pins: settings.pinList, verifyServer: settings.verifyServer)
+                           pins: settings.pinList)
     }
 
     func tlsConfiguration(_ tls: TLSSnapshot) -> BaresipTLSConfiguration {
-        #if DEBUG
-            if !tls.verifyServer {
-                var insecure = BaresipTLSConfiguration.insecureSkippingServerVerification()
-                insecure.caCertificatesPEM = tls.ca
-                insecure.clientCertificatePEM = tls.client
-                return insecure
-            }
-        #endif
         return BaresipTLSConfiguration(caCertificatesPEM: tls.ca, clientCertificatePEM: tls.client,
                                        pinnedSPKISHA256: tls.pins)
     }

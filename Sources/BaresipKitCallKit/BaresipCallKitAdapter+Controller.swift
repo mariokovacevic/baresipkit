@@ -31,6 +31,10 @@
                         takePlacedCallWaiter(uuid)?.resume(throwing: error)
                     }
                 }
+                Task { [weak self] in
+                    try? await Task.sleep(for: BaresipCallKitAdapter.systemActionDeadline)
+                    self?.takePlacedCallWaiter(uuid)?.resume(throwing: BaresipCallKitError.actionTimedOut)
+                }
             }
         }
 
@@ -43,11 +47,11 @@
         /// - Throws: The CallKit error when the call is unknown or the system refuses the request.
         public func answer(_ call: BaresipCallID, video: Bool) async throws {
             let uuid = try knownUUID(for: call)
-            lock.withLock { answerVideo[uuid] = video }
+            lock.withLock { book.requestAnswer(uuid, sendsCamera: video) }
             do {
                 try await answerCall(uuid: uuid)
             } catch {
-                lock.withLock { answerVideo[uuid] = nil }
+                lock.withLock { book.cancelAnswerRequest(uuid) }
                 throw error
             }
         }
@@ -67,7 +71,7 @@
         ///   - call: The call.
         /// - Throws: The CallKit error when the call is unknown or the system refuses the request.
         public func setOnHold(_ onHold: Bool, call: BaresipCallID) async throws {
-            try await setHeld(onHold, uuid: knownUUID(for: call))
+            try await setOnHold(onHold, uuid: knownUUID(for: call))
         }
 
         /// Mutes or unmutes a call through CallKit.

@@ -1,6 +1,6 @@
 # BaresipKit feature compatibility matrix
 
-Written against libre v4.9.0 (`e11a4c5`) and baresip v4.9.0 (`c06e367`); file and line references are relative to those checkouts. The build now pins v4.12.0 of both, with the same patches. Status vocabulary, as requested:
+Written against libre v4.9.0 (`e11a4c5`) and baresip v4.9.0 (`c06e367`); file and line references are relative to those checkouts and may have moved in v4.13.0, which the build now pins; the function names still apply. Status vocabulary:
 
 - **as-is** — supported by libre/baresip core without extra code
 - **module** — supported by an existing baresip module that only has to be compiled in
@@ -86,6 +86,7 @@ Everything below was verified by reading the pinned sources; items marked "host-
 | Multiple calls, swapping | as-is | `call_max_calls`, `uag_hold_others()` (`uag.c:81`), `uag_hold_resume()`, `call_set_current()`. |
 | Typed SIP reason mapping | facade | `call_scode()` + `bevent_get_text()`; `Reason` header available from `bevent_get_msg()`. |
 | Blind transfer (REFER) | as-is | `call_transfer()` (`call.c:2987`), `BEVENT_CALL_TRANSFER(_FAILED)`. |
+| Session timers (RFC 4028) | patch | libre has no session timer and baresip none either. Patch 0024 adds them to `sipsess` (`sipsess_set_timer()`, `sipsess_timer()`): `Supported: timer`, `Session-Expires` and `Min-SE` in the INVITE, the refresher chosen in the 2xx, refresh with UPDATE or re-INVITE at half the interval, BYE when the session expires, a new INVITE after 422. Patch 0025 adds `sip_session_expires` and `sip_min_se` to baresip's configuration. The facade sets them from `bsk_engine_config.session_expires` / `session_min_se`. |
 | Attended transfer | as-is | `call_replace_transfer()` (`call.c:3027`) sends REFER with `Replaces`. Supported. |
 
 ## 6. Hold / resume
@@ -121,7 +122,7 @@ Everything below was verified by reading the pinned sources; items marked "host-
 | TLS 1.2/1.3, verification on by default | as-is | `tls.c:214-237` sets a minimum of TLS 1.2; `sip_verify_server` defaults to on; `tls_set_verify_server()` enforces hostname matching (`transp.c:875`). `tls_set_min_proto_version()` available. |
 | Private CA | as-is | `tls_add_capem()` (in memory, no file needed on iOS), called once per certificate of the bundle; `tls_add_cafile_path()`. |
 | Custom trust callback / pinning | patch (implemented) | `Patches/0004-re-tls-verify-server-handler.patch` adds `tls_set_verify_server_handler()`; `Core/src/bsk_tls.c` implements SPKI SHA-256 pinning on top of it. Host-verified: private CA in memory, correct pin accepted, wrong pin and missing CA rejected with `BSK_ERR_TLS`. |
-| No implicit accept-all | as-is | `tls_disable_verify_server()` exists but is only called when `sip_verify_server no` is configured. The facade exposes it as `bsk_tls_config.insecure_skip_verify`, which a zeroed configuration leaves off, logs a warning when it is set and rejects together with pins. The Swift API can set it only through `insecureSkippingServerVerification()`, compiled in DEBUG builds only. |
+| No implicit accept-all | as-is | `tls_disable_verify_server()` exists but is only called when `sip_verify_server no` is configured. The facade's `bsk_tls_config.insecure_skip_verify` is rejected unless the core is built with `BARESIPKIT_ALLOW_INSECURE_TLS` (never for released binaries), `extra_config` may not set the TLS keys, and neither the Swift nor the Kotlin API can turn verification off. |
 | System trust store | patch (implemented) | `Patches/0018-re-tls-trust-handler.patch` adds `tls_set_trust_handler()`; `Core/src/apple/bsk_trust.c` answers it with SecTrust and the SSL policy for the host, `Core/src/bsk_tls.c` with OpenSSL's default verify paths on other platforms. Host-verified: registration with only the system store, with a matching and a wrong pin. |
 | Cipher configuration | as-is | `tls_set_ciphers()`. |
 | SRTP (SDES) | module | `modules/srtp`: `AES_CM_128_HMAC_SHA1_80/32`, `AEAD_AES_128_GCM`, `AEAD_AES_256_GCM` (`srtp.c:59-96`); `;mediaenc=srtp` optional, `srtp-mand` mandatory, `srtp-mandf` mandatory+forced. |

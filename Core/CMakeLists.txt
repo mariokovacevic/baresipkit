@@ -28,11 +28,14 @@ set(BSK_SOURCES
   src/bsk_video.c
   src/bsk_tls.c
   src/bsk_rate.c
+  src/bsk_reason.c
   src/bsk_message.c
   src/bsk_record.c
   src/bsk_audio.c
+  src/bsk_hold.c
   src/bsk_g722.c
   src/bsk_h264.c
+  src/bsk_frame.c
   third_party/g722/g722_encode.c
   third_party/g722/g722_decode.c
 )
@@ -41,6 +44,10 @@ if(APPLE)
   enable_language(OBJC)
   list(APPEND BSK_SOURCES src/apple/vidtoolbox.c src/apple/bskcapture.m src/apple/bsk_trust.c)
   set_source_files_properties(src/apple/bskcapture.m PROPERTIES COMPILE_FLAGS "-fobjc-arc")
+endif()
+
+if(ANDROID)
+  list(APPEND BSK_SOURCES src/android/bskcamera.c src/android/mediacodec.c)
 endif()
 
 add_library(baresipkitcore STATIC ${BSK_SOURCES})
@@ -59,12 +66,29 @@ if(APPLE)
     "-framework VideoToolbox" "-framework Foundation"
     "-framework Security" "-framework CoreFoundation")
 endif()
+if(ANDROID)
+  target_compile_definitions(baresipkitcore PRIVATE BSK_HAVE_ANDROID_VIDEO=1)
+  target_include_directories(baresipkitcore PRIVATE src/android)
+  target_link_libraries(baresipkitcore PUBLIC mediandk)
+endif()
 include(CheckFunctionExists)
 include(CheckIncludeFile)
 check_function_exists(thrd_create BSK_HAVE_THREADS_FUN)
 check_include_file(threads.h BSK_HAVE_THREADS_H)
 if(BSK_HAVE_THREADS_FUN AND BSK_HAVE_THREADS_H)
   target_compile_definitions(baresipkitcore PRIVATE HAVE_THREADS)
+endif()
+if(NOT BARESIPKIT_VERSION)
+  file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/../VERSION" BARESIPKIT_VERSION LIMIT_COUNT 1)
+endif()
+if(NOT BARESIPKIT_VERSION MATCHES "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.]+)?$")
+  message(FATAL_ERROR "BARESIPKIT_VERSION '${BARESIPKIT_VERSION}' is not a version like 1.2.3 or 1.2.3-rc.1")
+endif()
+target_compile_definitions(baresipkitcore PRIVATE BSK_VERSION_STRING="${BARESIPKIT_VERSION}")
+
+option(BARESIPKIT_ALLOW_INSECURE_TLS "Accept bsk_tls_config.insecure_skip_verify (test builds only)" OFF)
+if(BARESIPKIT_ALLOW_INSECURE_TLS)
+  target_compile_definitions(baresipkitcore PRIVATE BSK_ALLOW_INSECURE_TLS=1)
 endif()
 target_compile_options(baresipkitcore PRIVATE -Wall -Wextra -Wshadow -Werror)
 # Vendored code is kept unchanged; do not fail its build on warnings.
@@ -77,6 +101,7 @@ if(BARESIPKIT_EXTRA_LIBS)
 endif()
 
 if(BARESIPKIT_BUILD_TESTS)
+  target_compile_definitions(baresipkitcore PRIVATE BSK_TEST_HOOKS=1)
   enable_testing()
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../Tests/Core ${CMAKE_CURRENT_BINARY_DIR}/tests)
 endif()

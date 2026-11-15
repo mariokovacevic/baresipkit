@@ -2,6 +2,7 @@
     import CallKit
     import Foundation
     import BaresipKit
+    import BaresipKitSystemCall
 
     extension BaresipCallKitAdapter {
         /// Reports a call announced by a VoIP push to CallKit before its INVITE arrives, without
@@ -31,31 +32,38 @@
         /// still requires a report for the push, so `uuid` is reported and ended at once as
         /// answered elsewhere, and the ringing call keeps its own UUID from ``uuid(for:)``.
         ///
+        /// With ``BaresipCallKitConfiguration/callUUIDHeader`` an INVITE that carries a UUID is
+        /// bound by it instead: only the INVITE with `uuid` in the header takes a pushed call
+        /// that named its UUID, and a ringing call with another UUID is no duplicate of it,
+        /// whoever its caller is. A push without a UUID (`uuid` is `nil`) is matched by its
+        /// caller, also with an INVITE that carries a UUID. A push with the UUID of a call that
+        /// waits, rings or runs already, or of a pushed call that expired or was refused, is a
+        /// repeat, reported under a UUID of its own and ended at once. An INVITE that arrives
+        /// after its pushed call expired gets a new UUID, because CallKit already ended the old one.
+        ///
         /// - Parameters:
-        ///   - uuid: A new UUID for the call.
+        ///   - pushedUUID: The call's UUID from the push payload, or `nil` when the payload has none;
+        ///     the adapter then makes one.
         ///   - remoteURI: The caller's SIP URI from the push payload, if known.
         ///   - displayName: The caller's name to show.
         ///   - hasVideo: Whether the call is a video call.
         ///   - completion: Called on an arbitrary thread with `nil` once CallKit accepted the call,
         ///     or with the CallKit error when the system refused it.
-        public func reportIncomingCallFromPush(uuid: UUID, remoteURI: String?, displayName: String?,
+        public func reportIncomingCallFromPush(uuid pushedUUID: UUID?, remoteURI: String?, displayName: String?,
                                                hasVideo: Bool,
                                                completion: @escaping @Sendable (Error?) -> Void) {
             let update = CXCallUpdate()
-            update.remoteHandle = CXHandle(type: .generic, value: remoteURI ?? "unknown")
+            update.remoteHandle = handle(for: remoteURI ?? "unknown")
             update.localizedCallerName = displayName
             update.hasVideo = hasVideo
-            let announcement = PushCallLedger.Announcement(uuid: uuid, remoteURI: remoteURI, hasVideo: hasVideo)
-            let isDuplicate = lock.withLock { () -> Bool in
-                guard !pushCalls.duplicatesRingingCall(remoteURI: remoteURI) else { return true }
-                pushCalls.add(announcement, now: ContinuousClock.now)
-                return false
+            let outcome = lock.withLock {
+                book.announcePush(uuid: pushedUUID, remoteURI: remoteURI, hasVideo: hasVideo, now: ContinuousClock.now)
             }
-            if !isDuplicate {
-                schedulePushExpiry(uuid)
+            if !outcome.isDuplicate {
+                schedulePushExpiry(outcome.reported)
             }
-            provider.reportNewIncomingCall(with: uuid, update: update) { [weak self] error in
-                self?.pushCallReported(uuid, isDuplicate: isDuplicate, failed: error != nil)
+            provider.reportNewIncomingCall(with: outcome.reported, update: update) { [weak self] error in
+                self?.pushCallReported(outcome.reported, isDuplicate: outcome.isDuplicate, failed: error != nil)
                 completion(error)
             }
         }
@@ -68,12 +76,13 @@
         /// task started there runs only after the delegate method has returned.
         ///
         /// - Parameters:
-        ///   - uuid: A new UUID for the call.
+        ///   - uuid: The call's UUID from the push payload, or `nil` when the payload has none;
+        ///     the adapter then makes one.
         ///   - remoteURI: The caller's SIP URI from the push payload, if known.
         ///   - displayName: The caller's name to show.
         ///   - hasVideo: Whether the call is a video call.
         /// - Throws: The CallKit error when the system refuses the call, for example during Do Not Disturb.
-        public func reportIncomingCallFromPush(uuid: UUID, remoteURI: String?, displayName: String?,
+        public func reportIncomingCallFromPush(uuid: UUID?, remoteURI: String?, displayName: String?,
                                                hasVideo: Bool) async throws {
             try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
                 reportIncomingCallFromPush(uuid: uuid, remoteURI: remoteURI, displayName: displayName,
@@ -88,11 +97,7 @@
         }
 
         func expirePushCall(_ uuid: UUID) {
-            let expired = lock.withLock { () -> Bool in
-                guard pushCalls.discard(uuid) else { return false }
-                pendingAnswers.remove(uuid)
-                return true
-            }
+            let expired = lock.withLock { book.expirePush(uuid) }
             if expired {
                 provider.reportCall(with: uuid, endedAt: Date(), reason: .failed)
             }
@@ -108,18 +113,16 @@
 
         private func pushCallReported(_ uuid: UUID, isDuplicate: Bool, failed: Bool) {
             if failed {
-                forgetRefusedPushCall(uuid)
+                if !isDuplicate {
+                    forgetRefusedPushCall(uuid)
+                }
             } else if isDuplicate {
                 provider.reportCall(with: uuid, endedAt: Date(), reason: .answeredElsewhere)
             }
         }
 
         private func forgetRefusedPushCall(_ uuid: UUID) {
-            let orphan = lock.withLock { () -> BaresipCallID? in
-                pushCalls.discard(uuid)
-                pendingAnswers.remove(uuid)
-                return callByUUID[uuid]
-            }
+            let orphan = lock.withLock { book.forgetRefusedPush(uuid) }
             guard let orphan else { return }
             Task {
                 try? await engine.reject(callID: orphan, statusCode: Self.busyStatusCode)

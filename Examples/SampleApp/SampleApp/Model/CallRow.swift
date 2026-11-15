@@ -25,6 +25,8 @@ struct CallRow: Identifiable, Equatable {
     var dtmf: DTMFRequest?
     var dtmfSent = false
     var dtmfResult: String?
+    /// Whether another phone answered or declined the call while it rang here.
+    var endedElsewhere: BaresipCallEndReason?
 
     @MainActor
     init(call: BaresipPhoneCall, dtmf: DTMFState?) {
@@ -43,6 +45,7 @@ struct CallRow: Identifiable, Equatable {
         self.dtmf = dtmf?.request
         dtmfSent = dtmf?.sent ?? false
         dtmfResult = dtmf?.result
+        endedElsewhere = call.error?.endReason
     }
 
     var dtmfDigits: String {
@@ -62,7 +65,12 @@ struct CallRow: Identifiable, Equatable {
     }
 
     static func displayName(_ remote: String) -> String {
-        BaresipPhoneCall.userPart(of: remote)
+        var value = remote
+        for scheme in ["sips:", "sip:", "tel:"] where value.hasPrefix(scheme) {
+            value = String(value.dropFirst(scheme.count))
+        }
+        let user = value.prefix { $0 != "@" && $0 != ";" }
+        return user.isEmpty ? remote : String(user)
     }
 
     static func initials(_ name: String) -> String {

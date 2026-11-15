@@ -1,3 +1,4 @@
+import Foundation
 import XCTest
 @testable import BaresipKitPushKit
 
@@ -29,5 +30,49 @@ final class IncomingPushReportTests: XCTestCase {
 
         XCTAssertTrue(failure is CallKitUnavailable)
         XCTAssertEqual(placeholders, 1)
+    }
+
+    func testAnAsynchronousHandlerThatReturnsInTimeNeedsNoPlaceholder() async {
+        let failure = await IncomingPushReport.deliver(within: .seconds(5)) {}
+
+        XCTAssertNil(failure)
+    }
+
+    func testAnAsynchronousHandlerThatThrowsGivesItsError() async {
+        let failure = await IncomingPushReport.deliver(within: .seconds(5)) {
+            throw CallKitUnavailable()
+        }
+
+        XCTAssertTrue(failure?.error is CallKitUnavailable)
+    }
+
+    func testAnAsynchronousHandlerThatHangsTimesOutAndIsCancelled() async {
+        let cancelled = Flag()
+        let started = ContinuousClock.now
+
+        let failure = await IncomingPushReport.deliver(within: .milliseconds(100)) {
+            await withTaskCancellationHandler {
+                try? await Task.sleep(for: .seconds(60))
+            } onCancel: {
+                cancelled.set()
+            }
+        }
+
+        XCTAssertEqual(failure?.error as? BaresipPushKitError, .reportTimedOut)
+        XCTAssertLessThan(ContinuousClock.now - started, .seconds(5))
+        XCTAssertTrue(cancelled.isSet)
+    }
+}
+
+private final class Flag: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value = false
+
+    var isSet: Bool {
+        lock.withLock { value }
+    }
+
+    func set() {
+        lock.withLock { value = true }
     }
 }

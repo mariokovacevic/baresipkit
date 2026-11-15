@@ -6,6 +6,18 @@ ROOT="$(cd "$HERE/../.." && pwd)"
 PREFIX="${PREFIX:?set PREFIX to a host build prefix (Build/out/host/prefix)}"
 PREFIX="$(cd "$PREFIX" && pwd)"
 BUILD="${BUILD_DIR:-$ROOT/Build/out/host/core-tests}"
+
+show_failure_logs() {
+  local status=$?
+  if (( status != 0 )) && [[ -d "$BUILD" ]]; then
+    echo "--- exit status $status; the newest test logs in $BUILD:" >&2
+    while IFS= read -r log; do
+      echo "--- $log" >&2
+      tail -n 40 "$log" >&2
+    done < <(ls -t "$BUILD"/*.err "$BUILD"/*.out 2>/dev/null | head -n 4)
+  fi
+}
+trap show_failure_logs EXIT
 SANITIZE="${SANITIZE:-address,undefined}"
 HOSTIP="${HOSTIP:-$(hostname -I 2>/dev/null | awk '{print $1}')}"
 if [[ -z "$HOSTIP" && "$(uname -s)" == Darwin ]]; then
@@ -18,8 +30,12 @@ if [[ -f "$PREFIX/lib/libvpx.a" ]]; then
   EXTRA="$PREFIX/lib/libvpx.a;$EXTRA"
 fi
 FLAGS=""
+THREADS=()
 if [[ -n "$SANITIZE" ]]; then
   FLAGS="-fsanitize=$SANITIZE -fno-omit-frame-pointer"
+fi
+if [[ ",$SANITIZE," == *,thread,* ]]; then
+  THREADS=(-DBSK_HAVE_THREADS_FUN=OFF)
 fi
 
 cmake -S "$ROOT/Core" -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug \
@@ -27,7 +43,7 @@ cmake -S "$ROOT/Core" -B "$BUILD" -DCMAKE_BUILD_TYPE=Debug \
   -DBARESIP_INCLUDE_DIR="$PREFIX/include/baresip" \
   -DBARESIP_LIBRARY="$PREFIX/lib/libbaresip.a" \
   -DBARESIPKIT_EXTRA_LIBS="$EXTRA" \
-  -DBARESIPKIT_BUILD_TESTS=ON \
+  -DBARESIPKIT_BUILD_TESTS=ON ${THREADS[@]+"${THREADS[@]}"} \
   -DCMAKE_C_FLAGS="$FLAGS" -DCMAKE_EXE_LINKER_FLAGS="$FLAGS" >/dev/null
 cmake --build "$BUILD" -j"$(nproc 2>/dev/null || sysctl -n hw.ncpu)" >/dev/null
 
@@ -89,7 +105,10 @@ if [[ ! -f "$CERT_DIR/other.pem" ]]; then
     -subj "/CN=baresipkit-other" >/dev/null 2>&1
 fi
 cat "$CERT_DIR/other.pem" "$CERT_DIR/cert.pem" > "$CERT_DIR/bundle.pem"
+cat "$CERT_DIR/cert.pem" "$CERT_DIR/other.pem" > "$CERT_DIR/appended.pem"
 export BSK_TEST_PIN="$PIN"
+BSK_TEST_PIN_APPENDED="$(openssl x509 -in "$CERT_DIR/other.pem" -pubkey -noout | openssl pkey -pubin -outform der 2>/dev/null | openssl dgst -sha256 -binary | base64)"
+export BSK_TEST_PIN_APPENDED
 for mode in tls tls-bare tls-bundle tls-pin-ok tls-pin-bad tls-noca; do
   export BSK_TEST_CA_PEM="$CERT_DIR/cert.pem"
   if [[ "$mode" == tls-bundle ]]; then
@@ -105,10 +124,12 @@ for mode in tls tls-bare tls-bundle tls-pin-ok tls-pin-bad tls-noca; do
 done
 
 if [[ "$(uname -s)" != Darwin ]]; then
-  echo "== registration over TLS with the system trust store (no CA configured, pinning ok/bad)"
-  for mode in tls-system tls-system-pin-ok tls-system-pin-bad; do
+  echo "== registration over TLS with the system trust store (no CA configured, pinning ok/bad, a pinned certificate appended to the chain)"
+  for mode in tls-system tls-system-pin-ok tls-system-pin-bad tls-system-pin-appended; do
+    CHAIN="$CERT_DIR/cert.pem"
+    [[ "$mode" == tls-system-pin-appended ]] && CHAIN="$CERT_DIR/appended.pem"
     REGISTRAR_HOST="$HOSTIP" REGISTRAR_PORT=5081 REGISTRAR_IDLE_TIMEOUT=5 python3 "$ROOT/Tools/ContactParameterProof/tls_registrar.py" \
-      "$CERT_DIR/cert.pem" "$CERT_DIR/key.pem" "$BUILD/trace-$mode.txt" > "$BUILD/registrar-$mode.out" &
+      "$CHAIN" "$CERT_DIR/key.pem" "$BUILD/trace-$mode.txt" > "$BUILD/registrar-$mode.out" &
     REG_PID=$!
     sleep 0.7
     SSL_CERT_FILE="$CERT_DIR/cert.pem" "$BUILD/tests/bsk_test_registration" "$HOSTIP" 5081 "$mode"
@@ -158,6 +179,23 @@ if [[ "$(uname -s)" != Darwin ]]; then
   openssl x509 -in "$TRUST_DIR/leaf.pem" -outform der -out "$TRUST_DIR/leaf.der"
   openssl x509 -in "$TRUST_DIR/root.pem" -outform der -out "$TRUST_DIR/root.der"
   SSL_CERT_FILE="$TRUST_DIR/root.pem" "$BUILD/tests/bsk_test_trust" sip.example.com "$TRUST_DIR/leaf.der" "$TRUST_DIR/root.der"
+  openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes \
+    -keyout "$TRUST_DIR/pinned.key" -out "$TRUST_DIR/pinned.pem" -days 2 -subj "/CN=pinned.example.com" >/dev/null 2>&1
+  openssl x509 -in "$TRUST_DIR/pinned.pem" -outform der -out "$TRUST_DIR/pinned.der"
+  SSL_CERT_FILE="$TRUST_DIR/root.pem" "$BUILD/tests/bsk_test_trust" --unvisited sip.example.com \
+    "$TRUST_DIR/leaf.der" "$TRUST_DIR/root.der" "$TRUST_DIR/pinned.der"
+  mkdir -p "$TRUST_DIR/cacerts-empty" "$TRUST_DIR/cacerts" "$TRUST_DIR/cacerts-other"
+  ROOT_HASH="$(openssl x509 -in "$TRUST_DIR/root.pem" -noout -subject_hash_old)"
+  { cat "$TRUST_DIR/root.pem"; openssl x509 -in "$TRUST_DIR/root.pem" -noout -text; } > "$TRUST_DIR/cacerts/$ROOT_HASH.0"
+  cp "$TRUST_DIR/pinned.pem" "$TRUST_DIR/cacerts-other/$(openssl x509 -in "$TRUST_DIR/pinned.pem" -noout -subject_hash_old).0"
+  SSL_CERT_FILE=/dev/null SSL_CERT_DIR="$TRUST_DIR/none" "$BUILD/tests/bsk_test_trust" \
+    --ca-dir "$TRUST_DIR/cacerts-empty" --ca-dir "$TRUST_DIR/cacerts" sip.example.com "$TRUST_DIR/leaf.der"
+  if SSL_CERT_FILE=/dev/null SSL_CERT_DIR="$TRUST_DIR/none" "$BUILD/tests/bsk_test_trust" \
+    --ca-dir "$TRUST_DIR/cacerts-other" --ca-dir "$TRUST_DIR/cacerts" sip.example.com "$TRUST_DIR/leaf.der" 2>/dev/null; then
+    echo "trust: FAIL (a later CA directory was read although an earlier one held certificates)" >&2
+    exit 1
+  fi
+  echo "trust: PASS (CA directories in the Android layout; only the first directory with certificates is read)"
 fi
 
 echo "== two-process call (hold/resume, DTMF, mute, stats)"
@@ -170,6 +208,37 @@ done
 "$BUILD/tests/bsk_test_call" caller "$HOSTIP" 2> "$BUILD/caller.err"
 wait "$CALLEE_PID"
 cat "$BUILD/callee.out"
+
+echo "== session timer (RFC 4028): the caller refreshes every second, the call stays up for 6 seconds"
+BSK_TEST_VERBOSE=1 BSK_TEST_SESSION_EXPIRES=2 "$BUILD/tests/bsk_test_call" peer "$HOSTIP" > "$BUILD/callee-timer.out" 2> "$BUILD/callee-timer.err" &
+CALLEE_PID=$!
+for i in $(seq 1 50); do
+  grep -q READY "$BUILD/callee-timer.out" 2>/dev/null && break
+  sleep 0.1
+done
+BSK_TEST_VERBOSE=1 BSK_TEST_SESSION_EXPIRES=2 "$BUILD/tests/bsk_test_call" caller "$HOSTIP" 2> "$BUILD/caller-timer.err"
+wait "$CALLEE_PID"
+REQUESTS=$(grep -cE '^(INVITE|UPDATE) sip:bob@' "$BUILD/callee-timer.err" || true)
+REFRESHES=$((REQUESTS - 1))
+echo "refresh requests seen by the callee: $REFRESHES"
+if (( REFRESHES < 3 )); then
+  echo "expected at least 3 session refreshes" >&2
+  exit 1
+fi
+
+echo "== session timer: 422 below Min-SE, an INVITE with Require: timer is answered (scripted caller)"
+BSK_TEST_SESSION_EXPIRES=1800 BSK_TEST_SESSION_MIN_SE=90 "$BUILD/tests/bsk_test_call" peer "$HOSTIP" > "$BUILD/peer-timer.out" 2> "$BUILD/peer-timer.err" &
+CALLEE_PID=$!
+for i in $(seq 1 50); do
+  grep -q READY "$BUILD/peer-timer.out" 2>/dev/null && break
+  sleep 0.1
+done
+if ! python3 -I "$HERE/sip_peer.py" require-timer "$HOSTIP" 5070; then
+  kill "$CALLEE_PID" 2>/dev/null || true
+  exit 1
+fi
+wait "$CALLEE_PID"
+cat "$BUILD/peer-timer.out"
 
 echo "== call before the audio session is active (stays up, no microphone until activation)"
 "$BUILD/tests/bsk_test_call" peer "$HOSTIP" > "$BUILD/peer-inactive.out" 2> "$BUILD/peer-inactive.err" &
@@ -242,8 +311,8 @@ if [[ "$XB_RC" != 0 || "$XC_RC" != 0 ]]; then
   exit 1
 fi
 
-echo "== scripted peer: REFER while ringing, forged replace, calls into the engine from callbacks, teardown with a live call"
-for scenario in refer-ringing fake-replace reentrant remove-live stop-live; do
+echo "== scripted peer: REFER while ringing, forged replace, calls into the engine from callbacks, teardown with a live call, CANCEL with a Reason"
+for scenario in refer-ringing fake-replace reentrant remove-live stop-live cancel-elsewhere; do
   "$BUILD/tests/bsk_test_security" "$scenario" "$HOSTIP" > "$BUILD/security-$scenario.out" 2> "$BUILD/security-$scenario.err" &
   VICTIM_PID=$!
   for i in $(seq 1 50); do

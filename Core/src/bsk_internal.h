@@ -1,6 +1,7 @@
 #ifndef BSK_INTERNAL_H
 #define BSK_INTERNAL_H
 
+#include <stdatomic.h>
 #include <stdlib.h>
 #include <re.h>
 #define DEBUG_MODULE "bsk"
@@ -11,7 +12,14 @@
 #include "baresip_kit.h"
 #include "bsk_rate.h"
 
-#define BSK_VERSION_STRING "beta"
+#ifndef BSK_VERSION_STRING
+#define BSK_VERSION_STRING "0.0.0-dev"
+#endif
+#ifdef __ANDROID__
+#define BSK_DEFAULT_VIDEO_SOURCE "bskcamera"
+#else
+#define BSK_DEFAULT_VIDEO_SOURCE "bskcapture"
+#endif
 
 #define BSK_MAX_MODULES 32
 #define BSK_MAX_DTMF 64
@@ -30,7 +38,6 @@ struct bsk_account_ctx {
 	bool registered;
 	bool has_pending_cparams;
 	char pending_cparams[BSK_CPARAMS_MAX];
-	bool pending_reregister;
 	bool is_default;
 	bool tls;
 	bool answer_early_media;
@@ -50,6 +57,9 @@ struct bsk_call_ctx {
 	bsk_account_id account;
 	bsk_call_state state;
 	bsk_call_state steady_state;
+	bsk_call_end_reason end_reason;
+	bsk_call_id replaces;
+	bsk_call_id successor;
 	bool outgoing;
 	bool video;
 	bool local_hold;
@@ -87,6 +97,7 @@ struct bsk_call_ctx {
 	char hangup_reason[64];
 	struct tmr tmr_hangup;
 	struct tmr tmr_modify;
+	bool hold_music;
 };
 
 struct bsk_engine {
@@ -94,6 +105,11 @@ struct bsk_engine {
 	void *user;
 	bsk_log_handler logh;
 	void *log_user;
+	mtx_t log_mtx;
+	cnd_t log_cnd;
+	unsigned log_inflight;
+	unsigned log_inflight_old;
+	uint64_t log_gen;
 
 	char *user_agent;
 	char *instance_uuid;
@@ -145,7 +161,7 @@ struct bsk_engine {
 	int start_err;
 	bool start_done;
 	bool stop_done;
-	volatile int state;
+	_Atomic int state;
 	struct mqueue *mq;
 	bool mq_open;
 	struct list pending_ops;
@@ -158,6 +174,7 @@ struct bsk_engine {
 	bool replace_pending;
 	bool replace_confirmed;
 	bool replace_video;
+	bsk_call_id replaced_id;
 	const struct call *replace_call;
 	unsigned emit_depth;
 	const struct tls *tls_configured;
@@ -168,8 +185,12 @@ struct bsk_engine {
 	struct tmr tmr_rate;
 	bool video_adaptive;
 	uint32_t video_min_bitrate;
+	uint32_t session_expires;
+	uint32_t session_min_se;
 	bool audio_active;
-	bool suspended;
+	int16_t *hold_pcm;
+	size_t hold_samples;
+	uint32_t hold_srate;
 	bool stop_requested;
 	uint64_t t0_ms;
 	mtx_t video_mtx;
@@ -211,6 +232,9 @@ void bsk_log_init(bsk_engine *engine);
 void bsk_log_close(bsk_engine *engine);
 void bsk_log_emit(bsk_engine *engine, bsk_log_level level,
 		  bsk_log_domain domain, const char *line, size_t len);
+void bsk_log_set_handler(bsk_engine *engine, bsk_log_handler handler,
+			 void *user);
+bool bsk_log_has_handler(bsk_engine *engine);
 size_t bsk_redact(const char *in, size_t len, char *out, size_t out_len);
 void bsk_sip_trace_handler(bool tx, enum sip_transp tp, const struct sa *src,
 			   const struct sa *dst, const uint8_t *pkt, size_t len,
@@ -261,9 +285,24 @@ void bsk_message_close(bsk_engine *engine);
 
 bsk_engine *bsk_global_engine(void);
 
+#define BSK_HOLD_MODULE "bskhold"
+int bsk_hold_init(void);
+void bsk_hold_close(void);
+int bsk_hold_music_load(bsk_engine *engine, const char *path);
+bool bsk_call_hold_music(const bsk_engine *engine,
+			 const struct bsk_call_ctx *c);
+
 int bsk_tls_install(bsk_engine *engine, struct tls *tls);
+typedef void(bsk_trust_cert_h)(const uint8_t *der, size_t len, void *arg);
 bool bsk_trust_system(const char *host, const uint8_t *const *derv,
-		      const size_t *lenv, size_t count);
+		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
+		      void *arg);
+#if !defined(__APPLE__)
+bool bsk_trust_verify(const char *const *ca_dirs, size_t dir_count,
+		      const char *host, const uint8_t *const *derv,
+		      const size_t *lenv, size_t count, bsk_trust_cert_h *certh,
+		      void *arg);
+#endif
 
 int bsk_video_init(bsk_engine *engine);
 void bsk_video_close(bsk_engine *engine);

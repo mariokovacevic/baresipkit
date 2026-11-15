@@ -4,14 +4,20 @@ SIP voice and video calls on iOS, built on baresip.
 
 ## Overview
 
-> Important: BaresipKit is in beta. It has no release yet, and the API can still change.
+> Important: BaresipKit 1.0.0 is a release candidate. The public API is frozen for 1.0 and follows
+> Semantic Versioning; test it with your own devices and SIP server before relying on it.
 
 BaresipKit runs the baresip user agent on its own thread and exposes it as ``BaresipEngine``:
 an `async` API for accounts, calls and media, and an `AsyncStream` of ``BaresipEvent`` values
 for everything that happens afterwards. Optional modules connect the engine to the system:
 `BaresipKitAudio` for the audio session, `BaresipKitVideo` for video views, and
-`BaresipKitCallKit` and `BaresipKitPushKit` for the system call screen and VoIP pushes, and
+`BaresipKitCallKit` or `BaresipKitLiveCommunication` and `BaresipKitPushKit` for the system
+call screen and VoIP pushes, and
 `BaresipKitSwiftUI` for observable registration and call state.
+
+Enumerations such as ``BaresipEvent``, ``BaresipCallState`` and ``BaresipError/Code`` can gain
+cases in a minor release, so end a `switch` over them with `default:`. What Semantic Versioning
+covers is in [Stability](https://github.com/mariokovacevic/baresipkit/blob/main/Docs/STABILITY.md).
 
 ## Topics
 
@@ -61,6 +67,8 @@ for everything that happens afterwards. Optional modules connect the engine to t
 ### Network
 
 - <doc:NetworkChanges>
+- <doc:TLSAndCertificates>
+- <doc:NATTraversal>
 - ``BaresipTLSConfiguration``
 - ``BaresipCertificates``
 - ``BaresipCertificateError``
@@ -83,6 +91,7 @@ for everything that happens afterwards. Optional modules connect the engine to t
 ### System integration
 
 - <doc:CallKit>
+- <doc:LiveCommunicationKit>
 - <doc:PushKit>
 - <doc:SwiftUI>
 

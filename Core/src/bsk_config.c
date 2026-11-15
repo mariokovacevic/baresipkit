@@ -24,7 +24,7 @@ static int join_list(char *buf, size_t len, const char *const *v, size_t n)
 		if (!str_isset(v[i]) || !bsk_name_safe(v[i], "-./"))
 			return EINVAL;
 		if (used + need + 1 > len)
-			return EOVERFLOW;
+			return EINVAL;
 		(void)re_snprintf(buf + used, len - used, "%s%s",
 				  used ? "," : "", v[i]);
 		used += need;
@@ -207,7 +207,7 @@ static int copy_video(bsk_engine *e, const bsk_engine_config *c)
 	int err;
 
 	err = copy_name(e->video_src_mod, sizeof(e->video_src_mod),
-			video->source_module, "bskcapture");
+			video->source_module, BSK_DEFAULT_VIDEO_SOURCE);
 	err = bsk_first_error(err, copy_device(e->video_src_dev,
 					       sizeof(e->video_src_dev),
 					       video->source_device));
@@ -227,6 +227,42 @@ static int copy_video(bsk_engine *e, const bsk_engine_config *c)
 		e->video_min_bitrate = e->video_bitrate;
 
 	return 0;
+}
+
+
+static const char *const tls_keys[] = {
+	"sip_verify_server", "sip_cafile",        "sip_capath",
+	"sip_certificate",   "sip_verify_client",
+};
+
+
+const char *bsk_extra_config_tls_key(const char *extra)
+{
+	const char *line = extra;
+
+	while (line && *line) {
+		const char *key = line + strspn(line, " \t");
+		size_t len = strcspn(key, " \t\r\n");
+		size_t i;
+
+		for (i = 0; i < RE_ARRAY_SIZE(tls_keys); i++) {
+			if (len == strlen(tls_keys[i]) &&
+			    0 == strncmp(key, tls_keys[i], len))
+				return tls_keys[i];
+		}
+
+		line = strchr(line, '\n');
+		if (line)
+			++line;
+	}
+
+	return NULL;
+}
+
+
+uint32_t bsk_session_min_se(const bsk_engine_config *c)
+{
+	return c->session_min_se ? c->session_min_se : BSK_SESSION_TIMER_MIN;
 }
 
 
@@ -250,6 +286,7 @@ int bsk_engine_copy_config(bsk_engine *e, const bsk_engine_config *c)
 	err = bsk_first_error(err, copy_modules(e, c));
 	err = bsk_first_error(err, copy_audio(e, &c->audio));
 	err = bsk_first_error(err, copy_video(e, c));
+	err = bsk_first_error(err, bsk_hold_music_load(e, c->hold_music_path));
 	if (err)
 		return err;
 
@@ -263,6 +300,8 @@ int bsk_engine_copy_config(bsk_engine *e, const bsk_engine_config *c)
 	e->log_sip_trace = c->log_sip_trace;
 	e->ice_relay_only = c->ice_relay_only;
 	e->video_adaptive = c->video_adaptive_bitrate;
+	e->session_expires = c->session_expires;
+	e->session_min_se = bsk_session_min_se(c);
 
 	return 0;
 }
@@ -312,6 +351,8 @@ int bsk_engine_build_config(bsk_engine *e, struct mbuf *mb)
 			e->audio_channels, e->audio_channels);
 	err |= mbuf_printf(mb, "ice_policy\t\t%s\n",
 			   e->ice_relay_only ? "relay" : "all");
+	err |= mbuf_printf(mb, "sip_session_expires\t%u\nsip_min_se\t\t%u\n",
+			   e->session_expires, e->session_min_se);
 	if (str_isset(e->network_interface))
 		err |= mbuf_printf(mb, "net_interface\t\t%s\n",
 				   e->network_interface);
