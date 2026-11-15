@@ -6,6 +6,18 @@ ROOT="$(cd "$HERE/../.." && pwd)"
 PREFIX="${PREFIX:?set PREFIX to a host build prefix (Build/out/host/prefix)}"
 PREFIX="$(cd "$PREFIX" && pwd)"
 BUILD="${BUILD_DIR:-$ROOT/Build/out/host/core-tests}"
+
+show_failure_logs() {
+  local status=$?
+  if (( status != 0 )) && [[ -d "$BUILD" ]]; then
+    echo "--- exit status $status; the newest test logs in $BUILD:" >&2
+    while IFS= read -r log; do
+      echo "--- $log" >&2
+      tail -n 40 "$log" >&2
+    done < <(ls -t "$BUILD"/*.err "$BUILD"/*.out 2>/dev/null | head -n 4)
+  fi
+}
+trap show_failure_logs EXIT
 SANITIZE="${SANITIZE:-address,undefined}"
 HOSTIP="${HOSTIP:-$(hostname -I 2>/dev/null | awk '{print $1}')}"
 if [[ -z "$HOSTIP" && "$(uname -s)" == Darwin ]]; then
