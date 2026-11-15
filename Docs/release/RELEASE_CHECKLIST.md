@@ -42,7 +42,7 @@ after the merge.
 
 - [ ] CI green on `main` for iOS, Android and core. **Not verified**: only the branch has run.
   Owner, after the merge.
-- [ ] CI green on the branch at the release-candidate commit: see section 9.
+- [x] CI green on the branch: run 206 on `d72d29d`, all ten jobs (section 9).
 - [x] Lint and format (SwiftFormat, SwiftLint, clang-format, ktlint) run in CI with warnings as
   errors.
 - [x] Swift builds for the simulator, a device and macOS with `SWIFT_TREAT_WARNINGS_AS_ERRORS`;
@@ -129,7 +129,8 @@ See section 9 for the figures from the release-candidate CI run.
 
 - [x] Host core static library (full module set, Linux, debug with sanitizers): 48 705 808 bytes.
   Not representative of what ships.
-- [ ] XCFramework zip and AAR sizes from the release-candidate CI run: section 9.
+- [x] XCFramework artifact size recorded (section 9).
+- [ ] AAR sizes. **Not recorded**: CI does not upload the AARs; the release dry run does.
 - [ ] Engine cold start, registration time, push-to-incoming-call time, call setup time, CPU and
   battery. **Not measured**: needs a device (S-46).
 
@@ -160,11 +161,28 @@ See section 9 for the figures from the release-candidate CI run.
 
 ## 9. Release-candidate CI run
 
-Filled in from the CI run of the release-candidate commit.
+CI run 206 on `d72d29d`, the release-candidate commit plus two fixes (ktlint formatting and a
+stale DocC link) that run 205 on `07a65bd` had found. All ten jobs passed:
 
 | Job | Result |
 |---|---|
-| _to be filled_ | |
+| Lint and format check | passed |
+| Linux host build, ASan/UBSan, core tests, license check, 300 000 fuzz runs | passed |
+| Linux host build, ThreadSanitizer, core tests | passed |
+| macOS host build and core tests (with H.264 through VideoToolbox) | passed |
+| Integration against Asterisk and coturn (Docker) | passed |
+| macOS XCFramework, privacy manifest check, Swift package for simulator, device and macOS with warnings as errors, Swift API check, DocC with warnings as errors, XCTest on a simulator | passed |
+| Sample app build, UI test and screenshots | passed |
+| Android core, libraries, ABI check, JVM tests, ktlint | passed |
+| Android instrumented tests on an emulator, API 28 | passed |
+| Android instrumented tests on an emulator, API 34 | passed |
+
+Sizes from that run:
+
+- `BaresipKitCore.xcframework` CI artifact (zip of the default module set, all slices):
+  13 956 495 bytes.
+- AAR sizes: **not recorded**; the CI run does not upload the AARs. The release dry run
+  (`release-android.yml`) uploads them and records `SHA256SUMS`.
 
 ## 10. Real devices and live tests
 

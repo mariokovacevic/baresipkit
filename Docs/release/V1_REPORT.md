@@ -212,7 +212,7 @@ As in the release notes and [Docs/Limitations.md](../Limitations.md):
   fuzzing; the Android libraries compiled with their ABI checked; the JNI and TLS sources
   compiled with the NDK for both ABIs.
 - **CI:** everything else, including all Swift builds and tests, DocC, the Swift API check,
-  ktlint, the Android emulators, Asterisk integration, TSan and the macOS core. The result for
-  the release-candidate commit is in the checklist.
+  ktlint, the Android emulators, Asterisk integration, TSan and the macOS core. Run 206 on
+  `d72d29d` passed all ten jobs; the checklist lists them.
 - **Not available here:** a Swift toolchain, Docker, real devices. Nothing in this report claims
   a result from them that CI or the owner did not produce.
