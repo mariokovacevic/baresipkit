@@ -125,17 +125,29 @@ class ScreenshotTest {
     private fun find(selector: BySelector): UiObject2? = device.wait(Until.findObject(selector), TIMEOUT)
 
     private fun open(selector: BySelector): Boolean {
-        val target = find(selector) ?: return false
-        target.click()
+        if (!click(selector)) return false
         device.waitForIdle()
         Thread.sleep(SETTLE)
         return true
     }
 
     private fun openTab(name: String) {
-        find(By.res("tab.$name"))?.click()
+        click(By.res("tab.$name"))
         device.waitForIdle()
         Thread.sleep(SETTLE)
+    }
+
+    private fun click(selector: BySelector): Boolean {
+        repeat(MAXIMUM_CLICKS) {
+            val target = find(selector) ?: return false
+            try {
+                target.click()
+                return true
+            } catch (_: StaleObjectException) {
+                device.waitForIdle()
+            }
+        }
+        return false
     }
 
     private fun scrollTo(selector: BySelector) {
@@ -165,5 +177,6 @@ class ScreenshotTest {
         const val TIMEOUT = 20_000L
         const val SETTLE = 800L
         const val MAXIMUM_SCROLLS = 10
+        const val MAXIMUM_CLICKS = 3
     }
 }
