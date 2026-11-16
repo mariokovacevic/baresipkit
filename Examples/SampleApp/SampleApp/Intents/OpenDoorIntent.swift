@@ -60,7 +60,7 @@ struct OpenDoorIntent: AppIntent {
     }
 }
 
-struct ZvonoShortcuts: AppShortcutsProvider {
+struct SampleShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
         AppShortcut(intent: OpenDoorIntent(),
                     phrases: [

@@ -18,7 +18,7 @@ struct SetupView: View {
                     .font(.display(36, relativeTo: .largeTitle))
                     .foregroundStyle(Theme.text)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Zvono rings your phone when someone is at the door, shows you who it is and opens the door.")
+                Text("The app rings your phone when someone is at the door, shows you who it is and opens the door.")
                     .font(.body)
                     .foregroundStyle(Theme.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -59,7 +59,7 @@ struct SetupView: View {
 
                 Note(text: """
                 The password is kept in the Keychain of this phone. Certificates, NAT traversal and codecs are \
-                in Settings, Account. Next, Zvono asks for notifications, the microphone and the camera.
+                in Settings, Account. Next, the app asks for notifications, the microphone and the camera.
                 """)
             }
             .padding(.horizontal, 20)

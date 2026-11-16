@@ -33,7 +33,7 @@ targets:
     info:
       path: SampleApp/Info.plist
       properties:
-        CFBundleDisplayName: Zvono
+        CFBundleDisplayName: BaresipKit Sample
         UILaunchScreen:
           UIColorName: LaunchBackground
         UIAppFonts: [BarlowSemiCondensed-Medium.ttf, BarlowSemiCondensed-SemiBold.ttf]

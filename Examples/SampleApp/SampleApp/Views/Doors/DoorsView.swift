@@ -104,7 +104,7 @@ struct ReachabilityLine: View {
         case .registered:
             return model.settings.reachableInBackground
                 ? "Reachable. Rings arrive even when the app is closed."
-                : "Reachable while Zvono is open. Turn on push in Settings to get rings when it is closed."
+                : "Reachable while the app is open. Turn on push in Settings to get rings when it is closed."
         case .registering: return "Connecting to \(model.settings.domain.trimmed)…"
         case .unregistering: return "Signing out…"
         case .failed: return "Not connected\(model.registrationError.map { ": \($0)" } ?? "")"

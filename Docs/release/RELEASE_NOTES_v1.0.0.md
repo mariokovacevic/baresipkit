@@ -70,7 +70,7 @@ gh attestation verify BaresipKitCore.xcframework.zip --repo mariokovacevic/bares
 
 ## Known limitations
 
-- **Not tested on real Android devices.** The libraries and the Zvono sample run in CI, the JVM
+- **Not tested on real Android devices.** The libraries and the Android sample app run in CI, the JVM
   tests against the host core and the UI tests on emulators with API 28 and 34.
 - **FCM** has not been tried against Google's servers; the push path is tested with injected
   messages.

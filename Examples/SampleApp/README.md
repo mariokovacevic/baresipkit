@@ -1,6 +1,6 @@
 # Sample app
 
-A SwiftUI app built on the SDK, shown as Zvono, a video intercom for residents: dark, with brass
+A SwiftUI app built on the SDK, shown as a video intercom for residents: dark, with brass
 for ringing and opening doors, a bell with a keyhole as its icon, and five tabs.
 
 - **Doors**: the saved doors, each in one row with a small last picture from its camera (small,
@@ -73,7 +73,7 @@ for ringing and opening doors, a bell with a keyhole as its icon, and five tabs.
   called, video called or written to with one touch.
 - **Background**: with no call running, the app unregisters when it moves to the background and
   registers again when it is active, and unregisters when it terminates (`BaresipAppLifecycle`
-  with `.goOffline`); it is then not reachable by VoIP push. **Reachable when Zvono is closed**
+  with `.goOffline`); it is then not reachable by VoIP push. **Reachable when the app is closed**
   in Settings keeps the registration on the server instead (`.suspend`), so a VoIP push can
   announce a call.
 - **Ringing in the background** (prototype, see below): a call that rings with video while the
@@ -123,7 +123,7 @@ adds its own layers around it:
 
 To try it on a phone, use a local project (below) with your bundle identifiers, the Push
 Notifications capability and an app group registered for your team (`BSK_APP_GROUP`), turn on
-**Reachable when Zvono is closed** in Settings, and call the account from a device that offers
+**Reachable when the app is closed** in Settings, and call the account from a device that offers
 video while the app is in the background.
 
 `Tools/DoorStack` runs what this needs on your computer: a PBX, a push gateway and a door

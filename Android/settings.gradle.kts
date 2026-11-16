@@ -23,5 +23,5 @@ include(
     ":baresipkit-telecom",
     ":baresipkit-push",
     ":baresipkit-compose",
-    ":zvono",
+    ":sample",
 )

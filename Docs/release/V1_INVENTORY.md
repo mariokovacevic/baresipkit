@@ -47,7 +47,7 @@ Android/                  Gradle project
   baresipkit-telecom      Jetpack core-telecom adapter, push ledger
   baresipkit-push         Firebase Cloud Messaging Contact parameters and pushed calls
   baresipkit-compose      Compose state holders and video composables
-  zvono                   sample app (Compose)
+  sample                  sample app (Compose)
 Examples/SampleApp        iOS sample app (XcodeGen), with a notification content extension
 Tests/
   Core/                   C unit and multi-process tests (ASan/UBSan), scripted SIP peer
@@ -106,7 +106,7 @@ the published `1.0.0` was squashed, so changes cannot be listed commit by commit
 Changes relative to the published `1.0.0` tree (`git diff 7fc8970 HEAD`: 431 files,
 +39 034 / −2 896), grouped:
 
-- **Features:** Android support (6 libraries and the Zvono sample); LiveCommunicationKit adapter;
+- **Features:** Android support (6 libraries and the Android sample app); LiveCommunicationKit adapter;
   SIP session timers (RFC 4028, patches 0024/0025); answered/declined elsewhere (RFC 3326);
   music on hold (patch 0023); call UUID header, Recents redial, phone-number handles and action
   timeouts in the system-call adapters; messages during a call; DTMF-over-SIP-INFO marking (patch

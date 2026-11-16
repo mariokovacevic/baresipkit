@@ -5,7 +5,7 @@ first; this document records why the Android SDK exists, the decisions behind it
 built, and how the two SDKs match, type by type and test by test. To use either SDK, start with
 its setup guide: [iOS.md](iOS.md) or [Android.md](Android.md).
 
-Status: every phase below is done. The libraries and Zvono run in CI, the JVM tests against the
+Status: every phase below is done. The libraries and the Android sample app run in CI, the JVM tests against the
 host core and the UI tests on an emulator; nothing has run on a physical Android device yet.
 
 ## Why
@@ -25,7 +25,7 @@ patches and the tests are shared; only the layers that talk to the operating sys
 - The system integration Android has in place of CallKit, PushKit and the audio session: a
   self-managed `ConnectionService`, push through Firebase Cloud Messaging, audio focus and
   routing, and the pushed-call matching the iOS adapters share.
-- A Compose layer like `BaresipKitSwiftUI`, and the Zvono intercom sample for Android with the
+- A Compose layer like `BaresipKitSwiftUI`, and the intercom sample app for Android with the
   same design.
 - The same quality bar as iOS: CI, tests at every layer, documentation.
 
@@ -59,7 +59,7 @@ patches and the tests are shared; only the layers that talk to the operating sys
    `baresipkit-video` (rendering, camera), `baresipkit-telecom` (ConnectionService, the
    counterpart of CallKit and LiveCommunicationKit), `baresipkit-push` (FCM and push `Contact`
    parameters, the counterpart of PushKit), `baresipkit-compose` (the counterpart of
-   `BaresipKitSwiftUI`), and the sample app `zvono`.
+   `BaresipKitSwiftUI`), and the sample app `sample`.
 4. **Native build:** `PLATFORM=android Build/build-xcframework.sh` cross-compiles OpenSSL, Opus,
    libvpx, libre, baresip (with every patch) and the core with the NDK for `arm64-v8a` and
    `x86_64`, with the same pins and patches as for Apple. Gradle links the result into
@@ -114,7 +114,7 @@ Each phase ended green in CI and was usable on its own.
    same rules as the Swift versions (active call, held call resumed, controller actions, mute
    from the system, door-code DTMF replies, message peer matching), and `BaresipCallVideo` and
    `BaresipCameraPreview` composables. The Swift tests are ported one to one.
-8. **Zvono for Android.** The sample with the intercom design: doors, activity, keypad,
+8. **The Android sample app.** The sample with the intercom design: doors, activity, keypad,
    messages, settings, ring screen with preview, call screen with captions and chat, open door.
    UI test and screenshots in CI.
 9. **Documentation and release.** The README in `Android/` as the integration guide, API docs
@@ -135,11 +135,11 @@ apart from these platform differences:
 | `BaresipCertificateError` | `BaresipCertificateException` | Kotlin names failures as exceptions |
 | `BaresipRedialRequest(activity:)` | `BaresipRedialRequest.from(intent)` | iOS continues the app with a user activity from Recents, Android with a `sip:`/`tel:` intent |
 | `BaresipVideoFrame.pixelBuffer` | `BaresipVideoFrame.planes` | `CVPixelBuffer` exists only on Apple platforms |
-| `CallKit` settings `ringtoneSound`, `iconTemplateImageData`, `includesCallsInRecents`, `maximumCallsPerCallGroup` | none | Self-managed Telecom calls have no system ringer, icon, Recents or call groups; the app rings and shows the call itself (Zvono does) |
+| `CallKit` settings `ringtoneSound`, `iconTemplateImageData`, `includesCallsInRecents`, `maximumCallsPerCallGroup` | none | Self-managed Telecom calls have no system ringer, icon, Recents or call groups; the app rings and shows the call itself (the Android sample does) |
 | `BaresipAppLifecycle.disconnectsOnTermination` | none | Android does not tell an app reliably that it is being ended, so there is no moment to unregister; registrations expire on the server |
 
-Zvono mirrors the iOS sample screen by screen, including the git-ignored deployment profile
-(`AppProfile`, `Android/zvono/src/local/`), redial from outside the app, the ring picture in the
+The Android sample mirrors the iOS sample screen by screen, including the git-ignored deployment profile
+(`AppProfile`, `Android/sample/src/local/`), redial from outside the app, the ring picture in the
 notification (the iOS notification content extension), launcher shortcuts for doors (the iOS Open
 Door intent) and the call integration switch (the iOS call screen choice).
 
@@ -166,7 +166,7 @@ same behaviour through the Kotlin API:
 | `BaresipPhoneTests` (14), `BaresipPhoneControlTests` (16), `MessagePeerTests` (4) | `BaresipPhoneTest` (12), `BaresipPhoneControlTest` (18) | Ported one to one; snapshot cases merged |
 | `RedialRequestTests` (3) | `BaresipRedialRequestTest` (5), `RedialTest` (emulator) | Intents instead of user activities, with the trusted `CALL` rule |
 | Calls against a SIP peer (C suite, `test_call.c`) | `CallTest`, `OutgoingCallTest` (JVM against the host core) | Incoming and outgoing calls, hold, mute, DTMF in RTP and SIP INFO, messages, rejection |
-| Sample app UI test (`RegistrationCallUITests`) and screenshots | Zvono `RegistrationCallTest`, `ScreenshotTest`, `RedialTest`, 34 unit tests | TLS registration with a private CA, a wrong SPKI pin failing and clearing it, a call through the registrar to a peer on the host that runs until media flows, and every screen of the iOS sample. The emulator's NAT hides the phone's own address, so the Android call takes its media through a TURN relay (coturn) on the runner |
+| Sample app UI test (`RegistrationCallUITests`) and screenshots | Android sample `RegistrationCallTest`, `ScreenshotTest`, `RedialTest`, 34 unit tests | TLS registration with a private CA, a wrong SPKI pin failing and clearing it, a call through the registrar to a peer on the host that runs until media flows, and every screen of the iOS sample. The emulator's NAT hides the phone's own address, so the Android call takes its media through a TURN relay (coturn) on the runner |
 
 ## Open questions
 

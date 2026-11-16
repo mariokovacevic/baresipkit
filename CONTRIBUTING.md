@@ -77,7 +77,7 @@ cd Android && ./gradlew assembleDebug testDebugUnitTest ktlintCheck
 
 Kotlin follows ktlint's `ktlint_official` style with the settings in `.editorconfig`;
 `./gradlew ktlintFormat` fixes most of what `ktlintCheck` reports. The instrumented tests and
-Zvono's UI tests run on an emulator in CI.
+The Android sample's UI tests run on an emulator in CI.
 
 ## Format and lint
 

@@ -74,7 +74,7 @@ after the merge.
 - [x] Swift XCTest suite on an iOS simulator and on macOS.
 - [x] iOS sample app UI test on a simulator: TLS registration with a private CA, a wrong pin,
   a call to a host peer.
-- [x] Android JVM tests against the host core; instrumented tests and Zvono's UI and screenshot
+- [x] Android JVM tests against the host core; instrumented tests and the Android sample's UI and screenshot
   tests on emulators with API 28 and API 34.
 - [ ] Interop beyond Asterisk and coturn. **Not done**: no FreeSWITCH, Kamailio or media relay
   in the test setup; the README and `Docs/CompatibilityMatrix.md` claim only what was tested.
@@ -189,7 +189,7 @@ Sizes from that run:
   CallKit and LiveCommunicationKit, video both ways, a network change during a call. Owner.
 - [ ] Several calls from pushes in a row, and two calls at once, on a real device, including a
   server that sends a different Call-ID in the push than in the INVITE. Owner.
-- [ ] Android Zvono on a real device: registration over TLS to a server with a public-CA
+- [ ] The Android sample app on a real device: registration over TLS to a server with a public-CA
   certificate (the Android system CA fix), Telecom incoming and outgoing calls, FCM wake-up,
   Bluetooth headset, video both ways. Owner.
 - [ ] PushKit placeholder call with the app's own CallKit adapter when no call follows (S-13).

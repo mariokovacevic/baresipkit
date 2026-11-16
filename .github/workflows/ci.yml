@@ -176,7 +176,7 @@ jobs:
             -DBARESIP_INCLUDE_DIR="$P/include/baresip" -DBARESIP_LIBRARY="$P/lib/libbaresip.a" \
             -DBARESIPKIT_EXTRA_LIBS="$EXTRA" -DBARESIPKIT_BUILD_TESTS=ON >/dev/null
           cmake --build Build/out/host/core-tests -j4 --target bsk_test_call >/dev/null
-      - name: Start the TLS registrar and the call peer for Zvono
+      - name: Start the TLS registrar and the call peer for the Android sample
         run: |
           HOSTIP=$(hostname -I | awk '{print $1}')
           OUT="$PWD/Build/out/uitest"
@@ -208,15 +208,15 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           working-directory: Android
           script: |
-            ./gradlew --no-daemon :baresipkit:connectedDebugAndroidTest :zvono:installDebug :zvono:installDebugAndroidTest
-            adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.zvono.ScreenshotTest io.github.mariokovacevic.baresipkit.zvono.test/androidx.test.runner.AndroidJUnitRunner | tee screenshot-test.txt
-            mkdir -p build/screenshots && adb pull /sdcard/Android/data/io.github.mariokovacevic.baresipkit.zvono/files/screenshots build/screenshots
+            ./gradlew --no-daemon :baresipkit:connectedDebugAndroidTest :sample:installDebug :sample:installDebugAndroidTest
+            adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.sample.ScreenshotTest io.github.mariokovacevic.baresipkit.sample.test/androidx.test.runner.AndroidJUnitRunner | tee screenshot-test.txt
+            mkdir -p build/screenshots && adb pull /sdcard/Android/data/io.github.mariokovacevic.baresipkit.sample/files/screenshots build/screenshots
             grep -q "^OK (" screenshot-test.txt
-            adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.zvono.RedialTest io.github.mariokovacevic.baresipkit.zvono.test/androidx.test.runner.AndroidJUnitRunner | tee redial-test.txt
+            adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.sample.RedialTest io.github.mariokovacevic.baresipkit.sample.test/androidx.test.runner.AndroidJUnitRunner | tee redial-test.txt
             grep -q "^OK (" redial-test.txt
-            timeout 900 adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.zvono.RegistrationCallTest -e host "$UITEST_HOST" -e caB64 "$UITEST_CA_B64" io.github.mariokovacevic.baresipkit.zvono.test/androidx.test.runner.AndroidJUnitRunner | tee registration-test.txt
-            mkdir -p build/registration && adb pull /sdcard/Android/data/io.github.mariokovacevic.baresipkit.zvono/files/screenshots build/registration || true
-            timeout 60 adb exec-out "run-as io.github.mariokovacevic.baresipkit.zvono sh -c 'cat files/Logs/*'" < /dev/null > build/registration/zvono.log || true
+            timeout 900 adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.sample.RegistrationCallTest -e host "$UITEST_HOST" -e caB64 "$UITEST_CA_B64" io.github.mariokovacevic.baresipkit.sample.test/androidx.test.runner.AndroidJUnitRunner | tee registration-test.txt
+            mkdir -p build/registration && adb pull /sdcard/Android/data/io.github.mariokovacevic.baresipkit.sample/files/screenshots build/registration || true
+            timeout 60 adb exec-out "run-as io.github.mariokovacevic.baresipkit.sample sh -c 'cat files/Logs/*'" < /dev/null > build/registration/sample.log || true
             grep -q "^OK (" registration-test.txt
       - name: Show the registrar and peer logs
         if: failure()
@@ -225,7 +225,7 @@ jobs:
           echo "--- registrar"; tail -n 80 Build/out/uitest/registrar-trace.txt || true
           echo "--- coturn"; grep -iE "session|alloc|permission|channel|refused|denied|error" Build/out/uitest/coturn.out | tail -n 60 || true
           echo "--- peer ice"; grep -iE "ice|turn|candidate|stream|rtp" Build/out/uitest/peer.err | tail -n 60 || true
-          echo "--- zvono"; grep -iE "ice|turn|candidate|stream|rtp|call" Android/build/registration/zvono.log | tail -n 80 || true
+          echo "--- sample"; grep -iE "ice|turn|candidate|stream|rtp|call" Android/build/registration/sample.log | tail -n 80 || true
       - name: Upload instrumented test reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -234,7 +234,7 @@ jobs:
           path: |
             Android/*/build/reports/androidTests
             Android/screenshot-test.txt
-      - name: Upload Zvono screenshots
+      - name: Upload the Android sample screenshots
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:

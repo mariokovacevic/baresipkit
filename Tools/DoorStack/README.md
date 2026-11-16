@@ -91,7 +91,7 @@ A resident without a push token is rung at once; one without a registration gets
 1. Start the stack and put `state/asterisk/keys/asterisk.pem` on the phone (AirDrop or Files).
 2. In the sample's setup screen, or in Settings, Account: the computer's address as server,
    user `100`, the printed password and TLS. Import the certificate as server CA in Account.
-3. In Settings turn on **Reachable when Zvono is closed**, and in Account set the registration
+3. In Settings turn on **Reachable when the app is closed**, and in Account set the registration
    time to a day or more, so the registration outlives the time the app is suspended. Add a door
    with the SIP user `door1` and the code 1234 to get its picture and the Open door action.
 4. Point the gateway at Apple with a token signing key from your developer account:

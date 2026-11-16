@@ -6,6 +6,15 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The sample apps no longer carry a product name of their own. The Android sample is now
+  `Android/sample`, with the Gradle project `:sample`, the package and
+  application ID `io.github.mariokovacevic.baresipkit.sample` and the name "BaresipKit Sample",
+  as on iOS. A local deployment profile now goes in `Android/sample/src/local/` with the package
+  `io.github.mariokovacevic.baresipkit.sample.local`. Both apps say "the app" in their texts;
+  the libraries are unchanged.
+
 ## [1.0.0-rc.1] - 2026-11-14
 
 Release candidate for 1.0.0, the first stable release. The public Swift and Kotlin API is frozen
@@ -212,7 +221,7 @@ and follows [Docs/STABILITY.md](Docs/STABILITY.md).
 - `Tools/DoorStack`: a PBX, a push gateway and a door station simulator in Docker, for trying the
   sample app as a video intercom. A ring wakes a suspended phone with a VoIP push and reaches it
   once it has registered again; a scripted phone checks the whole path without Apple's servers.
-- The sample app looks like a video intercom, Zvono: a dark design with brass for ringing and
+- The sample app looks like a video intercom: a dark design with brass for ringing and
   opening, a bell with a keyhole as its icon and logo, Barlow Semi Condensed for titles, and the
   tabs Doors, Activity, Keypad, Messages and Settings. Saved doors carry their own SIP user,
   code, camera and opening options; Open calls the door, sends the code and hangs up, and the

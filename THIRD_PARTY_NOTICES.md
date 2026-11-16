@@ -61,8 +61,8 @@ licensing position.
 ## Barlow Semi Condensed (sample apps only)
 
 The sample apps bundle two styles of Barlow Semi Condensed: `Examples/SampleApp/SampleApp/Fonts`
-on iOS and `Android/zvono/src/main/res/font` on Android. They are not part of the libraries.
+on iOS and `Android/sample/src/main/res/font` on Android. They are not part of the libraries.
 
 Copyright 2017 The Barlow Project Authors (https://github.com/jpt/barlow). Licensed under the
 SIL Open Font License, Version 1.1; the full text is in
-`Examples/SampleApp/SampleApp/Fonts/OFL.txt` and `Android/zvono/FONTS-OFL.txt`.
+`Examples/SampleApp/SampleApp/Fonts/OFL.txt` and `Android/sample/FONTS-OFL.txt`.

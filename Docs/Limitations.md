@@ -20,6 +20,6 @@
 
 macOS: the XCFramework has an Apple silicon slice (`macos-arm64`, macOS 13 or later); there is no Intel slice yet. Audio goes through baresip's `audiounit` module, which uses the HAL output unit on macOS, so there is no echo cancellation; use headphones. `BaresipAudioSessionController`, the CallKit and PushKit adapters and `BaresipVideoView` are iOS only; on macOS, render frames from `BaresipVideoFrameRelay`. CI builds the package for macOS and runs the XCTest suite there, but no real call has been made on a Mac.
 
-Android: the core and its limits above are shared. The libraries and Zvono run in CI, the JVM tests against the host core and the UI tests on an emulator; nothing has run on a physical Android device yet. What only a device can show is listed in [Platforms.md](Platforms.md#open-questions).
+Android: the core and its limits above are shared. The libraries and the Android sample app run in CI, the JVM tests against the host core and the UI tests on an emulator; nothing has run on a physical Android device yet. What only a device can show is listed in [Platforms.md](Platforms.md#open-questions).
 
 Applied upstream patches (all in `Patches/`, to be proposed upstream): Contact URI parameters API, avcapture CMake gate and iOS guards, libre server-verification handler, ICE module events, starting media after ICE connects with optional SRTP, TURN over TCP/TLS, ICE restart, video bitrate, video filter directions, NAT pinhole for receive-only audio, picture updates over SIP INFO, avcapture for iOS 16.

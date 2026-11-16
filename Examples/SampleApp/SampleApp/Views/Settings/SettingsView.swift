@@ -13,7 +13,7 @@ struct SettingsView: View {
                 }
                 TitledSection(title: "When a door rings") {
                     Card {
-                        ToggleRow(title: "Reachable when Zvono is closed",
+                        ToggleRow(title: "Reachable when the app is closed",
                                   detail: "Stays registered, so a push wakes the app for a ring",
                                   isOn: $model.settings.reachableInBackground)
                         RowDivider()

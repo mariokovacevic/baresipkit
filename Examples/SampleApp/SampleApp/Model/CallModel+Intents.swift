@@ -7,7 +7,7 @@ enum DoorIntentError: Error, CustomLocalizedStringResourceConvertible {
     var localizedStringResource: LocalizedStringResource {
         switch self {
         case .unknownDoor: "That door has no code to open it."
-        case .notRegistered: "Zvono could not reach your server."
+        case .notRegistered: "The app could not reach your server."
         }
     }
 }

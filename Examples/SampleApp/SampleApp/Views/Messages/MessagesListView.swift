@@ -36,7 +36,7 @@ struct MessagesListView: View {
                 }
                 Note(text: """
                 Messages go through your intercom server, to people and desks on it. They arrive while \
-                Zvono is open or reachable.
+                the app is open or reachable.
                 """)
             }
             .padding(16)

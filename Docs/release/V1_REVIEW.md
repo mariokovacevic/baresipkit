@@ -556,7 +556,7 @@ These are owner decisions. Several Blockers depend on them.
   - The trust test skips silently without network.
   - DoorStack clones without commit verification.
   - coturn is pinned by tag, not digest.
-- **L-07 Private 10.x addresses in two Zvono tests**; prefer RFC 5737.
+- **L-07 Private 10.x addresses in two Android sample tests**; prefer RFC 5737.
 - **L-08 Process artifacts.**
   - `Docs/release/` names the review branch.
   - Commit trailers carry session URLs.

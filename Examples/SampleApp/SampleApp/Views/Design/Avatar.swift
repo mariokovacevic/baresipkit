@@ -74,6 +74,6 @@ struct LogoMark: View {
             .foregroundStyle(Theme.onBrass)
             .frame(width: size, height: size)
             .background(Theme.brass, in: RoundedRectangle(cornerRadius: size * 0.29, style: .continuous))
-            .accessibilityLabel("Zvono")
+            .accessibilityLabel("BaresipKit Sample")
     }
 }

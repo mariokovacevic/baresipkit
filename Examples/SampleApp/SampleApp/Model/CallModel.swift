@@ -71,7 +71,7 @@ final class CallModel: ObservableObject {
         didSet {
             if doors != oldValue {
                 SettingsStore.doors = doors
-                ZvonoShortcuts.updateAppShortcutParameters()
+                SampleShortcuts.updateAppShortcutParameters()
             }
         }
     }
@@ -225,7 +225,7 @@ final class CallModel: ObservableObject {
 
     func start() async {
         guard engine == nil else { return }
-        ZvonoShortcuts.updateAppShortcutParameters()
+        SampleShortcuts.updateAppShortcutParameters()
         #if DEBUG
             if uiTest {
                 prepareUITest()
