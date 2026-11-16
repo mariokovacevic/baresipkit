@@ -11,10 +11,10 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import io.github.mariokovacevic.baresipkit.telecom.BaresipRedialRequest
 import io.github.mariokovacevic.baresipkit.sample.model.CallModel
 import io.github.mariokovacevic.baresipkit.sample.model.DEMO_HOST
 import io.github.mariokovacevic.baresipkit.sample.model.seedDemo
+import io.github.mariokovacevic.baresipkit.telecom.BaresipRedialRequest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull

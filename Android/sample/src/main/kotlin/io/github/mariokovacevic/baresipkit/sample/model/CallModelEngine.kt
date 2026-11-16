@@ -17,10 +17,10 @@ import io.github.mariokovacevic.baresipkit.BaresipTurnServer
 import io.github.mariokovacevic.baresipkit.audio.BaresipAudioController
 import io.github.mariokovacevic.baresipkit.compose.BaresipPhone
 import io.github.mariokovacevic.baresipkit.push.BaresipPushAdapter
+import io.github.mariokovacevic.baresipkit.sample.R
 import io.github.mariokovacevic.baresipkit.telecom.BaresipTelecomAdapter
 import io.github.mariokovacevic.baresipkit.telecom.BaresipTelecomCall
 import io.github.mariokovacevic.baresipkit.telecom.BaresipTelecomConfiguration
-import io.github.mariokovacevic.baresipkit.sample.R
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

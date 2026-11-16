@@ -15,7 +15,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.lifecycleScope
-import io.github.mariokovacevic.baresipkit.telecom.BaresipRedialRequest
 import io.github.mariokovacevic.baresipkit.sample.model.AppTab
 import io.github.mariokovacevic.baresipkit.sample.model.OwnerCheck
 import io.github.mariokovacevic.baresipkit.sample.model.answer
@@ -26,6 +25,7 @@ import io.github.mariokovacevic.baresipkit.sample.model.openRingingDoor
 import io.github.mariokovacevic.baresipkit.sample.model.redial
 import io.github.mariokovacevic.baresipkit.sample.ui.SampleApp
 import io.github.mariokovacevic.baresipkit.sample.ui.SampleTheme
+import io.github.mariokovacevic.baresipkit.telecom.BaresipRedialRequest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume

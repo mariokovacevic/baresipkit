@@ -7,7 +7,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import io.github.mariokovacevic.baresipkit.BaresipEngine
 import io.github.mariokovacevic.baresipkit.BaresipFileLog
-import io.github.mariokovacevic.baresipkit.video.BaresipCamera
 import io.github.mariokovacevic.baresipkit.sample.model.CallModel
 import io.github.mariokovacevic.baresipkit.sample.model.PushReceiver
 import io.github.mariokovacevic.baresipkit.sample.model.SettingsStore
@@ -16,6 +15,7 @@ import io.github.mariokovacevic.baresipkit.sample.model.movedToForeground
 import io.github.mariokovacevic.baresipkit.sample.system.AndroidCallSystem
 import io.github.mariokovacevic.baresipkit.sample.system.KeystoreSecretStore
 import io.github.mariokovacevic.baresipkit.sample.system.PreferencesStore
+import io.github.mariokovacevic.baresipkit.video.BaresipCamera
 import java.io.File
 
 class SampleApplication : Application() {

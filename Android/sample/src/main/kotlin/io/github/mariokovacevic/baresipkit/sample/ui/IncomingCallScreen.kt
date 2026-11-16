@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.mariokovacevic.baresipkit.compose.BaresipCallVideo
-import io.github.mariokovacevic.baresipkit.video.BaresipVideoView
 import io.github.mariokovacevic.baresipkit.sample.model.CallModel
 import io.github.mariokovacevic.baresipkit.sample.model.CallPreviewFeed
 import io.github.mariokovacevic.baresipkit.sample.model.CallRow
@@ -60,6 +59,7 @@ import io.github.mariokovacevic.baresipkit.sample.model.phoneCall
 import io.github.mariokovacevic.baresipkit.sample.model.preview
 import io.github.mariokovacevic.baresipkit.sample.model.reject
 import io.github.mariokovacevic.baresipkit.sample.model.ringingDoor
+import io.github.mariokovacevic.baresipkit.video.BaresipVideoView
 
 @Composable
 fun IncomingCallScreen(
