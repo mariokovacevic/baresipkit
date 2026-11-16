@@ -54,7 +54,7 @@ Tests/Integration/run_integration.sh
 The sample app:
 
 ```bash
-cd Examples/SampleApp && xcodegen generate && open BaresipKitSample.xcodeproj
+cd Examples/iOS && xcodegen generate && open BaresipKitSample.xcodeproj
 ```
 
 Tests that need a physical iPhone are listed in [Docs/DeviceTesting.md](Docs/DeviceTesting.md).
@@ -77,7 +77,7 @@ cd Android && ./gradlew assembleDebug testDebugUnitTest ktlintCheck
 
 Kotlin follows ktlint's `ktlint_official` style with the settings in `.editorconfig`;
 `./gradlew ktlintFormat` fixes most of what `ktlintCheck` reports. The instrumented tests and
-Zvono's UI tests run on an emulator in CI.
+The Android sample's UI tests run on an emulator in CI.
 
 ## Format and lint
 

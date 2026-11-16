@@ -37,7 +37,7 @@ makes other incompatible changes, or raises a minimum OS version.
   any release. Do not parse them.
 - **The baresip module names and the `extraConfiguration` / `extraConfig` text** passed to the
   engine. They depend on the bundled baresip version, which a minor release may update.
-- **The sample apps** (`Examples/SampleApp`, `Android/zvono`) and everything in `Tools/`.
+- **The sample apps** (`Examples/iOS`, `Examples/Android`) and everything in `Tools/`.
 - **Exact timing**, for example how long a timeout takes or how often statistics arrive, unless
   the documentation states it.
 - **Creating output types yourself.** Types that the SDK returns or emits, such as

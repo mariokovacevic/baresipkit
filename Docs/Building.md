@@ -114,8 +114,8 @@ Builds a libFuzzer harness over the parsing code the facade owns (Contact parame
 |---|---|
 | `lint` | SwiftFormat, SwiftLint and clang-format |
 | `linux-core` | the host build under ASan/UBSan, the core test suite and the fuzzers |
-| `android` | the core for both Android ABIs, the Kotlin libraries, ktlint, the JVM tests against the host core, and Zvono |
-| `android-emulator` | the instrumented tests and Zvono's UI tests and screenshots on an Android emulator, against a TLS registrar, a SIP peer and coturn on the runner |
+| `android` | the core for both Android ABIs, the Kotlin libraries, ktlint, the JVM tests against the host core, and the Android sample app |
+| `android-emulator` | the instrumented tests and the Android sample's UI tests and screenshots on an Android emulator, against a TLS registrar, a SIP peer and coturn on the runner |
 | `macos` | the XCFramework, the Swift package for iOS, the simulator and macOS, its tests on macOS and a simulator, and the documentation |
 | `macos-core` | the host build and the core test suite on macOS |
 | `sample-app` | the sample app for the simulator and a device, its UI test and its screenshots |

@@ -24,7 +24,7 @@ The Kotlin API reference is generated with Dokka (`./gradlew :dokkaGeneratePubli
 | [DeviceTesting.md](DeviceTesting.md) | Swift: the manual test on a physical iPhone: camera, real audio, CallKit, PushKit and a real SIP server |
 | [Building.md](Building.md) | the XCFramework, module sets, the host build and CI; the Android build is in [Android.md](Android.md#building-from-source) |
 | [Releasing.md](Releasing.md) | releasing the Swift package: version numbering, the changelog process and the XCFramework checksum; Android releases are in [Android.md](Android.md#releasing) |
-| [Android/zvono/README.md](../Android/zvono/README.md) | Kotlin: Zvono for Android and its local deployment profile |
+| [Examples/README.md](../Examples/README.md) | the sample apps for iOS ([Examples/iOS](../Examples/iOS/README.md)) and Android ([Examples/Android](../Examples/Android/README.md)), and their local deployment profiles |
 
 ## Both platforms
 

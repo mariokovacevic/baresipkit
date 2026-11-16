@@ -23,5 +23,7 @@ include(
     ":baresipkit-telecom",
     ":baresipkit-push",
     ":baresipkit-compose",
-    ":zvono",
+    ":sample",
 )
+
+project(":sample").projectDir = file("../Examples/Android")

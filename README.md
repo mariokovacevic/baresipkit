@@ -28,12 +28,12 @@ lock screen" with a few dozen lines of code.
 > devices and SIP servers. Test it with your own setup before relying on it.
 
 <p align="center">
-  <img src="Docs/Images/doors.png" width="200" alt="Zvono's Doors screen: the front door with its last picture and an Open button, the garage gate, and today's rings">
+  <img src="Docs/Images/doors.png" width="200" alt="The sample app's Doors screen: the front door with its last picture and an Open button, the garage gate, and today's rings">
   <img src="Docs/Images/ring.png" width="200" alt="A ring from the front door, with Decline, Open door and Answer">
   <img src="Docs/Images/call.png" width="200" alt="A call with the front door: mute, speaker, camera, keypad, hold and the Open door button">
   <img src="Docs/Images/keypad.png" width="200" alt="The keypad with saved contacts to call, video call or message">
 </p>
-<p align="center"><sub>Zvono, the sample app: an intercom built on BaresipKit, here on iOS, from CI's simulator test. <a href="Android/zvono/README.md">Zvono for Android</a> has the same screens.</sub></p>
+<p align="center"><sub>The sample app: an intercom built on BaresipKit, here on iOS, from CI's simulator test. <a href="Examples/Android/README.md">The Android sample</a> has the same screens.</sub></p>
 
 ## Contents
 
@@ -54,8 +54,8 @@ setup recipes, an app checklist and the sample app.
 
 | Platform | Language and tools | Setup guide | Sample app |
 |---|---|---|---|
-| iOS 16 or later; macOS 13 or later on Apple silicon (partial) | Swift 6, Xcode 16, Swift Package Manager | [iOS and macOS setup](Docs/iOS.md) | [Examples/SampleApp](Examples/SampleApp) |
-| Android 9 or later (API 28) | Kotlin, coroutines, Gradle | [Android setup](Docs/Android.md) | [Android/zvono](Android/zvono/README.md) |
+| iOS 16 or later; macOS 13 or later on Apple silicon (partial) | Swift 6, Xcode 16, Swift Package Manager | [iOS and macOS setup](Docs/iOS.md) | [Examples/iOS](Examples/iOS) |
+| Android 9 or later (API 28) | Kotlin, coroutines, Gradle | [Android setup](Docs/Android.md) | [Examples/Android](Examples/Android/README.md) |
 
 Install a released version with Swift Package Manager:
 
@@ -181,11 +181,11 @@ Package.swift   Swift package; the C core is the BaresipKitCore binary target
 Core/           the C facade (include/baresip_kit.h, src/), built into the XCFramework and the Android libraries
 Sources/        BaresipKitBridge (C helpers), BaresipKit (Swift API) and the adapters
 Tests/          BaresipKitTests (XCTest), Core (C tests), Fuzz, Integration (Asterisk and coturn)
-Examples/       the iOS sample app (XcodeGen project)
+Examples/       the sample apps: iOS/ (SwiftUI, XcodeGen project) and Android/ (Compose, built by Android/)
 Build/          pinned versions, module sets and the build script for the XCFramework and the Android core
 Patches/        small patches applied to the pinned baresip and libre sources
 Scripts/        lint.sh and format.sh
-Android/        the Android libraries (Kotlin over JNI) and the Android sample, a Gradle project
+Android/        the Android libraries (Kotlin over JNI), a Gradle project that also builds Examples/Android
 Docs/           the setup guides for both platforms, the C ABI reference and research notes
 Tools/          the Contact parameter proof, test registrars and the door stack
 ```

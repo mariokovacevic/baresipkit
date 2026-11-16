@@ -60,7 +60,7 @@ These are owner decisions. Several Blockers depend on them.
 ### B-02 Local refs carry a company name and a work email address
 - **Location:**
   - Local tag `v1.0.0`: `.mailmap`, `Docs/CLEANUP_AUDIT.md`.
-  - Local branch `live-activity`: `Examples/SampleApp/README.md`,
+  - Local branch `live-activity`: `Examples/iOS/README.md`,
     `Tools/DoorStack/asterisk/pjsip.conf`.
   - 342 unreachable commits in this clone.
 - **Checked:** `main`, both remote branches and the remote tag `1.0.0` are clean (word-boundary
@@ -78,7 +78,7 @@ These are owner decisions. Several Blockers depend on them.
     `Core/include/baresip_kit.h:240`, `Core/src/bsk_hold.c:7`,
     `Sources/BaresipKit/Media/BaresipAudioConfiguration.swift:27`,
     `Sources/BaresipKit/BaresipKit.docc/AudioSession.md:97`, `CHANGELOG.md:58`,
-    `Examples/SampleApp/SampleApp/Model/CallModel+Engine.swift:24`,
+    `Examples/iOS/SampleApp/Model/CallModel+Engine.swift:24`,
     `Patches/0023-baresip-stream-send-on-hold.patch:8`, `Patches/README.md:35`.
   - A vendor's SIP server named as the origin of the push parameter format:
     `Sources/BaresipKitPushKit/BaresipPushTokens.swift:6`, `Docs/iOS.md:259`,
@@ -556,7 +556,7 @@ These are owner decisions. Several Blockers depend on them.
   - The trust test skips silently without network.
   - DoorStack clones without commit verification.
   - coturn is pinned by tag, not digest.
-- **L-07 Private 10.x addresses in two Zvono tests**; prefer RFC 5737.
+- **L-07 Private 10.x addresses in two Android sample tests**; prefer RFC 5737.
 - **L-08 Process artifacts.**
   - `Docs/release/` names the review branch.
   - Commit trailers carry session URLs.

@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 STATE="$ROOT/Tools/DoorStack/state"
-APP_DIR="$ROOT/Examples/SampleApp"
+APP_DIR="$ROOT/Examples/iOS"
 DERIVED="$ROOT/Build/out/simulators"
 BUNDLE=com.example.BaresipKitSample
 COUNT="${COUNT:-2}"

@@ -101,7 +101,7 @@ for _ in $(seq 1 50); do
   sleep 0.2
 done
 
-cd Examples/SampleApp
+cd Examples/iOS
 xcodegen generate >/dev/null
 echo "Running the screenshot test on $SIM_UDID with the registrar at $HOSTIP:5082"
 TEST_RUNNER_BSK_UITEST_HOST="$HOSTIP" TEST_RUNNER_BSK_UITEST_PORT=5082 \

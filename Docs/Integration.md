@@ -194,7 +194,7 @@ ICE restarts on network changes: when `networkDidChange(updateCalls: true)` find
 
 `BaresipKit` ships a privacy manifest (`Sources/BaresipKit/Resources/PrivacyInfo.xcprivacy`) that Xcode merges into the app's privacy report. It declares no tracking and no collected data, and one required-reason API category: file timestamps (`stat` and `fstat`, used by libre, baresip's uuid module and OpenSSL for files inside the app container), with reason `C617.1`. The SDK uses no boot time, disk space, keyboard or user defaults APIs.
 
-Calls carry the user's voice, video and phone numbers to the SIP server the app configures. Whether that counts as collected data depends on the app and its server, so the app declares it in its own manifest and App Store privacy details, together with its own API use. The sample app's manifest (`Examples/SampleApp/SampleApp/App/PrivacyInfo.xcprivacy`) adds `UserDefaults` with reason `CA92.1`.
+Calls carry the user's voice, video and phone numbers to the SIP server the app configures. Whether that counts as collected data depends on the app and its server, so the app declares it in its own manifest and App Store privacy details, together with its own API use. The sample app's manifest (`Examples/iOS/SampleApp/App/PrivacyInfo.xcprivacy`) adds `UserDefaults` with reason `CA92.1`.
 
 ## Logging
 

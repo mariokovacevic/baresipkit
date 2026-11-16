@@ -32,16 +32,15 @@ Legend:
   cache, Swift destroy on the engine thread, CA store reloads); 5 were declined with reasons in
   `V1_REPORT.md`.
 - [x] Every behaviour change is listed in `CHANGELOG.md`.
-- [ ] Branch merged to `main` through a pull request. Not done: no pull request has been opened
-  yet. Owner.
+- [x] Branch merged to `main` through a pull request: mariokovacevic/baresipkit#1, squash
+  merged on 2026-11-15 as `305e010`, the second commit of `main`.
 
 ## 3. CI on `main`
 
 The run numbers below are for the release-candidate branch. They have to be repeated on `main`
 after the merge.
 
-- [ ] CI green on `main` for iOS, Android and core. **Not verified**: only the branch has run.
-  Owner, after the merge.
+- [x] CI green on `main` for iOS, Android and core: run 213 on `305e010` passed all ten jobs.
 - [x] CI green on the branch: run 206 on `d72d29d`, all ten jobs (section 9).
 - [x] Lint and format (SwiftFormat, SwiftLint, clang-format, ktlint) run in CI with warnings as
   errors.
@@ -75,7 +74,7 @@ after the merge.
 - [x] Swift XCTest suite on an iOS simulator and on macOS.
 - [x] iOS sample app UI test on a simulator: TLS registration with a private CA, a wrong pin,
   a call to a host peer.
-- [x] Android JVM tests against the host core; instrumented tests and Zvono's UI and screenshot
+- [x] Android JVM tests against the host core; instrumented tests and the Android sample's UI and screenshot
   tests on emulators with API 28 and API 34.
 - [ ] Interop beyond Asterisk and coturn. **Not done**: no FreeSWITCH, Kamailio or media relay
   in the test setup; the README and `Docs/CompatibilityMatrix.md` claim only what was tested.
@@ -118,8 +117,8 @@ Servers and devices used so far:
   **Not verified** from here. Owner.
 - [ ] Private vulnerability reporting is enabled on the repository, as `SECURITY.md` relies on it.
   **Not verified** from here. Owner.
-- [ ] Withdraw the old `1.0.0` GitHub release and tag (D1), only after explicit confirmation,
-  right before the release. Owner.
+- [x] Withdraw the old `1.0.0` GitHub release and tag (D1): done by the owner on 2026-11-15; the
+  repository has no releases and no tags.
 - [ ] Maven Central namespace `io.github.mariokovacevic` verified, and the signing key and
   credentials stored as repository secrets. **Not verified** from here. Owner.
 
@@ -190,7 +189,7 @@ Sizes from that run:
   CallKit and LiveCommunicationKit, video both ways, a network change during a call. Owner.
 - [ ] Several calls from pushes in a row, and two calls at once, on a real device, including a
   server that sends a different Call-ID in the push than in the INVITE. Owner.
-- [ ] Android Zvono on a real device: registration over TLS to a server with a public-CA
+- [ ] The Android sample app on a real device: registration over TLS to a server with a public-CA
   certificate (the Android system CA fix), Telecom incoming and outgoing calls, FCM wake-up,
   Bluetooth headset, video both ways. Owner.
 - [ ] PushKit placeholder call with the app's own CallKit adapter when no call follows (S-13).
@@ -199,11 +198,11 @@ Sizes from that run:
 
 ## 11. After approval only
 
-Not started; each step needs the owner's explicit go.
+Each step needs the owner's explicit go. Steps 1 and 3 are done.
 
-1. Merge to `main` and see CI green there.
+1. ~~Merge to `main` and see CI green there.~~ Done (#1, `305e010`, CI run 213).
 2. Fresh clone; dry runs of both release workflows.
-3. Withdraw the old `1.0.0` release and tag.
+3. ~~Withdraw the old `1.0.0` release and tag.~~ Done.
 4. Tag `v1.0.0-rc.1`, or go straight to `v1.0.0` after the device tests.
 5. Publish the XCFramework release and stage, then release, the Maven Central deployment.
 6. Announce.

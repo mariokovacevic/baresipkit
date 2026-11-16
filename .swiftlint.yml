@@ -6,7 +6,7 @@
 included:
   - Sources
   - Tests/BaresipKitTests
-  - Examples/SampleApp
+  - Examples/iOS
 
 opt_in_rules:
   - force_unwrapping
