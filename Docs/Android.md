@@ -305,7 +305,7 @@ the camera permission:
 
 ## Sample app
 
-[Android/sample](../Android/sample/README.md) is the intercom sample app in Compose: doors with their last
+[Examples/Android](../Examples/Android/README.md) is the intercom sample app in Compose: doors with their last
 picture and Open, activity, keypad, messages, settings and diagnostics, the ring screen with a
 preview before answering, and the call screen with captions and chat for SIP messages. It uses
 every module above. CI runs its screenshot test on emulators with API 28 and 34 and keeps the

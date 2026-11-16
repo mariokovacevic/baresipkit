@@ -25,3 +25,5 @@ include(
     ":baresipkit-compose",
     ":sample",
 )
+
+project(":sample").projectDir = file("../Examples/Android")

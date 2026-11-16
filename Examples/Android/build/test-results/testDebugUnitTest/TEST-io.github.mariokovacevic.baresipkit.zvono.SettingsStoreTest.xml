@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="io.github.mariokovacevic.baresipkit.zvono.SettingsStoreTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-11-13T09:48:47.444Z" hostname="vm" time="0.078">
+  <properties/>
+  <testcase name="theAccountIsBuiltFromTheSettings" classname="io.github.mariokovacevic.baresipkit.zvono.SettingsStoreTest" time="0.012"/>
+  <testcase name="secretsStayOutOfThePlainStore" classname="io.github.mariokovacevic.baresipkit.zvono.SettingsStoreTest" time="0.014"/>
+  <testcase name="everythingSavedIsReadBack" classname="io.github.mariokovacevic.baresipkit.zvono.SettingsStoreTest" time="0.038"/>
+  <testcase name="clearRemovesTheAccountAndItsSecrets" classname="io.github.mariokovacevic.baresipkit.zvono.SettingsStoreTest" time="0.001"/>
+  <testcase name="missingKeysKeepTheirDefaultsAndUnknownKeysAreIgnored" classname="io.github.mariokovacevic.baresipkit.zvono.SettingsStoreTest" time="0.012"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

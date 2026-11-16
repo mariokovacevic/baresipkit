@@ -1,0 +1,21 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "io.github.mariokovacevic.baresipkit.zvono.test",
+  "variantName": "debugAndroidTest",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 0,
+      "versionName": "",
+      "outputFile": "zvono-debug-androidTest.apk"
+    }
+  ],
+  "elementType": "File",
+  "minSdkVersionForDexing": 28
+}

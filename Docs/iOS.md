@@ -537,7 +537,7 @@ Before shipping a VoIP app built on BaresipKit:
 
 ## Sample app
 
-[Examples/SampleApp](../Examples/SampleApp) is a SwiftUI app that uses every module: accounts with
+[Examples/iOS](../Examples/iOS) is a SwiftUI app that uses every module: accounts with
 TLS and certificates, calls with CallKit and PushKit, video with a self view, early media
 preview, DTMF door codes, transfer, messages, contacts, ringtones, music on hold, recording, call
 history and a shareable log, laid out as a video intercom app with saved doors and an
@@ -545,7 +545,7 @@ Open button. Its Account screen exposes the NAT, SIP, codec and video settings, 
 server. A UI test registers and calls a test peer in CI.
 
 ```bash
-cd Examples/SampleApp
+cd Examples/iOS
 xcodegen
 open BaresipKitSample.xcodeproj
 ```
@@ -553,7 +553,7 @@ open BaresipKitSample.xcodeproj
 The screenshots in the [README](../README.md) come from the sample's screenshot test (CI's `sample-screenshots`
 artifact, or `Tools/SampleScreenshots/run.sh` on a Mac);
 `Tools/SampleScreenshots/readme_images.py` turns them into the small images in `Docs/Images`.
-The Android sample app is in [Android/sample](../Android/sample/README.md).
+The Android sample app is in [Examples/Android](../Examples/Android/README.md).
 
 ## Building from source and tests
 

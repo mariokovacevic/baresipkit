@@ -384,7 +384,7 @@ jobs:
       - name: Build the sample app for the simulator
         run: |
           brew install xcodegen >/dev/null
-          cd Examples/SampleApp
+          cd Examples/iOS
           xcodegen generate
           for destination in 'generic/platform=iOS Simulator' 'generic/platform=iOS'; do
             xcodebuild build -project BaresipKitSample.xcodeproj -scheme BaresipKitSample \
@@ -406,7 +406,7 @@ jobs:
           PEER_PID=$!
           for i in $(seq 1 50); do grep -q READY "$OUT/peer.out" 2>/dev/null && break; sleep 0.2; done
           xcrun simctl boot "$SIM_UDID" || true
-          cd Examples/SampleApp
+          cd Examples/iOS
           TEST_RUNNER_BSK_UITEST_HOST="$HOSTIP" TEST_RUNNER_BSK_UITEST_CA_PEM="$(cat "$OUT/cert.pem")" \
             xcodebuild test -project BaresipKitSample.xcodeproj -scheme BaresipKitSample \
             -destination "id=${SIM_UDID}" CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= 2>&1 \

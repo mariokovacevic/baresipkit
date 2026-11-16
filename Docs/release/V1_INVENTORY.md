@@ -48,7 +48,7 @@ Android/                  Gradle project
   baresipkit-push         Firebase Cloud Messaging Contact parameters and pushed calls
   baresipkit-compose      Compose state holders and video composables
   sample                  sample app (Compose)
-Examples/SampleApp        iOS sample app (XcodeGen), with a notification content extension
+Examples/iOS        iOS sample app (XcodeGen), with a notification content extension
 Tests/
   Core/                   C unit and multi-process tests (ASan/UBSan), scripted SIP peer
   Fuzz/                   libFuzzer targets for facade parsers

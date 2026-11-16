@@ -54,7 +54,7 @@ Tests/Integration/run_integration.sh
 The sample app:
 
 ```bash
-cd Examples/SampleApp && xcodegen generate && open BaresipKitSample.xcodeproj
+cd Examples/iOS && xcodegen generate && open BaresipKitSample.xcodeproj
 ```
 
 Tests that need a physical iPhone are listed in [Docs/DeviceTesting.md](Docs/DeviceTesting.md).

@@ -139,7 +139,7 @@ apart from these platform differences:
 | `BaresipAppLifecycle.disconnectsOnTermination` | none | Android does not tell an app reliably that it is being ended, so there is no moment to unregister; registrations expire on the server |
 
 The Android sample mirrors the iOS sample screen by screen, including the git-ignored deployment profile
-(`AppProfile`, `Android/sample/src/local/`), redial from outside the app, the ring picture in the
+(`AppProfile`, `Examples/Android/src/local/`), redial from outside the app, the ring picture in the
 notification (the iOS notification content extension), launcher shortcuts for doors (the iOS Open
 Door intent) and the call integration switch (the iOS call screen choice).
 

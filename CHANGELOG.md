@@ -8,10 +8,13 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
-- The sample apps no longer carry a product name of their own. The Android sample is now
-  `Android/sample`, with the Gradle project `:sample`, the package and
+- Both sample apps live in `Examples/`: the iOS sample in `Examples/iOS` (before
+  `Examples/SampleApp`) and the Android sample in `Examples/Android`, still built by the Gradle
+  project in `Android/` as `:sample`. `Examples/README.md` says what is where.
+- The sample apps no longer carry a product name of their own. The Android sample has the
+  Gradle project `:sample`, the package and
   application ID `io.github.mariokovacevic.baresipkit.sample` and the name "BaresipKit Sample",
-  as on iOS. A local deployment profile now goes in `Android/sample/src/local/` with the package
+  as on iOS. A local deployment profile now goes in `Examples/Android/src/local/` with the package
   `io.github.mariokovacevic.baresipkit.sample.local`. Both apps say "the app" in their texts;
   the libraries are unchanged.
 

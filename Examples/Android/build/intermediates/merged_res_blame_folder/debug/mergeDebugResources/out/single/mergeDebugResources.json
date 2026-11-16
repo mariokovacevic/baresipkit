@@ -1,0 +1,62 @@
+[
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/raw_classic.wav.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/raw/classic.wav"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/xml_shared_files.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/xml/shared_files.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/drawable_ic_launcher_background.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/font_barlow_semi_condensed_medium.ttf.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/font/barlow_semi_condensed_medium.ttf"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/drawable_ic_launcher_monochrome.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/drawable/ic_launcher_monochrome.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/font_barlow_semi_condensed_semibold.ttf.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/font/barlow_semi_condensed_semibold.ttf"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/drawable_ic_shortcut_open_door.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/drawable/ic_shortcut_open_door.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/layout_notification_picture.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/layout/notification_picture.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/raw_chime.wav.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/raw/chime.wav"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/raw_hold_music.wav.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/raw/hold_music.wav"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/xml_shortcuts.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/xml/shortcuts.xml"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/raw_bells.wav.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/raw/bells.wav"
+    },
+    {
+        "merged": "io.github.mariokovacevic.baresipkit.sample-debug-10:/drawable_ic_logo.xml.flat",
+        "source": "io.github.mariokovacevic.baresipkit.sample-main-12:/drawable/ic_logo.xml"
+    }
+]
