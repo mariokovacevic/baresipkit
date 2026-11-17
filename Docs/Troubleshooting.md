@@ -83,11 +83,14 @@ Check `.registration(_, .failed, _, let error)` from `engine.events`; `error.cod
    device's address because it never sent a packet first. Enable `BaresipNATConfiguration.pinhole`
    so the device sends empty RTP packets until the peer's media arrives, or use ICE.
 4. **RTP timeout.** A call that starts with audio and then goes silent on both sides may have
-   hit `rtpTimeout`: no RTP arrived for that long and the call ends. While the call's audio is
-   sent and received, only the audio counts (a peer that stops its video does not end the call),
-   and the time on hold does not count (patch 0031). Check the `media` log for the
-   timeout and confirm with the peer or the network that RTP kept flowing (NAT rebinding, a
-   firewall timeout, or a TURN allocation that expired without `restartICE`, see ICE below).
+   hit `rtpTimeout`: no RTP arrived for that long and the call ends. Every stream that is sent
+   and received counts, so a video call also ends when only its video stops arriving. If the
+   other side stops its video without a new offer while the conversation goes on, turn on
+   `rtpTimeoutPrefersAudio` in the account's NAT settings: only the audio then counts while it
+   is sent and received. The time on hold does not count (patch 0031). Check the `media` log
+   for the timeout and confirm with the peer or the network that RTP kept flowing (NAT
+   rebinding, a firewall timeout, or a TURN allocation that expired without `restartICE`, see
+   ICE below).
 5. Microphone permission: `NSMicrophoneUsageDescription` must be in the Info.plist, and the user
    must have granted it; a denied permission shows as the audio session activating with no
    capture, not as a BaresipKit error.

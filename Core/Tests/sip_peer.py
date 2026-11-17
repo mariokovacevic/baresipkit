@@ -7,7 +7,7 @@ responses.
 Usage: sip_peer.py SCENARIO HOST CALLEE_PORT
 Scenarios: refer-ringing, fake-replace, reentrant, remove-live, stop-live,
 require-timer, cancel-elsewhere, dtmf, dtmf-info, answer-on-media, hold-timeout,
-video-stops, video-only-timeout, one-way-audio-timeout.
+video-stops-default, video-stops, video-only-timeout, one-way-audio-timeout.
 Exits 0 when the callee behaved as expected, else 1.
 """
 
@@ -418,7 +418,7 @@ def send_video_for_a_second(peer):
     return None
 
 
-def video_stops(peer):
+def video_stops(peer, ends_the_call=False):
     peer.offers_video = True
     if not establish(peer):
         return "call not answered"
@@ -427,10 +427,17 @@ def video_stops(peer):
     failure = send_video_for_a_second(peer)
     if failure:
         return failure
-    if peer.bye_from_callee(6):
-        return "the callee ended the call when the video stopped"
+    ended = peer.bye_from_callee(6)
     audio.stopped.set()
+    if ends_the_call:
+        return None if ended else "the callee kept the call when the video stopped"
+    if ended:
+        return "the callee ended the call when the video stopped"
     return end_call(peer)
+
+
+def video_stops_default(peer):
+    return video_stops(peer, ends_the_call=True)
 
 
 def video_only_timeout(peer):
@@ -540,6 +547,7 @@ SCENARIOS = {
     "dtmf-info": dtmf_info,
     "answer-on-media": answer_on_media,
     "hold-timeout": hold_timeout,
+    "video-stops-default": video_stops_default,
     "video-stops": video_stops,
     "video-only-timeout": video_only_timeout,
     "one-way-audio-timeout": one_way_audio_timeout,

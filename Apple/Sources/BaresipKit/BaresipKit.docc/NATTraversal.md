@@ -51,6 +51,11 @@ only after they have seen a packet from this side, such as an early media previe
 ### Timeouts
 
 ``BaresipNATConfiguration/rtpTimeout`` ends an established call that receives no RTP for that
-long, for example after the network went away for good. While the call's audio is sent and
-received, only the audio counts, so a peer that stops its video does not end the call; otherwise
-the video counts. The time on hold does not count.
+long, for example after the network went away for good. Every stream that is sent and received
+counts, so a video call ends when either its audio or its video stops arriving. The time on hold
+does not count.
+
+Some devices stop sending video in the middle of a call without a new offer.
+``BaresipNATConfiguration/rtpTimeoutPrefersAudio`` keeps such a call: while the call's audio is
+sent and received, only the audio counts, and the video is watched only in a call whose audio is
+off, on hold or one-way. It is off by default.

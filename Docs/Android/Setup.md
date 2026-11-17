@@ -228,6 +228,10 @@ val account =
   after it has seen a packet from you.
 - `BaresipConfiguration.iceRelayOnly = true` sends all media through TURN, for example to test a
   relay.
+- A video call ends when its audio or its video stops arriving for `rtpTimeout`. If the other
+  side stops its video without a new offer while the conversation goes on, set
+  `rtpTimeoutPrefersAudio = true`: only the audio then counts while it is sent and received. It
+  is off by default.
 - `BaresipEvent.Ice` reports a call's ICE state and the candidate pair in use;
   `callStatistics(call)` has the same.
 - `BaresipNetworkMonitor` tells the engine when the network changes, and the engine restarts

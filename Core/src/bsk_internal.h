@@ -46,6 +46,7 @@ struct bsk_account_ctx {
 	bool unregistered;
 	uint32_t expires;
 	uint32_t rtp_timeout_ms;
+	bool rtp_timeout_prefers_audio;
 	uint64_t reg_started_ms;
 	struct tmr tmr_remove;
 };

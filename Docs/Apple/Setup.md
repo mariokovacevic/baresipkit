@@ -470,6 +470,11 @@ account.nat = BaresipNATConfiguration(
 relay. Without ICE, turn on `pinhole` when a media relay such as rtpengine forwards the
 caller's media only after it has seen a packet from you.
 
+A video call ends when its audio or its video stops arriving for `rtpTimeout`. If the other side
+stops its video without a new offer while the conversation goes on, set
+`account.nat.rtpTimeoutPrefersAudio = true`: only the audio then counts while it is sent and
+received. It is off by default.
+
 ### Background and network changes
 
 `BaresipAppLifecycle` takes the account offline when the app goes to the background without a

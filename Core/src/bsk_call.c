@@ -102,25 +102,21 @@ static enum sdp_dir negotiated_dir(const struct stream *strm)
 }
 
 
-static uint32_t rtp_timeout_ms(bsk_engine *e, const struct bsk_call_ctx *c)
+static void prefer_audio_for_rtp_timeout(bsk_engine *e, struct bsk_call_ctx *c)
 {
 	const struct bsk_account_ctx *a = bsk_account_find(e, c->account);
-
-	if (a && a->rtp_timeout_ms)
-		return a->rtp_timeout_ms;
-
-	return conf_config()->avt.rtp_timeout * 1000;
-}
-
-
-static void watch_video_rtp_unless_audio_is_watched(bsk_engine *e,
-						    struct bsk_call_ctx *c)
-{
 	struct stream *audio = audio_strm(call_audio(c->call));
-	bool audio_watched = negotiated_dir(audio) == SDP_SENDRECV;
+	uint32_t timeout_ms;
 
-	stream_enable_rtp_timeout(video_strm(call_video(c->call)),
-				  audio_watched ? 0 : rtp_timeout_ms(e, c));
+	if (!a || !a->rtp_timeout_prefers_audio)
+		return;
+
+	timeout_ms = a->rtp_timeout_ms ? a->rtp_timeout_ms
+				       : conf_config()->avt.rtp_timeout * 1000;
+	if (negotiated_dir(audio) == SDP_SENDRECV)
+		timeout_ms = 0;
+
+	stream_enable_rtp_timeout(video_strm(call_video(c->call)), timeout_ms);
 }
 
 
@@ -584,7 +580,7 @@ void bsk_call_handle_event(bsk_engine *e, enum bevent_ev ev,
 	case BEVENT_CALL_ANSWERED:
 	case BEVENT_CALL_ESTABLISHED:
 		if (ev == BEVENT_CALL_ESTABLISHED)
-			watch_video_rtp_unless_audio_is_watched(e, c);
+			prefer_audio_for_rtp_timeout(e, c);
 		if (c->state != BSK_CALL_CONNECTED &&
 		    c->state != BSK_CALL_STREAMS_RUNNING)
 			bsk_call_emit_state(e, c, BSK_CALL_CONNECTED, NULL);
@@ -629,7 +625,7 @@ void bsk_call_handle_event(bsk_engine *e, enum bevent_ev ev,
 
 	case BEVENT_CALL_REMOTE_SDP:
 		if (bsk_call_established(c))
-			watch_video_rtp_unless_audio_is_watched(e, c);
+			prefer_audio_for_rtp_timeout(e, c);
 		if (text && 0 == str_casecmp(text, "answer") &&
 		    !c->hold_queued) {
 			if (c->state == BSK_CALL_PAUSING)

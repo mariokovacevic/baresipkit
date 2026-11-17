@@ -29,6 +29,7 @@ data class SipSettings(
     val pictureUpdateOverInfo: Boolean = true,
     val dtmfMode: BaresipDtmfMode = BaresipDtmfMode.SIP_INFO,
     val rtpTimeoutSeconds: Int = 30,
+    val rtpTimeoutPrefersAudio: Boolean = true,
     val sipOutbound: Boolean = false,
     val registerExpiresSeconds: Int = 600,
     val acceptTransfers: Boolean = true,

@@ -26,6 +26,8 @@ struct SIPSettings: Codable, Equatable {
     var dtmfMode: BaresipDTMFMode = .sipInfo
     /// Seconds without RTP before an established call ends; 0 never ends it.
     var rtpTimeoutSeconds = 30
+    /// Whether video that stops leaves a call up while its audio arrives.
+    var rtpTimeoutPrefersAudio = true
     var sipOutbound = false
     var registerExpiresSeconds = 600
     var acceptTransfers = true
@@ -157,6 +159,7 @@ extension SIPSettings {
         try read(.pictureUpdateOverInfo, &pictureUpdateOverInfo)
         try read(.dtmfMode, &dtmfMode)
         try read(.rtpTimeoutSeconds, &rtpTimeoutSeconds)
+        try read(.rtpTimeoutPrefersAudio, &rtpTimeoutPrefersAudio)
         try read(.sipOutbound, &sipOutbound)
         try read(.registerExpiresSeconds, &registerExpiresSeconds)
         try read(.acceptTransfers, &acceptTransfers)

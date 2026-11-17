@@ -47,7 +47,8 @@ struct AccountNATSection: View {
         STUN only learns the public address; ICE also checks paths and can use a TURN relay. Relay only \
         forces media through TURN. The pinhole sends empty RTP packets during a preview, so media relays \
         such as rtpengine forward the caller's media even without ICE. A call without RTP for the timeout \
-        ends. Relay only and IPv6 restart the engine.
+        ends; with Keep the call when video stops, only the audio counts while it arrives. Relay only and \
+        IPv6 restart the engine.
         """) {
             Card {
                 SegmentRow(title: "Traversal", selection: $model.settings.natMode, identifier: "account.nat") {
@@ -77,6 +78,8 @@ struct AccountNATSection: View {
                 RowDivider()
                 StepperRow(title: "RTP timeout", value: rtpTimeout, number: $model.settings.rtpTimeoutSeconds,
                            range: 0 ... 300, step: 10)
+                RowDivider()
+                ToggleRow(title: "Keep the call when video stops", isOn: $model.settings.rtpTimeoutPrefersAudio)
                 RowDivider()
                 ToggleRow(title: "IPv6", isOn: $model.settings.engine.ipv6)
             }

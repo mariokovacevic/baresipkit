@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #define BSK_ABI_VERSION_MAJOR 0
-#define BSK_ABI_VERSION_MINOR 13
+#define BSK_ABI_VERSION_MINOR 14
 
 typedef struct bsk_engine bsk_engine;
 
@@ -289,6 +289,7 @@ typedef struct bsk_account_config {
 	bool vfu_info;
 	const char *const *incoming_headers;
 	size_t incoming_header_count;
+	bool rtp_timeout_prefers_audio;
 } bsk_account_config;
 
 typedef struct bsk_call_info {

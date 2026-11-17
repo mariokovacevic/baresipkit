@@ -523,6 +523,7 @@ static int add_op(bsk_engine *e, void *arg)
 	a->is_default = !bsk_account_default(e);
 	a->answer_early_media = c->answer_early_media;
 	a->rtp_timeout_ms = c->nat.rtp_timeout_ms;
+	a->rtp_timeout_prefers_audio = c->rtp_timeout_prefers_audio;
 	a->reject_transfers = c->reject_transfers;
 	list_append(&e->accounts, &a->le, a);
 	aa->id = a->id;

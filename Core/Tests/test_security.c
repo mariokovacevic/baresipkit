@@ -25,6 +25,7 @@ static int dtmf_event_count;
 static int media_answer_status = -1;
 static uint32_t rtp_timeout_ms;
 static bool with_video;
+static bool prefers_audio;
 static const char *video_modules[] = { "g711",      "l16",    "auconv",
 				       "auresamp",  "ausine", "aufile",
 				       "fakevideo", "vp8",    "rtcpsummary" };
@@ -204,6 +205,7 @@ static bsk_account_id start(const char *host, bool early_media)
 	ac.aor = aor;
 	ac.answer_early_media = early_media;
 	ac.nat.rtp_timeout_ms = rtp_timeout_ms;
+	ac.rtp_timeout_prefers_audio = prefers_audio;
 	if (with_video) {
 		static const char *acodecs[] = { "PCMU/8000/1" };
 		static const char *vcodecs[] = { "VP8" };
@@ -442,6 +444,26 @@ static int run_hold_timeout(const char *host)
 }
 
 
+static int run_video_stops_default(const char *host)
+{
+	bsk_call_info info;
+	bsk_error err;
+
+	rtp_timeout_ms = 2000;
+	with_video = true;
+	(void)start(host, false);
+	CHECK(wait_until(&w, has_incoming, 15000));
+	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
+	CHECK(wait_until(&w, has_connected, 5000));
+	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
+	CHECK(info.audio_dir == BSK_DIR_SENDRECV);
+	CHECK(info.video_dir == BSK_DIR_SENDRECV);
+	CHECK(wait_until(&w, one_released, 6000));
+	finish("by default video that stops ends the call");
+	return 0;
+}
+
+
 static int run_video_stops(const char *host)
 {
 	bsk_call_info info;
@@ -449,6 +471,7 @@ static int run_video_stops(const char *host)
 
 	rtp_timeout_ms = 2000;
 	with_video = true;
+	prefers_audio = true;
 	(void)start(host, false);
 	CHECK(wait_until(&w, has_incoming, 15000));
 	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
@@ -471,6 +494,7 @@ static int run_video_only_timeout(const char *host)
 
 	rtp_timeout_ms = 2000;
 	with_video = true;
+	prefers_audio = true;
 	(void)start(host, false);
 	CHECK(wait_until(&w, has_incoming, 15000));
 	CHECK_OK(
@@ -493,6 +517,7 @@ static int run_one_way_audio_timeout(const char *host)
 
 	rtp_timeout_ms = 2000;
 	with_video = true;
+	prefers_audio = true;
 	(void)start(host, false);
 	CHECK(wait_until(&w, has_incoming, 15000));
 	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
@@ -546,6 +571,8 @@ int main(int argc, char **argv)
 		return run_answer_on_media(argv[2]);
 	if (mode_is("hold-timeout"))
 		return run_hold_timeout(argv[2]);
+	if (mode_is("video-stops-default"))
+		return run_video_stops_default(argv[2]);
 	if (mode_is("video-stops"))
 		return run_video_stops(argv[2]);
 	if (mode_is("video-only-timeout"))

@@ -154,6 +154,7 @@ static void test_capabilities(void)
 		"call.headers",
 		"nat.rtcp-mux",
 		"nat.pinhole",
+		"nat.rtp-timeout-prefers-audio",
 		"codec.g722",
 		"video.picture-update.sip-info",
 		"audio.hold-music",
@@ -190,7 +191,7 @@ static void test_status_strings(void)
 	CHECK(0 == strcmp(bsk_status_string(BSK_OK), "ok"));
 	CHECK(0 ==
 	      strcmp(bsk_status_string(BSK_ERR_AUTH), "authentication failed"));
-	CHECK(bsk_abi_version() == 13);
+	CHECK(bsk_abi_version() == 14);
 	CHECK(bsk_capabilities(NULL, 0) > 0);
 	test_capabilities();
 }

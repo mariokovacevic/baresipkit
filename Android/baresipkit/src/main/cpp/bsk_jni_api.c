@@ -204,6 +204,8 @@ static void read_account_config(struct bsk_jni_arena *arena, jobject obj,
 	cfg->nat.mode = (bsk_nat_traversal)int_field(env, obj, "natMode");
 	cfg->nat.stun_uri = cstr(arena, obj, "stunUri");
 	cfg->nat.rtp_timeout_ms = (uint32_t)int_field(env, obj, "rtpTimeoutMs");
+	cfg->rtp_timeout_prefers_audio =
+		bool_field(env, obj, "rtpTimeoutPrefersAudio");
 	const char *turn = cstr(arena, obj, "turnUri");
 	if (turn) {
 		bsk_turn_server *server =
