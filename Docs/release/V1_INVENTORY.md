@@ -1,6 +1,6 @@
 # BaresipKit v1.0.0 inventory
 
-State of branch `claude/zen-keller-jl2mtg` at commit `0844964` (2026-11-14). Every number in this file
+State of the release-candidate review branch at commit `0844964` (2026-11-14). Every number in this file
 was produced from that tree; where something could not be produced in the review environment,
 it says so.
 
@@ -9,7 +9,7 @@ it says so.
 | Item | Value |
 |---|---|
 | Default branch `main` | `2bfa144` "Initial commit": an empty starting point; no release work is on it |
-| Review branch | `claude/zen-keller-jl2mtg`, 4 commits on top of `main` (see section 4) |
+| Review branch | the release-candidate review branch, 4 commits on top of `main` (see section 4) |
 | Published GitHub release | **`1.0.0`**, published 2026-11-10, tag `1.0.0` → `7fc8970` ("Initial commit" of an earlier history). That commit is not an ancestor of any current branch: the history was replaced after the release |
 | Contents of release `1.0.0` | iOS only (no `Android/`, no LiveCommunicationKit module). Its `Package.swift` has an empty `coreReleaseURL`, so the package falls back to a local `Build/out/BaresipKitCore.xcframework` that is not in the repository: SwiftPM cannot resolve the tag for a consumer. Its own `CHANGELOG.md` says "Beta, not released yet" |
 | Local-only tag | `v1.0.0` → `b57cb19` "Release v1.0.0: point BaresipKitCore at the release asset", not pushed, not on any branch |

@@ -27,7 +27,7 @@ Legend:
 - [x] All 16 Blockers of `V1_REVIEW.md` are fixed or decided; see `V1_REPORT.md`.
 - [x] Approved Should-fix items are fixed or explicitly deferred with a reason; see
   `V1_REPORT.md`.
-- [x] Second code review of `main...claude/zen-keller-jl2mtg` done. Of its 10 candidate
+- [x] Second code review of the release-candidate branch against `main` done. Of its 10 candidate
   findings, 5 were confirmed and fixed (log handler swap, audio activation order, JNI method
   cache, Swift destroy on the engine thread, CA store reloads); 5 were declined with reasons in
   `V1_REPORT.md`.
