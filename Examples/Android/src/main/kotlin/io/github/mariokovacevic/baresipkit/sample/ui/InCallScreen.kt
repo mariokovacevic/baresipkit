@@ -721,7 +721,12 @@ private fun transferChoices(
     fun unique(
         list: List<TransferChoice>,
         limit: Int = Int.MAX_VALUE,
-    ): List<TransferChoice> = list.asSequence().filter { seen.add(it.key) }.take(limit).toList()
+    ): List<TransferChoice> =
+        list
+            .asSequence()
+            .filter { seen.add(it.key) }
+            .take(limit)
+            .toList()
     val doors =
         unique(
             model.doors.filter { it.address.isNotBlank() }.map { TransferChoice(it.title, it.user, it.address.trim()) },
