@@ -23,6 +23,11 @@ static struct {
 } dtmf_events[8];
 static int dtmf_event_count;
 static int media_answer_status = -1;
+static uint32_t rtp_timeout_ms;
+static bool with_video;
+static const char *video_modules[] = { "g711",      "l16",    "auconv",
+				       "auresamp",  "ausine", "aufile",
+				       "fakevideo", "vp8",    "rtcpsummary" };
 
 
 static bool mode_is(const char *name)
@@ -171,6 +176,16 @@ static bsk_account_id start(const char *host, bool early_media)
 	memset(&cfg, 0, sizeof(cfg));
 	cfg.modules = test_modules;
 	cfg.module_count = sizeof(test_modules) / sizeof(test_modules[0]);
+	if (with_video) {
+		cfg.modules = video_modules;
+		cfg.module_count =
+			sizeof(video_modules) / sizeof(video_modules[0]);
+		cfg.video.source_module = "fakevideo";
+		cfg.video.width = 320;
+		cfg.video.height = 240;
+		cfg.video.fps = 15;
+		cfg.video.bitrate_bps = 300000;
+	}
 	cfg.audio.source_module = "ausine";
 	cfg.audio.player_module = "aufile";
 	cfg.audio.player_device = "/dev/null";
@@ -188,6 +203,16 @@ static bsk_account_id start(const char *host, bool early_media)
 	memset(&ac, 0, sizeof(ac));
 	ac.aor = aor;
 	ac.answer_early_media = early_media;
+	ac.nat.rtp_timeout_ms = rtp_timeout_ms;
+	if (with_video) {
+		static const char *acodecs[] = { "PCMU/8000/1" };
+		static const char *vcodecs[] = { "VP8" };
+
+		ac.audio_codecs = acodecs;
+		ac.audio_codec_count = 1;
+		ac.video_codecs = vcodecs;
+		ac.video_codec_count = 1;
+	}
 	CHECK_OK(bsk_account_add(engine, &ac, &acc, &err), &err);
 	CHECK_OK(bsk_engine_audio_session_activated(engine, &err), &err);
 
@@ -392,6 +417,95 @@ static int run_dtmf_info(const char *host)
 }
 
 
+static int run_hold_timeout(const char *host)
+{
+	bsk_call_info info;
+	bsk_error err;
+
+	rtp_timeout_ms = 4000;
+	(void)start(host, false);
+	CHECK(wait_until(&w, has_incoming, 15000));
+	CHECK_OK(bsk_call_answer(engine, last_incoming, false, &err), &err);
+	CHECK(wait_until(&w, streams, 5000));
+	usleep(1000 * 1000);
+	CHECK_OK(bsk_call_hold(engine, last_incoming, true, &err), &err);
+	CHECK(wait_until(&w, paused, 5000));
+	usleep(5000 * 1000);
+	CHECK_OK(bsk_call_hold(engine, last_incoming, false, &err), &err);
+	CHECK(wait_until(&w, streams, 5000));
+	usleep(3500 * 1000);
+	CHECK(__atomic_load_n(&released_count, __ATOMIC_SEQ_CST) == 0);
+	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
+	CHECK(wait_until(&w, one_released, 10000));
+	finish("a call resumed after a hold longer than the RTP timeout stays up");
+	return 0;
+}
+
+
+static int run_video_stops(const char *host)
+{
+	bsk_call_info info;
+	bsk_error err;
+
+	rtp_timeout_ms = 2000;
+	with_video = true;
+	(void)start(host, false);
+	CHECK(wait_until(&w, has_incoming, 15000));
+	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
+	CHECK(wait_until(&w, has_connected, 5000));
+	usleep(6000 * 1000);
+	CHECK(__atomic_load_n(&released_count, __ATOMIC_SEQ_CST) == 0);
+	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
+	CHECK(info.audio_dir == BSK_DIR_SENDRECV);
+	CHECK(info.video_dir == BSK_DIR_SENDRECV);
+	CHECK(wait_until(&w, one_released, 10000));
+	finish("video that stops does not end a call whose audio flows");
+	return 0;
+}
+
+
+static int run_video_only_timeout(const char *host)
+{
+	bsk_call_info info;
+	bsk_error err;
+
+	rtp_timeout_ms = 2000;
+	with_video = true;
+	(void)start(host, false);
+	CHECK(wait_until(&w, has_incoming, 15000));
+	CHECK_OK(
+		bsk_call_answer_media(engine, last_incoming, false, true, &err),
+		&err);
+	CHECK(wait_until(&w, has_connected, 5000));
+	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
+	CHECK(info.audio_dir == BSK_DIR_INACTIVE);
+	CHECK(info.video_dir == BSK_DIR_SENDRECV);
+	CHECK(wait_until(&w, one_released, 10000));
+	finish("a call without audio ends when its video stops");
+	return 0;
+}
+
+
+static int run_one_way_audio_timeout(const char *host)
+{
+	bsk_call_info info;
+	bsk_error err;
+
+	rtp_timeout_ms = 2000;
+	with_video = true;
+	(void)start(host, false);
+	CHECK(wait_until(&w, has_incoming, 15000));
+	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
+	CHECK(wait_until(&w, has_connected, 5000));
+	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
+	CHECK(info.audio_dir == BSK_DIR_RECVONLY);
+	CHECK(info.video_dir == BSK_DIR_SENDRECV);
+	CHECK(wait_until(&w, one_released, 10000));
+	finish("a call with one-way audio ends when its video stops");
+	return 0;
+}
+
+
 static int run_answer_on_media(const char *host)
 {
 	(void)start(host, true);
@@ -430,6 +544,14 @@ int main(int argc, char **argv)
 		return run_dtmf_info(argv[2]);
 	if (mode_is("answer-on-media"))
 		return run_answer_on_media(argv[2]);
+	if (mode_is("hold-timeout"))
+		return run_hold_timeout(argv[2]);
+	if (mode_is("video-stops"))
+		return run_video_stops(argv[2]);
+	if (mode_is("video-only-timeout"))
+		return run_video_only_timeout(argv[2]);
+	if (mode_is("one-way-audio-timeout"))
+		return run_one_way_audio_timeout(argv[2]);
 
 	fprintf(stderr, "unknown mode %s\n", mode);
 	return 2;

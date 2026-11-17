@@ -43,6 +43,16 @@ All notable changes to this project are documented here. The format follows
   answered an incoming call from the callback as soon as its early media arrived never sent
   the 200, and every later call into the engine blocked (patch 0030). The Swift and Kotlin SDKs
   hand events to the app outside that callback and were not affected.
+- A call held for longer than `rtpTimeout` and then resumed is no longer ended at once with an
+  RTP timeout: the time on hold does not count (patch 0031).
+- While a call's audio is sent and received, the RTP timeout watches the audio only. A peer that
+  stops its video without a new offer, such as a web client after a hold, no longer ends the
+  call. A call whose audio is off, on hold or one-way keeps the timeout on its video.
+- `BaresipPhone.activeCall` (Swift and Kotlin) follows a swap on the system call screen: when the
+  active call is on hold and another call resumes or connects, that call becomes active. Before,
+  the active call stayed on the held call, so the camera and mute buttons of a call screen changed
+  the held call, and when the resumed call ended before it was connected, the other call stayed on
+  hold instead of being resumed.
 
 ## [1.0.0-rc.1] - 2026-11-14
 

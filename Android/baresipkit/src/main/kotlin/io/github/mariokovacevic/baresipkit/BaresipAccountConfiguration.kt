@@ -322,7 +322,11 @@ public class BaresipNatConfiguration private constructor(
     /** The TURN relay used by ICE. At most one server is supported. */
     public val turnServers: List<BaresipTurnServer> = builder.turnServers
 
-    /** How long an established call may receive no RTP before it is ended. */
+    /**
+     * How long an established call may receive no RTP before it is ended. While the call's audio
+     * is sent and received, only the audio counts; otherwise its video does. The time on hold
+     * does not count.
+     */
     public val rtpTimeout: Duration = builder.rtpTimeout
 
     /** Whether RTCP shares the RTP port (RFC 5761). On by default. */

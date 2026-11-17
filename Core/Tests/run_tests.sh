@@ -311,25 +311,30 @@ if [[ "$XB_RC" != 0 || "$XC_RC" != 0 ]]; then
   exit 1
 fi
 
-echo "== scripted peer: REFER while ringing, forged replace, calls into the engine from callbacks, teardown with a live call, CANCEL with a Reason, DTMF source, answering when the first audio arrives"
-for scenario in refer-ringing fake-replace reentrant remove-live stop-live cancel-elsewhere dtmf dtmf-info answer-on-media; do
-  "$BUILD/tests/bsk_test_security" "$scenario" "$HOSTIP" > "$BUILD/security-$scenario.out" 2> "$BUILD/security-$scenario.err" &
-  VICTIM_PID=$!
-  for i in $(seq 1 50); do
-    grep -q READY "$BUILD/security-$scenario.out" 2>/dev/null && break
-    sleep 0.1
+scripted_peer() {
+  local scenario
+  for scenario in "$@"; do
+    "$BUILD/tests/bsk_test_security" "$scenario" "$HOSTIP" > "$BUILD/security-$scenario.out" 2> "$BUILD/security-$scenario.err" &
+    VICTIM_PID=$!
+    for i in $(seq 1 50); do
+      grep -q READY "$BUILD/security-$scenario.out" 2>/dev/null && break
+      sleep 0.1
+    done
+    if ! python3 -I "$HERE/sip_peer.py" "$scenario" "$HOSTIP" 5090; then
+      kill "$VICTIM_PID" 2>/dev/null || true
+      tail -40 "$BUILD/security-$scenario.err" || true
+      exit 1
+    fi
+    if ! wait "$VICTIM_PID"; then
+      tail -40 "$BUILD/security-$scenario.err" || true
+      exit 1
+    fi
+    grep -v READY "$BUILD/security-$scenario.out" || true
   done
-  if ! python3 -I "$HERE/sip_peer.py" "$scenario" "$HOSTIP" 5090; then
-    kill "$VICTIM_PID" 2>/dev/null || true
-    tail -40 "$BUILD/security-$scenario.err" || true
-    exit 1
-  fi
-  if ! wait "$VICTIM_PID"; then
-    tail -40 "$BUILD/security-$scenario.err" || true
-    exit 1
-  fi
-  grep -v READY "$BUILD/security-$scenario.out" || true
-done
+}
+
+echo "== scripted peer: REFER while ringing, forged replace, calls into the engine from callbacks, teardown with a live call, CANCEL with a Reason, DTMF source, answering when the first audio arrives, a hold longer than the RTP timeout"
+scripted_peer refer-ringing fake-replace reentrant remove-live stop-live cancel-elsewhere dtmf dtmf-info answer-on-media hold-timeout
 
 if [[ -f "$PREFIX/lib/libvpx.a" ]]; then
   echo "== video preview (fakevideo)"
@@ -344,6 +349,8 @@ if [[ -f "$PREFIX/lib/libvpx.a" ]]; then
   "$BUILD/tests/bsk_test_video" caller "$HOSTIP" 2> "$BUILD/vcaller.err"
   wait "$VCALLEE_PID"
   cat "$BUILD/vcallee.out"
+  echo "== scripted peer with video: video stops while audio flows, in a call without audio, and in a call with one-way audio"
+  scripted_peer video-stops video-only-timeout one-way-audio-timeout
 else
   echo "== video stages skipped (no libvpx in prefix; build with MODULE_SET=full)"
 fi

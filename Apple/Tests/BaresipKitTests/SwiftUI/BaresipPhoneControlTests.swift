@@ -306,4 +306,71 @@ final class BaresipPhoneAnsweredElsewhereTests: XCTestCase {
         phone.apply(.call(second, .connected, nil))
         XCTAssertEqual(phone.activeCall?.id, second)
     }
+
+    func testACallResumedOnTheSystemScreenBecomesActive() throws {
+        let phone = try makePhone()
+        let first = BaresipCallID(rawValue: 1)
+        let second = BaresipCallID(rawValue: 2)
+        phone.apply(.call(first, .streamsRunning, nil))
+        phone.apply(.call(first, .paused, nil))
+        phone.apply(.call(second, .outgoingInit, nil))
+        phone.apply(.call(second, .streamsRunning, nil))
+        XCTAssertEqual(phone.activeCall?.id, second)
+
+        phone.apply(.call(second, .pausing, nil))
+        phone.apply(.call(first, .resuming, nil))
+        phone.apply(.call(first, .streamsRunning, nil))
+        phone.apply(.call(second, .paused, nil))
+        XCTAssertEqual(phone.activeCall?.id, first)
+
+        phone.apply(.call(first, .pausing, nil))
+        phone.apply(.call(second, .resuming, nil))
+        phone.apply(.call(second, .streamsRunning, nil))
+        phone.apply(.call(first, .paused, nil))
+        XCTAssertEqual(phone.activeCall?.id, second)
+    }
+
+    func testACallThatEndsWhileResumingOnTheSystemScreenResumesTheHeldCall() async throws {
+        let first = BaresipCallID(rawValue: 1)
+        let second = BaresipCallID(rawValue: 2)
+        let controller = RecordingController(controls: [first, second])
+        let phone = try makePhone()
+        phone.callController = controller
+        phone.apply(.call(first, .paused, nil))
+        phone.apply(.call(second, .streamsRunning, nil))
+        XCTAssertEqual(phone.activeCall?.id, second)
+
+        phone.apply(.call(second, .pausing, nil))
+        phone.apply(.call(first, .resuming, nil))
+        XCTAssertEqual(phone.activeCall?.id, first)
+        phone.apply(.call(first, .released, nil))
+        phone.apply(.call(second, .paused, nil))
+
+        XCTAssertEqual(phone.activeCall?.id, second)
+        for _ in 0 ..< 100 where !controller.actions.contains("hold 2 false") {
+            try await Task.sleep(for: .milliseconds(10))
+        }
+        XCTAssertTrue(controller.actions.contains("hold 2 false"), "\(controller.actions)")
+    }
+
+    func testAnUpdateOfAnotherCallKeepsAnActiveCallThatIsNotHeld() throws {
+        let phone = try makePhone()
+        let first = BaresipCallID(rawValue: 1)
+        let second = BaresipCallID(rawValue: 2)
+        phone.apply(.call(first, .streamsRunning, nil))
+        phone.apply(.call(second, .pausedByRemote, nil))
+
+        phone.apply(.call(second, .streamsRunning, nil))
+
+        XCTAssertEqual(phone.activeCall?.id, first)
+    }
+
+    private func makePhone() throws -> BaresipPhone {
+        var configuration = BaresipConfiguration(instanceUUID: UUID())
+        configuration.modules = ["g711"]
+        configuration.audio.sourceModule = "ausine"
+        configuration.audio.playerModule = "aufile"
+        configuration.audio.playerDevice = "/dev/null"
+        return try BaresipPhone(engine: BaresipEngine(configuration: configuration))
+    }
 }

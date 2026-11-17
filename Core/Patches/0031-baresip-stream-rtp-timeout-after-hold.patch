@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: BaresipKit <baresipkit@users.noreply.github.com>
+Date: Tue, 17 Nov 2026 15:06:41 +0100
+Subject: [PATCH] stream: restart the RTP timeout after hold
+
+check_rtp_handler() only checks a stream while it is sendrecv, but the
+time of the last received packet is not touched while the stream is on
+hold. When a call is resumed after a hold longer than the RTP timeout,
+the first check sees the gap of the whole hold and closes the call,
+although the peer had no reason to send. A call held for 20 seconds,
+resumed and held again would end with "no video RTP packets received
+for 31350 milliseconds" moments after it was resumed.
+
+Move the time of the last packet forward while the stream is not
+sendrecv, so the timeout counts from the moment the stream is sendrecv
+again. Streams that never received RTP are unchanged.
+---
+ src/stream.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/stream.c b/src/stream.c
+index 2822a72..5af01c6 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -339,6 +339,8 @@ static void check_rtp_handler(void *arg)
+ 		}
+ 	}
+ 	else {
++		rtprecv_set_ts_last(strm->rx, now);
++
+ 		debug("check_rtp: not checking \"%s\" RTP (dir=%s)\n",
+ 			  sdp_media_name(strm->sdp),
+ 			  sdp_dir_name(sdp_media_dir(strm->sdp)));
+-- 
+2.43.0
+

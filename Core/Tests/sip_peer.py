@@ -6,7 +6,8 @@ responses.
 
 Usage: sip_peer.py SCENARIO HOST CALLEE_PORT
 Scenarios: refer-ringing, fake-replace, reentrant, remove-live, stop-live,
-require-timer, cancel-elsewhere, dtmf, dtmf-info, answer-on-media.
+require-timer, cancel-elsewhere, dtmf, dtmf-info, answer-on-media, hold-timeout,
+video-stops, video-only-timeout, one-way-audio-timeout.
 Exits 0 when the callee behaved as expected, else 1.
 """
 
@@ -15,6 +16,7 @@ import re
 import socket
 import struct
 import sys
+import threading
 import time
 
 
@@ -27,6 +29,10 @@ class Peer:
         self.sip.settimeout(0.2)
         self.rtp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.rtp.bind((host, 0))
+        self.video = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.video.bind((host, 0))
+        self.offers_video = False
+        self.audio_direction = "sendrecv"
         self.port = self.sip.getsockname()[1]
         self.uri = "sip:bob@%s:%d" % (host, callee_port)
         self.telephone_event = False
@@ -39,14 +45,19 @@ class Peer:
         self.to_tag = None
         self.cseq = 0
 
-    def sdp(self):
+    def sdp(self, direction=None):
         formats, attributes = "0", "a=rtpmap:0 PCMU/8000\r\n"
         if self.telephone_event:
             formats += " 101"
             attributes += "a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15\r\n"
+        video = ""
+        if self.offers_video:
+            video = ("m=video %d RTP/AVP 96\r\na=rtpmap:96 VP8/90000\r\na=sendrecv\r\n"
+                     % self.video.getsockname()[1])
         return ("v=0\r\no=- 1 1 IN IP4 %s\r\ns=-\r\nc=IN IP4 %s\r\nt=0 0\r\n"
-                "m=audio %d RTP/AVP %s\r\n%sa=sendrecv\r\n"
-                % (self.host, self.host, self.rtp.getsockname()[1], formats, attributes))
+                "m=audio %d RTP/AVP %s\r\n%sa=%s\r\n%s"
+                % (self.host, self.host, self.rtp.getsockname()[1], formats, attributes,
+                   direction or self.audio_direction, video))
 
     def request(self, method, headers=(), body="", cseq=None, branch=None,
                 content_type="application/sdp"):
@@ -74,12 +85,16 @@ class Peer:
         self.sip.sendto(("\r\n".join(lines) + "\r\n\r\n" + body).encode(), self.callee)
         return branch
 
-    def reply_ok(self, data):
+    def reply_ok(self, data, body=""):
         head = data.split("\r\n\r\n", 1)[0].split("\r\n")
         kept = [line for line in head[1:]
                 if line.lower().startswith(("via:", "from:", "to:", "call-id:", "cseq:"))]
-        self.sip.sendto(("\r\n".join(["SIP/2.0 200 OK"] + kept + ["Content-Length: 0"])
-                         + "\r\n\r\n").encode(), self.callee)
+        if body:
+            kept += ["Contact: <sip:alice@%s:%d>" % (self.host, self.port),
+                     "Content-Type: application/sdp"]
+        self.sip.sendto(("\r\n".join(["SIP/2.0 200 OK"] + kept
+                                      + ["Content-Length: %d" % len(body)])
+                         + "\r\n\r\n" + body).encode(), self.callee)
 
     def receive(self, seconds, accept):
         deadline = time.time() + seconds
@@ -300,24 +315,12 @@ def send_telephone_event(peer, address, digit):
         time.sleep(0.02)
 
 
-def send_audio(peer, address, packets):
-    ssrc = random.getrandbits(32)
-    timestamp = random.getrandbits(32)
-    for seq in range(packets):
-        header = struct.pack("!BBHII", 0x80, 0x80 if seq == 0 else 0, seq,
-                             (timestamp + 160 * seq) & 0xFFFFFFFF, ssrc)
-        peer.rtp.sendto(header + b"\xff" * 160, address)
-        time.sleep(0.02)
-
-
 def answer_on_media(peer):
     peer.invite()
     if peer.status(10, "INVITE", lambda code: code == 183) != 183:
         return "no 183 with early media"
-    address = media_address(peer.last_response)
-    if not address:
+    if not peer.send_rtp(peer.last_response, 10):
         return "no audio address in the 183"
-    send_audio(peer, address, 10)
     if peer.status(5, "INVITE", lambda code: code >= 200) != 200:
         return "the call was not answered when audio arrived"
     peer.ack()
@@ -325,6 +328,137 @@ def answer_on_media(peer):
     peer.request("BYE")
     if peer.status(3, "BYE", lambda code: code >= 200) != 200:
         return "BYE not accepted"
+    return None
+
+
+class RtpStream(threading.Thread):
+    def __init__(self, sock, address, payload_type, clock_step, payload, interval):
+        super().__init__(daemon=True)
+        self.sock = sock
+        self.address = address
+        self.payload_type = payload_type
+        self.clock_step = clock_step
+        self.payload = payload
+        self.interval = interval
+        self.sending = threading.Event()
+        self.sending.set()
+        self.stopped = threading.Event()
+
+    def run(self):
+        ssrc = random.getrandbits(32)
+        timestamp = random.getrandbits(32)
+        seq = 0
+        while not self.stopped.is_set():
+            if self.sending.is_set():
+                header = struct.pack("!BBHII", 0x80, self.payload_type, seq & 0xFFFF,
+                                     (timestamp + self.clock_step * seq) & 0xFFFFFFFF, ssrc)
+                self.sock.sendto(header + self.payload, self.address)
+                seq += 1
+            time.sleep(self.interval)
+
+
+def audio_stream(peer, address):
+    return RtpStream(peer.rtp, address, 0, 160, b"\xff" * 160, 0.02)
+
+
+def video_stream(peer, address):
+    return RtpStream(peer.video, address, 0x80 | 96, 6000, b"\x10" + bytes(200), 0.066)
+
+
+def video_address(response):
+    body = response.split("\r\n\r\n", 1)[-1]
+    host = re.search(r"^c=IN IP4 (\S+)", body, re.M)
+    port = re.search(r"^m=video (\d+)", body, re.M)
+    if not host or not port or port.group(1) == "0":
+        return None
+    return host.group(1), int(port.group(1))
+
+
+def reinvite(peer, seconds):
+    return peer.receive(seconds, lambda data: data if data.startswith("INVITE ") else None)
+
+
+def end_call(peer):
+    peer.request("BYE")
+    if peer.status(3, "BYE", lambda code: code >= 200) != 200:
+        return "BYE not accepted"
+    return None
+
+
+def hold_timeout(peer):
+    if not establish(peer):
+        return "call not answered"
+    audio = audio_stream(peer, media_address(peer.last_response))
+    audio.start()
+    hold = reinvite(peer, 10)
+    if not hold or "a=sendonly" not in hold:
+        return "the callee did not put the call on hold"
+    audio.sending.clear()
+    peer.reply_ok(hold, peer.sdp("recvonly"))
+    resume = reinvite(peer, 10)
+    if not resume or "a=sendonly" in resume:
+        return "the callee did not resume the call"
+    peer.reply_ok(resume, peer.sdp())
+    time.sleep(1.5)
+    audio.sending.set()
+    if peer.bye_from_callee(3):
+        return "the callee ended the call after the hold"
+    audio.stopped.set()
+    return end_call(peer)
+
+
+def send_video_for_a_second(peer):
+    address = video_address(peer.last_response)
+    if not address:
+        return "no video in the answer"
+    video = video_stream(peer, address)
+    video.start()
+    time.sleep(1)
+    video.stopped.set()
+    return None
+
+
+def video_stops(peer):
+    peer.offers_video = True
+    if not establish(peer):
+        return "call not answered"
+    audio = audio_stream(peer, media_address(peer.last_response))
+    audio.start()
+    failure = send_video_for_a_second(peer)
+    if failure:
+        return failure
+    if peer.bye_from_callee(6):
+        return "the callee ended the call when the video stopped"
+    audio.stopped.set()
+    return end_call(peer)
+
+
+def video_only_timeout(peer):
+    peer.offers_video = True
+    if not establish(peer):
+        return "call not answered"
+    if not re.search(r"^m=audio.*?^a=inactive", peer.last_response, re.M | re.S):
+        return "the audio of the answer is not inactive"
+    failure = send_video_for_a_second(peer)
+    if failure:
+        return failure
+    if not peer.bye_from_callee(8):
+        return "the callee kept the call although its only media stopped"
+    return None
+
+
+def one_way_audio_timeout(peer):
+    peer.offers_video = True
+    peer.audio_direction = "sendonly"
+    if not establish(peer):
+        return "call not answered"
+    if not re.search(r"^m=audio.*?^a=recvonly", peer.last_response, re.M | re.S):
+        return "the audio of the answer is not recvonly"
+    failure = send_video_for_a_second(peer)
+    if failure:
+        return failure
+    if not peer.bye_from_callee(8):
+        return "the callee kept the call although nothing it watches arrived"
     return None
 
 
@@ -405,6 +539,10 @@ SCENARIOS = {
     "dtmf": dtmf,
     "dtmf-info": dtmf_info,
     "answer-on-media": answer_on_media,
+    "hold-timeout": hold_timeout,
+    "video-stops": video_stops,
+    "video-only-timeout": video_only_timeout,
+    "one-way-audio-timeout": one_way_audio_timeout,
 }
 
 

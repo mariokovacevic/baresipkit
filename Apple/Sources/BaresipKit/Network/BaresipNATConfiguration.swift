@@ -6,7 +6,9 @@ public struct BaresipNATConfiguration: Sendable, Equatable {
     public var stunURI: String?
     /// The TURN relay used by ICE. At most one server is supported.
     public var turnServers: [BaresipTURNServer]
-    /// How long an established call may receive no RTP before it is ended.
+    /// How long an established call may receive no RTP before it is ended. While the call's audio
+    /// is sent and received, only the audio counts; otherwise its video does. The time on hold
+    /// does not count.
     public var rtpTimeout: Duration
     /// Whether RTCP shares the RTP port (RFC 5761).
     ///
