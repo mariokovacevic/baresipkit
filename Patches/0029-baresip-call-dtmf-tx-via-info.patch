@@ -1,0 +1,95 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: BaresipKit <baresipkit@users.noreply.github.com>
+Date: Tue, 17 Nov 2026 10:00:00 +0100
+Subject: [PATCH] call: tell whether a sent DTMF digit goes out in a SIP INFO
+
+call_send_digit() sends a digit in a SIP INFO request in the SIP INFO
+mode, and in the auto mode when the peer did not negotiate
+telephone-event; otherwise as an RTP telephone event. An application
+that reports how a digit went out had to repeat that rule and could get
+it wrong. Move the decision into call_dtmf_tx_via_info(), which
+call_send_digit() now uses, so both always agree.
+---
+ include/baresip.h |  1 +
+ src/call.c        | 42 +++++++++++++++++++++++-------------------
+ 2 files changed, 24 insertions(+), 19 deletions(-)
+
+diff --git a/include/baresip.h b/include/baresip.h
+index 5a05f8b..1ffcc27 100644
+--- a/include/baresip.h
++++ b/include/baresip.h
+@@ -249,6 +249,7 @@ int  call_send_picture_update(struct call *call);
+ bool call_has_audio(const struct call *call);
+ bool call_has_video(const struct call *call);
+ bool call_dtmf_via_info(const struct call *call);
++bool call_dtmf_tx_via_info(const struct call *call);
+ bool call_early_video_available(const struct call *call);
+ bool call_refresh_allowed(const struct call *call);
+ int  call_restart_mnat(struct call *call);
+diff --git a/src/call.c b/src/call.c
+index 4e85437..7f45f49 100644
+--- a/src/call.c
++++ b/src/call.c
+@@ -1817,29 +1817,11 @@ int call_info(struct re_printf *pf, const struct call *call)
+ int call_send_digit(struct call *call, char key)
+ {
+ 	int err = 0;
+-	const struct sdp_format *fmt;
+-	bool info = true;
+ 
+ 	if (!call)
+ 		return EINVAL;
+ 
+-	switch (account_dtmfmode(call->acc)) {
+-		case DTMFMODE_SIP_INFO:
+-			info = true;
+-			break;
+-		case DTMFMODE_AUTO:
+-			fmt = sdp_media_rformat(
+-				stream_sdpmedia(audio_strm(call->audio)),
+-				telev_rtpfmt);
+-			info = fmt == NULL;
+-			break;
+-		case DTMFMODE_RTP_EVENT:
+-		default:
+-			info = false;
+-			break;
+-	}
+-
+-	if (info) {
++	if (call_dtmf_tx_via_info(call)) {
+ 		if (key != KEYCODE_REL) {
+ 			err = send_dtmf_info(call, key);
+ 		}
+@@ -1852,6 +1834,28 @@ int call_send_digit(struct call *call, char key)
+ }
+ 
+ 
++bool call_dtmf_tx_via_info(const struct call *call)
++{
++	const struct sdp_format *fmt;
++
++	if (!call)
++		return false;
++
++	switch (account_dtmfmode(call->acc)) {
++		case DTMFMODE_SIP_INFO:
++			return true;
++		case DTMFMODE_AUTO:
++			fmt = sdp_media_rformat(
++				stream_sdpmedia(audio_strm(call->audio)),
++				telev_rtpfmt);
++			return fmt == NULL;
++		case DTMFMODE_RTP_EVENT:
++		default:
++			return false;
++	}
++}
++
++
+ /**
+  * Get the User-Agent for the call
+  *
+-- 
+2.43.0
+

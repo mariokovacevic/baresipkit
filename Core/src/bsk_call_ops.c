@@ -309,9 +309,7 @@ static void dtmf_next(bsk_engine *e, struct bsk_call_ctx *c)
 		ev.account = c->account;
 		ev.call = c->id;
 		ev.u.dtmf.digit = digit;
-		ev.u.dtmf.via_sip_info =
-			account_dtmfmode(call_account(c->call)) ==
-			DTMFMODE_SIP_INFO;
+		ev.u.dtmf.via_sip_info = call_dtmf_tx_via_info(c->call);
 		bsk_emit(e, &ev);
 	}
 	c->dtmf_tone_on = true;

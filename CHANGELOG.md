@@ -20,6 +20,12 @@ All notable changes to this project are documented here. The format follows
 - The iOS release workflow is `release-ios.yml` and shows as "Release iOS" in the Actions tab
   (before `release.yml` and "Release"), named like `release-android.yml` and "Release Android".
 
+### Fixed
+
+- A DTMF digit sent in the `.auto` mode that goes out as SIP INFO, because the peer did not
+  negotiate telephone-event, reports `viaSIPInfo` (Kotlin `viaSipInfo`) as `true`; before, only
+  the `.sipInfo` mode did (patch 0029).
+
 ## [1.0.0-rc.1] - 2026-11-14
 
 Release candidate for 1.0.0, the first stable release. The public Swift and Kotlin API is frozen

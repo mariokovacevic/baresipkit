@@ -311,8 +311,8 @@ if [[ "$XB_RC" != 0 || "$XC_RC" != 0 ]]; then
   exit 1
 fi
 
-echo "== scripted peer: REFER while ringing, forged replace, calls into the engine from callbacks, teardown with a live call, CANCEL with a Reason"
-for scenario in refer-ringing fake-replace reentrant remove-live stop-live cancel-elsewhere; do
+echo "== scripted peer: REFER while ringing, forged replace, calls into the engine from callbacks, teardown with a live call, CANCEL with a Reason, DTMF source"
+for scenario in refer-ringing fake-replace reentrant remove-live stop-live cancel-elsewhere dtmf dtmf-info; do
   "$BUILD/tests/bsk_test_security" "$scenario" "$HOSTIP" > "$BUILD/security-$scenario.out" 2> "$BUILD/security-$scenario.err" &
   VICTIM_PID=$!
   for i in $(seq 1 50); do
