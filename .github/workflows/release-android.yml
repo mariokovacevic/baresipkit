@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version to publish, as written in VERSION and tagged by the Release workflow, e.g. 1.0.0"
+        description: "Version to publish, as written in VERSION and tagged by the Release iOS workflow, e.g. 1.0.0"
         required: true
       dry_run:
         description: "Build, check and assemble everything, upload it as a workflow artifact, publish nothing"

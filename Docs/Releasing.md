@@ -1,6 +1,6 @@
 # Releasing
 
-How a release is cut, as implemented by `.github/workflows/release.yml`. Nothing on this page
+How a release is cut, as implemented by `.github/workflows/release-ios.yml`. Nothing on this page
 happens on its own: a maintainer starts every step.
 
 ## Versioning
@@ -26,7 +26,7 @@ Merge it and wait until CI is green for the merge commit.
 
 ## What the release workflow does
 
-Run **Release** from the Actions tab on the default branch with the version. **Dry run** is on by
+Run **Release iOS** from the Actions tab on the default branch with the version. **Dry run** is on by
 default: it performs every check, assembles every asset and uploads them as a workflow artifact
 named `release-<version>`, and publishes nothing. Review that artifact, then run the workflow again
 with dry run off.

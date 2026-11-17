@@ -1,4 +1,4 @@
-name: Release
+name: Release iOS
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: release
+  group: release-ios
   cancel-in-progress: false
 
 defaults:

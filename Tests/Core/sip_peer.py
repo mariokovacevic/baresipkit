@@ -6,13 +6,14 @@ responses.
 
 Usage: sip_peer.py SCENARIO HOST CALLEE_PORT
 Scenarios: refer-ringing, fake-replace, reentrant, remove-live, stop-live,
-require-timer, cancel-elsewhere.
+require-timer, cancel-elsewhere, dtmf, dtmf-info.
 Exits 0 when the callee behaved as expected, else 1.
 """
 
 import random
 import re
 import socket
+import struct
 import sys
 import time
 
@@ -28,6 +29,8 @@ class Peer:
         self.rtp.bind((host, 0))
         self.port = self.sip.getsockname()[1]
         self.uri = "sip:bob@%s:%d" % (host, callee_port)
+        self.telephone_event = False
+        self.last_response = ""
         self.new_dialog()
 
     def new_dialog(self):
@@ -37,11 +40,16 @@ class Peer:
         self.cseq = 0
 
     def sdp(self):
+        formats, attributes = "0", "a=rtpmap:0 PCMU/8000\r\n"
+        if self.telephone_event:
+            formats += " 101"
+            attributes += "a=rtpmap:101 telephone-event/8000\r\na=fmtp:101 0-15\r\n"
         return ("v=0\r\no=- 1 1 IN IP4 %s\r\ns=-\r\nc=IN IP4 %s\r\nt=0 0\r\n"
-                "m=audio %d RTP/AVP 0\r\na=rtpmap:0 PCMU/8000\r\na=sendrecv\r\n"
-                % (self.host, self.host, self.rtp.getsockname()[1]))
+                "m=audio %d RTP/AVP %s\r\n%sa=sendrecv\r\n"
+                % (self.host, self.host, self.rtp.getsockname()[1], formats, attributes))
 
-    def request(self, method, headers=(), body="", cseq=None, branch=None):
+    def request(self, method, headers=(), body="", cseq=None, branch=None,
+                content_type="application/sdp"):
         if cseq is None:
             self.cseq += 1
             cseq = self.cseq
@@ -61,7 +69,7 @@ class Peer:
         ]
         lines.extend(headers)
         if body:
-            lines.append("Content-Type: application/sdp")
+            lines.append("Content-Type: %s" % content_type)
         lines.append("Content-Length: %d" % len(body))
         self.sip.sendto(("\r\n".join(lines) + "\r\n\r\n" + body).encode(), self.callee)
         return branch
@@ -98,7 +106,10 @@ class Peer:
             if not re.search(r"^CSeq: \d+ %s" % method, data, re.M | re.I):
                 return None
             code = int(match.group(1))
-            return code if wanted(code) else None
+            if not wanted(code):
+                return None
+            self.last_response = data
+            return code
         return self.receive(seconds, accept)
 
     def invite(self, headers=()):
@@ -267,6 +278,94 @@ def ended_by_callee(peer):
     return None
 
 
+def media_address(response):
+    body = response.split("\r\n\r\n", 1)[-1]
+    host = re.search(r"^c=IN IP4 (\S+)", body, re.M)
+    port = re.search(r"^m=audio (\d+)", body, re.M)
+    if not host or not port:
+        return None
+    return host.group(1), int(port.group(1))
+
+
+def send_telephone_event(peer, address, digit):
+    ssrc = random.getrandbits(32)
+    timestamp = random.getrandbits(32)
+    packets = [(i == 0, False, 400 * (i + 1)) for i in range(3)]
+    packets += [(False, True, 1600)] * 3
+    for seq, (marker, end, duration) in enumerate(packets, random.getrandbits(15)):
+        header = struct.pack("!BBHII", 0x80, (0x80 if marker else 0) | 101,
+                             seq & 0xFFFF, timestamp, ssrc)
+        payload = struct.pack("!BBH", digit, (0x80 if end else 0) | 10, duration)
+        peer.rtp.sendto(header + payload, address)
+        time.sleep(0.02)
+
+
+def receive_telephone_event(peer, payload_type, digit, seconds):
+    peer.rtp.settimeout(0.2)
+    deadline = time.time() + seconds
+    while time.time() < deadline:
+        try:
+            data = peer.rtp.recv(2048)
+        except socket.timeout:
+            continue
+        if len(data) >= 16 and data[1] & 0x7F == payload_type and data[12] == digit:
+            return True
+    return False
+
+
+def dtmf(peer):
+    peer.telephone_event = True
+    if not establish(peer):
+        return "call not answered"
+    address = media_address(peer.last_response)
+    if not address:
+        return "no audio address in the answer"
+    payload_type = re.search(r"^a=rtpmap:(\d+) telephone-event/", peer.last_response, re.M)
+    if not payload_type:
+        return "telephone-event not in the answer"
+    time.sleep(0.5)
+    peer.request("INFO", body="Signal=5\r\nDuration=100\r\n",
+                 content_type="application/dtmf-relay")
+    code = peer.status(3, "INFO", lambda code: code >= 200)
+    if code != 200:
+        return "INFO answered with %s" % code
+    time.sleep(0.5)
+    send_telephone_event(peer, address, 7)
+    if not receive_telephone_event(peer, int(payload_type.group(1)), 8, 5):
+        return "no telephone-event for 8 from the callee"
+    time.sleep(0.3)
+    peer.request("BYE")
+    if peer.status(3, "BYE", lambda code: code >= 200) != 200:
+        return "BYE not accepted"
+    return None
+
+
+def dtmf_info(peer):
+    if not establish(peer):
+        return "call not answered"
+
+    def accept(data):
+        if not data.startswith("INFO "):
+            return None
+        peer.reply_ok(data)
+        if not re.search(r"^Content-Type: *application/dtmf-relay", data, re.M | re.I):
+            return "INFO without application/dtmf-relay"
+        if not re.search(r"^Signal= *4", data.split("\r\n\r\n", 1)[-1], re.M):
+            return "INFO without Signal=4"
+        return ""
+
+    failure = peer.receive(5, accept)
+    if failure is None:
+        return "no SIP INFO for 4 from the callee"
+    if failure:
+        return failure
+    time.sleep(0.3)
+    peer.request("BYE")
+    if peer.status(3, "BYE", lambda code: code >= 200) != 200:
+        return "BYE not accepted"
+    return None
+
+
 SCENARIOS = {
     "refer-ringing": refer_ringing,
     "fake-replace": fake_replace,
@@ -275,6 +374,8 @@ SCENARIOS = {
     "stop-live": ended_by_callee,
     "require-timer": require_timer,
     "cancel-elsewhere": cancel_elsewhere,
+    "dtmf": dtmf,
+    "dtmf-info": dtmf_info,
 }
 
 
