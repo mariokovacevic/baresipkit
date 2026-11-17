@@ -1,0 +1,3 @@
+-keep class io.github.mariokovacevic.baresipkit.internal.Native { *; }
+-keep class io.github.mariokovacevic.baresipkit.internal.NativeEngineConfig { *; }
+-keep class io.github.mariokovacevic.baresipkit.internal.NativeAccountConfig { *; }

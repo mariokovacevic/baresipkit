@@ -1,0 +1,2094 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "BaresipKitLiveCommunication",
+    "printedName": "BaresipKitLiveCommunication",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "AVFoundation",
+        "printedName": "AVFoundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "BaresipKit",
+        "printedName": "BaresipKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "BaresipKitSystemCall",
+        "printedName": "BaresipKitSystemCall",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "LiveCommunicationKit",
+        "printedName": "LiveCommunicationKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftOnoneSupport",
+        "printedName": "SwiftOnoneSupport",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "_Concurrency",
+        "printedName": "_Concurrency",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "_StringProcessing",
+        "printedName": "_StringProcessing",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "Import",
+        "name": "_SwiftConcurrencyShims",
+        "printedName": "_SwiftConcurrencyShims",
+        "declKind": "Import",
+        "moduleName": "BaresipKitLiveCommunication"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipLiveCommunicationAdapter",
+        "printedName": "BaresipLiveCommunicationAdapter",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(engine:configuration:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipLiveCommunicationAdapter",
+                "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationAdapter",
+                "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipEngine",
+                "printedName": "BaresipKit.BaresipEngine",
+                "usr": "s:10BaresipKit0A6EngineC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipLiveCommunicationConfiguration",
+                "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationConfiguration",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC6engine13configurationAC0aB00A6EngineC_AA0acD13ConfigurationVtcfc",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC6engine13configurationAC0aB00A6EngineC_AA0acD13ConfigurationVtcfc",
+            "moduleName": "BaresipKitLiveCommunication",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "AudioSessionHandler",
+            "printedName": "AudioSessionHandler",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(Swift.Bool) async -> Swift.Void",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "Void",
+                    "printedName": "Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ]
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC19AudioSessionHandlera",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC19AudioSessionHandlera",
+            "moduleName": "BaresipKitLiveCommunication"
+          },
+          {
+            "kind": "Function",
+            "name": "setAudioSessionHandler",
+            "printedName": "setAudioSessionHandler(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationAdapter.AudioSessionHandler?",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "AudioSessionHandler",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationAdapter.AudioSessionHandler",
+                    "children": [
+                      {
+                        "kind": "TypeFunc",
+                        "name": "Function",
+                        "printedName": "(Swift.Bool) async -> Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNameAlias",
+                            "name": "Void",
+                            "printedName": "Swift.Void",
+                            "children": [
+                              {
+                                "kind": "TypeNominal",
+                                "name": "Void",
+                                "printedName": "()"
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Bool",
+                            "printedName": "Swift.Bool",
+                            "usr": "s:Sb"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC22setAudioSessionHandleryyySbYaYbcSgF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC22setAudioSessionHandleryyySbYaYbcSgF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "uuid",
+            "printedName": "uuid(for:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.UUID?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UUID",
+                    "printedName": "Foundation.UUID",
+                    "usr": "s:10Foundation4UUIDV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC4uuid3for10Foundation4UUIDVSg0aB00A6CallIDV_tF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC4uuid3for10Foundation4UUIDVSg0aB00A6CallIDV_tF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "startOutgoingCall",
+            "printedName": "startOutgoingCall(to:displayName:video:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC17startOutgoingCall2to11displayName5video10Foundation4UUIDVSS_SSSgSbtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC17startOutgoingCall2to11displayName5video10Foundation4UUIDVSS_SSSgSbtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "answerCall",
+            "printedName": "answerCall(uuid:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC10answerCall4uuidy10Foundation4UUIDV_tYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC10answerCall4uuidy10Foundation4UUIDV_tYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setMuted",
+            "printedName": "setMuted(_:uuid:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC8setMuted_4uuidySb_10Foundation4UUIDVtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC8setMuted_4uuidySb_10Foundation4UUIDVtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setOnHold",
+            "printedName": "setOnHold(_:uuid:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC9setOnHold_4uuidySb_10Foundation4UUIDVtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC9setOnHold_4uuidySb_10Foundation4UUIDVtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "endCall",
+            "printedName": "endCall(uuid:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "UUID",
+                "printedName": "Foundation.UUID",
+                "usr": "s:10Foundation4UUIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC7endCall4uuidy10Foundation4UUIDV_tYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC7endCall4uuidy10Foundation4UUIDV_tYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "controls",
+            "printedName": "controls(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC8controlsySb0aB00A6CallIDVF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC8controlsySb0aB00A6CallIDVF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "placeCall",
+            "printedName": "placeCall(to:video:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "String",
+                "printedName": "Swift.String",
+                "usr": "s:SS"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC9placeCall2to5video0aB00aG2IDVSS_SbtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC9placeCall2to5video0aB00aG2IDVSS_SbtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "answer",
+            "printedName": "answer(_:video:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC6answer_5videoy0aB00A6CallIDV_SbtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC6answer_5videoy0aB00A6CallIDV_SbtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "end",
+            "printedName": "end(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC3endyy0aB00A6CallIDVYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC3endyy0aB00A6CallIDVYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setOnHold",
+            "printedName": "setOnHold(_:call:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC9setOnHold_4callySb_0aB00A6CallIDVtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC9setOnHold_4callySb_0aB00A6CallIDVtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "setMuted",
+            "printedName": "setMuted(_:call:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC8setMuted_4callySb_0aB00A6CallIDVtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC8setMuted_4callySb_0aB00A6CallIDVtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "addMuteObserver",
+            "printedName": "addMuteObserver(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKit.BaresipCallID, Swift.Bool) -> Swift.Void",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "Void",
+                    "printedName": "Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Void",
+                        "printedName": "()"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Tuple",
+                    "printedName": "(BaresipKit.BaresipCallID, Swift.Bool)",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipCallID",
+                        "printedName": "BaresipKit.BaresipCallID",
+                        "usr": "s:10BaresipKit0A6CallIDV"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Bool",
+                        "printedName": "Swift.Bool",
+                        "usr": "s:Sb"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC15addMuteObserveryyy0aB00A6CallIDV_SbtYbcF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC15addMuteObserveryyy0aB00A6CallIDV_SbtYbcF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "reportIncomingCallFromPush",
+            "printedName": "reportIncomingCallFromPush(uuid:remoteURI:displayName:hasVideo:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.UUID?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UUID",
+                    "printedName": "Foundation.UUID",
+                    "usr": "s:10Foundation4UUIDV"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC26reportIncomingCallFromPush4uuid9remoteURI11displayName8hasVideoy10Foundation4UUIDVSg_SSSgAMSbtYaKF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC26reportIncomingCallFromPush4uuid9remoteURI11displayName8hasVideoy10Foundation4UUIDVSg_SSSgAMSbtYaKF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "Final"
+            ],
+            "isFromExtension": true,
+            "throwing": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:27BaresipKitLiveCommunication0acD7AdapterC",
+        "mangledName": "$s27BaresipKitLiveCommunication0acD7AdapterC",
+        "moduleName": "BaresipKitLiveCommunication",
+        "intro_iOS": "17.4",
+        "declAttributes": [
+          "Final",
+          "Available"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "BaresipCallController",
+            "printedName": "BaresipCallController",
+            "usr": "s:10BaresipKit0A14CallControllerP",
+            "mangledName": "$s10BaresipKit0A14CallControllerP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipLiveCommunicationError",
+        "printedName": "BaresipLiveCommunicationError",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "unknownCall",
+            "printedName": "unknownCall",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type) -> BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipLiveCommunicationError",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                    "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipLiveCommunicationError",
+                        "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                        "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO11unknownCallyA2CmF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO11unknownCallyA2CmF",
+            "moduleName": "BaresipKitLiveCommunication"
+          },
+          {
+            "kind": "Var",
+            "name": "unsupportedAction",
+            "printedName": "unsupportedAction",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type) -> BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipLiveCommunicationError",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                    "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipLiveCommunicationError",
+                        "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                        "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO17unsupportedActionyA2CmF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO17unsupportedActionyA2CmF",
+            "moduleName": "BaresipKitLiveCommunication"
+          },
+          {
+            "kind": "Var",
+            "name": "actionTimedOut",
+            "printedName": "actionTimedOut",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type) -> BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipLiveCommunicationError",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                    "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipLiveCommunicationError",
+                        "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                        "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO14actionTimedOutyA2CmF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO14actionTimedOutyA2CmF",
+            "moduleName": "BaresipKitLiveCommunication"
+          },
+          {
+            "kind": "Var",
+            "name": "managerReset",
+            "printedName": "managerReset",
+            "children": [
+              {
+                "kind": "TypeFunc",
+                "name": "Function",
+                "printedName": "(BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type) -> BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipLiveCommunicationError",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                    "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Metatype",
+                    "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError.Type",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipLiveCommunicationError",
+                        "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                        "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "declKind": "EnumElement",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO12managerResetyA2CmF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO12managerResetyA2CmF",
+            "moduleName": "BaresipKitLiveCommunication"
+          },
+          {
+            "kind": "Function",
+            "name": "__derived_enum_equals",
+            "printedName": "__derived_enum_equals(_:_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipLiveCommunicationError",
+                "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipLiveCommunicationError",
+                "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationError",
+                "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO21__derived_enum_equalsySbAC_ACtFZ",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO21__derived_enum_equalsySbAC_ACtFZ",
+            "moduleName": "BaresipKitLiveCommunication",
+            "static": true,
+            "implicit": true,
+            "declAttributes": [
+              "Implements",
+              "Semantics"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "hash",
+            "printedName": "hash(into:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Hasher",
+                "printedName": "Swift.Hasher",
+                "paramValueOwnership": "InOut",
+                "usr": "s:s6HasherV"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO4hash4intoys6HasherVz_tF",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO4hash4intoys6HasherVz_tF",
+            "moduleName": "BaresipKitLiveCommunication",
+            "implicit": true,
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "hashValue",
+            "printedName": "hashValue",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO9hashValueSivp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO9hashValueSivp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "implicit": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO9hashValueSivg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO9hashValueSivg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "accessorKind": "get"
+              }
+            ]
+          }
+        ],
+        "declKind": "Enum",
+        "usr": "s:27BaresipKitLiveCommunication0acD5ErrorO",
+        "mangledName": "$s27BaresipKitLiveCommunication0acD5ErrorO",
+        "moduleName": "BaresipKitLiveCommunication",
+        "isEnumExhaustive": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Error",
+            "printedName": "Error",
+            "usr": "s:s5ErrorP",
+            "mangledName": "$ss5ErrorP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipLiveCommunicationConfiguration",
+        "printedName": "BaresipLiveCommunicationConfiguration",
+        "children": [
+          {
+            "kind": "Var",
+            "name": "supportsVideo",
+            "printedName": "supportsVideo",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideoSbvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideoSbvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideoSbvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideoSbvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideoSbvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideoSbvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "maximumConversationGroups",
+            "printedName": "maximumConversationGroups",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV25maximumConversationGroupsSivp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV25maximumConversationGroupsSivp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV25maximumConversationGroupsSivg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV25maximumConversationGroupsSivg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV25maximumConversationGroupsSivs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV25maximumConversationGroupsSivs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "maximumConversationsPerConversationGroup",
+            "printedName": "maximumConversationsPerConversationGroup",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV40maximumConversationsPerConversationGroupSivp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV40maximumConversationsPerConversationGroupSivp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV40maximumConversationsPerConversationGroupSivg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV40maximumConversationsPerConversationGroupSivg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV40maximumConversationsPerConversationGroupSivs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV40maximumConversationsPerConversationGroupSivs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "iconTemplateImageData",
+            "printedName": "iconTemplateImageData",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Data?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV21iconTemplateImageData10Foundation0I0VSgvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV21iconTemplateImageData10Foundation0I0VSgvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Data?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV21iconTemplateImageData10Foundation0I0VSgvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV21iconTemplateImageData10Foundation0I0VSgvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Foundation.Data?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Data",
+                        "printedName": "Foundation.Data",
+                        "usr": "s:10Foundation4DataV"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV21iconTemplateImageData10Foundation0I0VSgvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV21iconTemplateImageData10Foundation0I0VSgvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "ringtoneName",
+            "printedName": "ringtoneName",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV12ringtoneNameSSSgvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV12ringtoneNameSSSgvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV12ringtoneNameSSSgvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV12ringtoneNameSSSgvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV12ringtoneNameSSSgvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV12ringtoneNameSSSgvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "pushInviteTimeout",
+            "printedName": "pushInviteTimeout",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Duration",
+                "printedName": "Swift.Duration",
+                "usr": "s:s8DurationV"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV17pushInviteTimeouts8DurationVvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV17pushInviteTimeouts8DurationVvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV17pushInviteTimeouts8DurationVvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV17pushInviteTimeouts8DurationVvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Duration",
+                    "printedName": "Swift.Duration",
+                    "usr": "s:s8DurationV"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV17pushInviteTimeouts8DurationVvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV17pushInviteTimeouts8DurationVvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "sendsCameraOnAnswer",
+            "printedName": "sendsCameraOnAnswer",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV19sendsCameraOnAnswerSbvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV19sendsCameraOnAnswerSbvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV19sendsCameraOnAnswerSbvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV19sendsCameraOnAnswerSbvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV19sendsCameraOnAnswerSbvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV19sendsCameraOnAnswerSbvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "matchesPushWithoutCaller",
+            "printedName": "matchesPushWithoutCaller",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV24matchesPushWithoutCallerSbvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV24matchesPushWithoutCallerSbvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV24matchesPushWithoutCallerSbvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV24matchesPushWithoutCallerSbvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV24matchesPushWithoutCallerSbvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV24matchesPushWithoutCallerSbvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "callUUIDHeader",
+            "printedName": "callUUIDHeader",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV14callUUIDHeaderSSSgvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV14callUUIDHeaderSSSgvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV14callUUIDHeaderSSSgvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV14callUUIDHeaderSSSgvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "Swift.String?",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "String",
+                        "printedName": "Swift.String",
+                        "usr": "s:SS"
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV14callUUIDHeaderSSSgvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV14callUUIDHeaderSSSgvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "includesCallsInRecents",
+            "printedName": "includesCallsInRecents",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV22includesCallsInRecentsSbvp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV22includesCallsInRecentsSbvp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV22includesCallsInRecentsSbvg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV22includesCallsInRecentsSbvg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV22includesCallsInRecentsSbvs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV22includesCallsInRecentsSbvs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "handleStyle",
+            "printedName": "handleStyle",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipHandleStyle",
+                "printedName": "BaresipKit.BaresipHandleStyle",
+                "usr": "s:10BaresipKit0A11HandleStyleO"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV11handleStyle0aB00a6HandleG0Ovp",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV11handleStyle0aB00a6HandleG0Ovp",
+            "moduleName": "BaresipKitLiveCommunication",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipHandleStyle",
+                    "printedName": "BaresipKit.BaresipHandleStyle",
+                    "usr": "s:10BaresipKit0A11HandleStyleO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV11handleStyle0aB00a6HandleG0Ovg",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV11handleStyle0aB00a6HandleG0Ovg",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipHandleStyle",
+                    "printedName": "BaresipKit.BaresipHandleStyle",
+                    "usr": "s:10BaresipKit0A11HandleStyleO"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV11handleStyle0aB00a6HandleG0Ovs",
+                "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV11handleStyle0aB00a6HandleG0Ovs",
+                "moduleName": "BaresipKitLiveCommunication",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(supportsVideo:maximumConversationGroups:maximumConversationsPerConversationGroup:iconTemplateImageData:ringtoneName:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipLiveCommunicationConfiguration",
+                "printedName": "BaresipKitLiveCommunication.BaresipLiveCommunicationConfiguration",
+                "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "hasDefaultArg": true,
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Foundation.Data?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Data",
+                    "printedName": "Foundation.Data",
+                    "usr": "s:10Foundation4DataV"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "Swift.String?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "String",
+                    "printedName": "Swift.String",
+                    "usr": "s:SS"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideo25maximumConversationGroups0h16ConversationsPerI5Group21iconTemplateImageData12ringtoneNameACSb_S2i10Foundation0Q0VSgSSSgtcfc",
+            "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV13supportsVideo25maximumConversationGroups0h16ConversationsPerI5Group21iconTemplateImageData12ringtoneNameACSb_S2i10Foundation0Q0VSgSSSgtcfc",
+            "moduleName": "BaresipKitLiveCommunication",
+            "init_kind": "Designated"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:27BaresipKitLiveCommunication0acD13ConfigurationV",
+        "mangledName": "$s27BaresipKitLiveCommunication0acD13ConfigurationV",
+        "moduleName": "BaresipKitLiveCommunication",
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8,
+    "tool_arguments": [
+      "-dump-sdk",
+      "-module",
+      "BaresipKitLiveCommunication",
+      "-o",
+      "\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/swift-api\/dumps\/BaresipKitLiveCommunication.json",
+      "-avoid-location",
+      "-sdk",
+      "\/Applications\/Xcode_26.6.app\/Contents\/Developer\/Platforms\/iPhoneSimulator.platform\/Developer\/SDKs\/iPhoneSimulator26.5.sdk",
+      "-target",
+      "arm64-apple-ios16.0-simulator",
+      "-I",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-F",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Sources\/BaresipKitBridge\/include",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/BaresipKitCore.xcframework\/ios-arm64-simulator\/Headers",
+      "-sdk-version",
+      "23F81a"
+    ]
+  }
+}

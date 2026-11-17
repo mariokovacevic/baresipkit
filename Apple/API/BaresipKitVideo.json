@@ -1,0 +1,1751 @@
+{
+  "ABIRoot": {
+    "kind": "Root",
+    "name": "BaresipKitVideo",
+    "printedName": "BaresipKitVideo",
+    "children": [
+      {
+        "kind": "Import",
+        "name": "AVFoundation",
+        "printedName": "AVFoundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "BaresipKit",
+        "printedName": "BaresipKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "CoreGraphics",
+        "printedName": "CoreGraphics",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "CoreImage",
+        "printedName": "CoreImage",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "CoreMedia",
+        "printedName": "CoreMedia",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "CoreVideo",
+        "printedName": "CoreVideo",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "Foundation",
+        "printedName": "Foundation",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftOnoneSupport",
+        "printedName": "SwiftOnoneSupport",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "SwiftUI",
+        "printedName": "SwiftUI",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "UIKit",
+        "printedName": "UIKit",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "_Concurrency",
+        "printedName": "_Concurrency",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "_StringProcessing",
+        "printedName": "_StringProcessing",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "_SwiftConcurrencyShims",
+        "printedName": "_SwiftConcurrencyShims",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "Import",
+        "name": "os",
+        "printedName": "os",
+        "declKind": "Import",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipCallVideo",
+        "printedName": "BaresipCallVideo",
+        "children": [
+          {
+            "kind": "TypeDecl",
+            "name": "Source",
+            "printedName": "Source",
+            "children": [
+              {
+                "kind": "Var",
+                "name": "remote",
+                "printedName": "remote",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitVideo.BaresipCallVideo.Source.Type) -> BaresipKitVideo.BaresipCallVideo.Source",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Source",
+                        "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                        "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "BaresipKitVideo.BaresipCallVideo.Source.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Source",
+                            "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                            "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO6remoteyA2EmF",
+                "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO6remoteyA2EmF",
+                "moduleName": "BaresipKitVideo"
+              },
+              {
+                "kind": "Var",
+                "name": "local",
+                "printedName": "local",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitVideo.BaresipCallVideo.Source.Type) -> BaresipKitVideo.BaresipCallVideo.Source",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Source",
+                        "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                        "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Metatype",
+                        "printedName": "BaresipKitVideo.BaresipCallVideo.Source.Type",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Source",
+                            "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                            "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "declKind": "EnumElement",
+                "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO5localyA2EmF",
+                "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO5localyA2EmF",
+                "moduleName": "BaresipKitVideo"
+              },
+              {
+                "kind": "Function",
+                "name": "__derived_enum_equals",
+                "printedName": "__derived_enum_equals(_:_:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Source",
+                    "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                    "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Source",
+                    "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                    "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO21__derived_enum_equalsySbAE_AEtFZ",
+                "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO21__derived_enum_equalsySbAE_AEtFZ",
+                "moduleName": "BaresipKitVideo",
+                "static": true,
+                "implicit": true,
+                "declAttributes": [
+                  "Implements",
+                  "Semantics"
+                ],
+                "funcSelfKind": "NonMutating"
+              },
+              {
+                "kind": "Function",
+                "name": "hash",
+                "printedName": "hash(into:)",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Hasher",
+                    "printedName": "Swift.Hasher",
+                    "paramValueOwnership": "InOut",
+                    "usr": "s:s6HasherV"
+                  }
+                ],
+                "declKind": "Func",
+                "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO4hash4intoys6HasherVz_tF",
+                "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO4hash4intoys6HasherVz_tF",
+                "moduleName": "BaresipKitVideo",
+                "implicit": true,
+                "funcSelfKind": "NonMutating"
+              },
+              {
+                "kind": "Var",
+                "name": "hashValue",
+                "printedName": "hashValue",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Int",
+                    "printedName": "Swift.Int",
+                    "usr": "s:Si"
+                  }
+                ],
+                "declKind": "Var",
+                "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO9hashValueSivp",
+                "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO9hashValueSivp",
+                "moduleName": "BaresipKitVideo",
+                "implicit": true,
+                "accessors": [
+                  {
+                    "kind": "Accessor",
+                    "name": "Get",
+                    "printedName": "Get()",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Int",
+                        "printedName": "Swift.Int",
+                        "usr": "s:Si"
+                      }
+                    ],
+                    "declKind": "Accessor",
+                    "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO9hashValueSivg",
+                    "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO9hashValueSivg",
+                    "moduleName": "BaresipKitVideo",
+                    "implicit": true,
+                    "accessorKind": "get"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Enum",
+            "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V6SourceO",
+            "moduleName": "BaresipKitVideo",
+            "isEnumExhaustive": true,
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Equatable",
+                "printedName": "Equatable",
+                "usr": "s:SQ",
+                "mangledName": "$sSQ"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Hashable",
+                "printedName": "Hashable",
+                "usr": "s:SH",
+                "mangledName": "$sSH"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Sendable",
+                "printedName": "Sendable",
+                "usr": "s:s8SendableP",
+                "mangledName": "$ss8SendableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "SendableMetatype",
+                "printedName": "SendableMetatype",
+                "usr": "s:s16SendableMetatypeP",
+                "mangledName": "$ss16SendableMetatypeP"
+              }
+            ]
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(engine:callID:source:mirrored:videoGravity:onViewCreated:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallVideo",
+                "printedName": "BaresipKitVideo.BaresipCallVideo",
+                "usr": "s:15BaresipKitVideo0a4CallC0V"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipEngine",
+                "printedName": "BaresipKit.BaresipEngine",
+                "usr": "s:10BaresipKit0A6EngineC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipCallID",
+                "printedName": "BaresipKit.BaresipCallID",
+                "usr": "s:10BaresipKit0A6CallIDV"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Source",
+                "printedName": "BaresipKitVideo.BaresipCallVideo.Source",
+                "hasDefaultArg": true,
+                "usr": "s:15BaresipKitVideo0a4CallC0V6SourceO"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "hasDefaultArg": true,
+                "usr": "s:Sb"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "AVFoundation.AVLayerVideoGravity?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AVLayerVideoGravity",
+                    "printedName": "AVFoundation.AVLayerVideoGravity",
+                    "usr": "c:@T@AVLayerVideoGravity"
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((BaresipKitVideo.BaresipVideoView) -> Swift.Void)?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitVideo.BaresipVideoView) -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipVideoView",
+                        "printedName": "BaresipKitVideo.BaresipVideoView",
+                        "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:15BaresipKitVideo0a4CallC0V6engine6callID6source8mirrored12videoGravity13onViewCreatedAC0aB00A6EngineC_AJ0adG0VAC6SourceOSbSo07AVLayercK0aSgyAA0acM0CcSgtcfc",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V6engine6callID6source8mirrored12videoGravity13onViewCreatedAC0aB00A6EngineC_AJ0adG0VAC6SourceOSbSo07AVLayercK0aSgyAA0acM0CcSgtcfc",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "TypeDecl",
+            "name": "Coordinator",
+            "printedName": "Coordinator",
+            "declKind": "Class",
+            "usr": "s:15BaresipKitVideo0a4CallC0V11CoordinatorC",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V11CoordinatorC",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final"
+            ],
+            "hasMissingDesignatedInitializers": true,
+            "conformances": [
+              {
+                "kind": "Conformance",
+                "name": "Copyable",
+                "printedName": "Copyable",
+                "usr": "s:s8CopyableP",
+                "mangledName": "$ss8CopyableP"
+              },
+              {
+                "kind": "Conformance",
+                "name": "Escapable",
+                "printedName": "Escapable",
+                "usr": "s:s9EscapableP",
+                "mangledName": "$ss9EscapableP"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "makeCoordinator",
+            "printedName": "makeCoordinator()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Coordinator",
+                "printedName": "BaresipKitVideo.BaresipCallVideo.Coordinator",
+                "usr": "s:15BaresipKitVideo0a4CallC0V11CoordinatorC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0a4CallC0V15makeCoordinatorAC0F0CyF",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V15makeCoordinatorAC0F0CyF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "makeUIView",
+            "printedName": "makeUIView(context:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoView",
+                "printedName": "BaresipKitVideo.BaresipVideoView",
+                "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+              },
+              {
+                "kind": "TypeNameAlias",
+                "name": "Context",
+                "printedName": "BaresipKitVideo.BaresipCallVideo.Context",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIViewRepresentableContext",
+                    "printedName": "SwiftUI.UIViewRepresentableContext<BaresipKitVideo.BaresipCallVideo>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipCallVideo",
+                        "printedName": "BaresipKitVideo.BaresipCallVideo",
+                        "usr": "s:15BaresipKitVideo0a4CallC0V"
+                      }
+                    ],
+                    "usr": "s:7SwiftUI26UIViewRepresentableContextV"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0a4CallC0V10makeUIView7contextAA0aC4ViewC7SwiftUI0F20RepresentableContextVyACG_tF",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V10makeUIView7contextAA0aC4ViewC7SwiftUI0F20RepresentableContextVyACG_tF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "updateUIView",
+            "printedName": "updateUIView(_:context:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoView",
+                "printedName": "BaresipKitVideo.BaresipVideoView",
+                "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+              },
+              {
+                "kind": "TypeNameAlias",
+                "name": "Context",
+                "printedName": "BaresipKitVideo.BaresipCallVideo.Context",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "UIViewRepresentableContext",
+                    "printedName": "SwiftUI.UIViewRepresentableContext<BaresipKitVideo.BaresipCallVideo>",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipCallVideo",
+                        "printedName": "BaresipKitVideo.BaresipCallVideo",
+                        "usr": "s:15BaresipKitVideo0a4CallC0V"
+                      }
+                    ],
+                    "usr": "s:7SwiftUI26UIViewRepresentableContextV"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0a4CallC0V12updateUIView_7contextyAA0aC4ViewC_7SwiftUI0F20RepresentableContextVyACGtF",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V12updateUIView_7contextyAA0aC4ViewC_7SwiftUI0F20RepresentableContextVyACGtF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "dismantleUIView",
+            "printedName": "dismantleUIView(_:coordinator:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoView",
+                "printedName": "BaresipKitVideo.BaresipVideoView",
+                "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Coordinator",
+                "printedName": "BaresipKitVideo.BaresipCallVideo.Coordinator",
+                "usr": "s:15BaresipKitVideo0a4CallC0V11CoordinatorC"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0a4CallC0V15dismantleUIView_11coordinatoryAA0aC4ViewC_AC11CoordinatorCtFZ",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V15dismantleUIView_11coordinatoryAA0aC4ViewC_AC11CoordinatorCtFZ",
+            "moduleName": "BaresipKitVideo",
+            "static": true,
+            "declAttributes": [
+              "Preconcurrency",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "Body",
+            "printedName": "Body",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Never",
+                "printedName": "Swift.Never",
+                "usr": "s:s5NeverO"
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:15BaresipKitVideo0a4CallC0V4Bodya",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V4Bodya",
+            "moduleName": "BaresipKitVideo",
+            "implicit": true
+          },
+          {
+            "kind": "TypeAlias",
+            "name": "UIViewType",
+            "printedName": "UIViewType",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoView",
+                "printedName": "BaresipKitVideo.BaresipVideoView",
+                "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+              }
+            ],
+            "declKind": "TypeAlias",
+            "usr": "s:15BaresipKitVideo0a4CallC0V10UIViewTypea",
+            "mangledName": "$s15BaresipKitVideo0a4CallC0V10UIViewTypea",
+            "moduleName": "BaresipKitVideo",
+            "implicit": true
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:15BaresipKitVideo0a4CallC0V",
+        "mangledName": "$s15BaresipKitVideo0a4CallC0V",
+        "moduleName": "BaresipKitVideo",
+        "declAttributes": [
+          "Preconcurrency",
+          "Custom"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIViewRepresentable",
+            "printedName": "UIViewRepresentable",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "UIViewType",
+                "printedName": "UIViewType",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipVideoView",
+                    "printedName": "BaresipKitVideo.BaresipVideoView",
+                    "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+                  }
+                ]
+              },
+              {
+                "kind": "TypeWitness",
+                "name": "Coordinator",
+                "printedName": "Coordinator",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Coordinator",
+                    "printedName": "BaresipKitVideo.BaresipCallVideo.Coordinator",
+                    "usr": "s:15BaresipKitVideo0a4CallC0V11CoordinatorC"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:7SwiftUI19UIViewRepresentableP",
+            "mangledName": "$s7SwiftUI19UIViewRepresentableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "View",
+            "printedName": "View",
+            "children": [
+              {
+                "kind": "TypeWitness",
+                "name": "Body",
+                "printedName": "Body",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Never",
+                    "printedName": "Swift.Never",
+                    "usr": "s:s5NeverO"
+                  }
+                ]
+              }
+            ],
+            "usr": "s:7SwiftUI4ViewP",
+            "mangledName": "$s7SwiftUI4ViewP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeAlias",
+        "name": "BaresipVideoFrame",
+        "printedName": "BaresipVideoFrame",
+        "children": [
+          {
+            "kind": "TypeNominal",
+            "name": "BaresipVideoFrame",
+            "printedName": "BaresipKit.BaresipVideoFrame",
+            "usr": "s:10BaresipKit0A10VideoFrameV"
+          }
+        ],
+        "declKind": "TypeAlias",
+        "usr": "s:15BaresipKitVideo0aC5Framea",
+        "mangledName": "$s15BaresipKitVideo0aC5Framea",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "TypeAlias",
+        "name": "BaresipVideoRenderer",
+        "printedName": "BaresipVideoRenderer",
+        "children": [
+          {
+            "kind": "TypeNominal",
+            "name": "BaresipVideoRenderer",
+            "printedName": "BaresipKit.BaresipVideoRenderer",
+            "usr": "s:10BaresipKit0A13VideoRendererP"
+          }
+        ],
+        "declKind": "TypeAlias",
+        "usr": "s:15BaresipKitVideo0aC8Renderera",
+        "mangledName": "$s15BaresipKitVideo0aC8Renderera",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "TypeAlias",
+        "name": "BaresipPixelFormat",
+        "printedName": "BaresipPixelFormat",
+        "children": [
+          {
+            "kind": "TypeNominal",
+            "name": "BaresipPixelFormat",
+            "printedName": "BaresipKit.BaresipPixelFormat",
+            "usr": "s:10BaresipKit0A11PixelFormatO"
+          }
+        ],
+        "declKind": "TypeAlias",
+        "usr": "s:15BaresipKitVideo0A11PixelFormata",
+        "mangledName": "$s15BaresipKitVideo0A11PixelFormata",
+        "moduleName": "BaresipKitVideo"
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipVideoFrameRelay",
+        "printedName": "BaresipVideoFrameRelay",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(onFrame:onSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoFrameRelay",
+                "printedName": "BaresipKitVideo.BaresipVideoFrameRelay",
+                "usr": "s:15BaresipKitVideo0aC10FrameRelayC"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((BaresipKitVideo.BaresipVideoFrame) -> Swift.Void)?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitVideo.BaresipVideoFrame) -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "BaresipVideoFrame",
+                        "printedName": "BaresipKitVideo.BaresipVideoFrame",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "BaresipVideoFrame",
+                            "printedName": "BaresipKit.BaresipVideoFrame",
+                            "usr": "s:10BaresipKit0A10VideoFrameV"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Int, Swift.Int) -> Swift.Void)?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Int, Swift.Int) -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(Swift.Int, Swift.Int)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Int",
+                            "printedName": "Swift.Int",
+                            "usr": "s:Si"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Int",
+                            "printedName": "Swift.Int",
+                            "usr": "s:Si"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "hasDefaultArg": true,
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "s:15BaresipKitVideo0aC10FrameRelayC02onD00F4SizeACy0aB00acD0VYbcSg_ySi_SitYbcSgtcfc",
+            "mangledName": "$s15BaresipKitVideo0aC10FrameRelayC02onD00F4SizeACy0aB00acD0VYbcSg_ySi_SitYbcSgtcfc",
+            "moduleName": "BaresipKitVideo",
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "setHandlers",
+            "printedName": "setHandlers(onFrame:onSize:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((BaresipKitVideo.BaresipVideoFrame) -> Swift.Void)?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(BaresipKitVideo.BaresipVideoFrame) -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "BaresipVideoFrame",
+                        "printedName": "BaresipKitVideo.BaresipVideoFrame",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "BaresipVideoFrame",
+                            "printedName": "BaresipKit.BaresipVideoFrame",
+                            "usr": "s:10BaresipKit0A10VideoFrameV"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "((Swift.Int, Swift.Int) -> Swift.Void)?",
+                "children": [
+                  {
+                    "kind": "TypeFunc",
+                    "name": "Function",
+                    "printedName": "(Swift.Int, Swift.Int) -> Swift.Void",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "Void",
+                        "printedName": "Swift.Void",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Void",
+                            "printedName": "()"
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "TypeNominal",
+                        "name": "Tuple",
+                        "printedName": "(Swift.Int, Swift.Int)",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Int",
+                            "printedName": "Swift.Int",
+                            "usr": "s:Si"
+                          },
+                          {
+                            "kind": "TypeNominal",
+                            "name": "Int",
+                            "printedName": "Swift.Int",
+                            "usr": "s:Si"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0aC10FrameRelayC11setHandlers02onD00H4Sizeyy0aB00acD0VYbcSg_ySi_SitYbcSgtF",
+            "mangledName": "$s15BaresipKitVideo0aC10FrameRelayC11setHandlers02onD00H4Sizeyy0aB00acD0VYbcSg_ySi_SitYbcSgtF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "render",
+            "printedName": "render(_:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNameAlias",
+                "name": "BaresipVideoFrame",
+                "printedName": "BaresipKitVideo.BaresipVideoFrame",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipVideoFrame",
+                    "printedName": "BaresipKit.BaresipVideoFrame",
+                    "usr": "s:10BaresipKit0A10VideoFrameV"
+                  }
+                ]
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0aC10FrameRelayC6renderyy0aB00acD0VF",
+            "mangledName": "$s15BaresipKitVideo0aC10FrameRelayC6renderyy0aB00acD0VF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Function",
+            "name": "didChangeSize",
+            "printedName": "didChangeSize(width:height:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "Int",
+                "printedName": "Swift.Int",
+                "usr": "s:Si"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0aC10FrameRelayC13didChangeSize5width6heightySi_SitF",
+            "mangledName": "$s15BaresipKitVideo0aC10FrameRelayC13didChangeSize5width6heightySi_SitF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "s:15BaresipKitVideo0aC10FrameRelayC",
+        "mangledName": "$s15BaresipKitVideo0aC10FrameRelayC",
+        "moduleName": "BaresipKitVideo",
+        "declAttributes": [
+          "Final"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "BaresipVideoRenderer",
+            "printedName": "BaresipVideoRenderer",
+            "usr": "s:10BaresipKit0A13VideoRendererP",
+            "mangledName": "$s10BaresipKit0A13VideoRendererP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipVideoView",
+        "printedName": "BaresipVideoView",
+        "children": [
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(frame:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoView",
+                "printedName": "BaresipKitVideo.BaresipVideoView",
+                "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CGRect",
+                "printedName": "CoreFoundation.CGRect",
+                "usr": "c:@S@CGRect"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView(im)initWithFrame:",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC5frameACSo6CGRectV_tcfc",
+            "moduleName": "BaresipKitVideo",
+            "overriding": true,
+            "objc_name": "initWithFrame:",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Override",
+              "Custom"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Constructor",
+            "name": "init",
+            "printedName": "init(coder:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKitVideo.BaresipVideoView?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipVideoView",
+                    "printedName": "BaresipKitVideo.BaresipVideoView",
+                    "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "NSCoder",
+                "printedName": "Foundation.NSCoder",
+                "usr": "c:objc(cs)NSCoder"
+              }
+            ],
+            "declKind": "Constructor",
+            "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView(im)initWithCoder:",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC5coderACSgSo7NSCoderC_tcfc",
+            "moduleName": "BaresipKitVideo",
+            "overriding": true,
+            "objc_name": "initWithCoder:",
+            "declAttributes": [
+              "Dynamic",
+              "ObjC",
+              "Required",
+              "Custom"
+            ],
+            "init_kind": "Designated"
+          },
+          {
+            "kind": "Function",
+            "name": "layoutSubviews",
+            "printedName": "layoutSubviews()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView(im)layoutSubviews",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC14layoutSubviewsyyF",
+            "moduleName": "BaresipKitVideo",
+            "overriding": true,
+            "objc_name": "layoutSubviews",
+            "declAttributes": [
+              "Final",
+              "ObjC",
+              "Override",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "videoGravity",
+            "printedName": "videoGravity",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "AVLayerVideoGravity",
+                "printedName": "AVFoundation.AVLayerVideoGravity",
+                "usr": "c:@T@AVLayerVideoGravity"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitVideo0aC4ViewC12videoGravitySo07AVLayercF0avp",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC12videoGravitySo07AVLayercF0avp",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AVLayerVideoGravity",
+                    "printedName": "AVFoundation.AVLayerVideoGravity",
+                    "usr": "c:@T@AVLayerVideoGravity"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitVideo0aC4ViewC12videoGravitySo07AVLayercF0avg",
+                "mangledName": "$s15BaresipKitVideo0aC4ViewC12videoGravitySo07AVLayercF0avg",
+                "moduleName": "BaresipKitVideo",
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "AVLayerVideoGravity",
+                    "printedName": "AVFoundation.AVLayerVideoGravity",
+                    "usr": "c:@T@AVLayerVideoGravity"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitVideo0aC4ViewC12videoGravitySo07AVLayercF0avs",
+                "mangledName": "$s15BaresipKitVideo0aC4ViewC12videoGravitySo07AVLayercF0avs",
+                "moduleName": "BaresipKitVideo",
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
+            "name": "renderer",
+            "printedName": "renderer",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "BaresipVideoRenderer",
+                "printedName": "any BaresipKitVideo.BaresipVideoRenderer",
+                "usr": "s:10BaresipKit0A13VideoRendererP"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitVideo0aC4ViewC8renderer0aB00aC8Renderer_pvp",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC8renderer0aB00aC8Renderer_pvp",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "BaresipVideoRenderer",
+                    "printedName": "any BaresipKitVideo.BaresipVideoRenderer",
+                    "usr": "s:10BaresipKit0A13VideoRendererP"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitVideo0aC4ViewC8renderer0aB00aC8Renderer_pvg",
+                "mangledName": "$s15BaresipKitVideo0aC4ViewC8renderer0aB00aC8Renderer_pvg",
+                "moduleName": "BaresipKitVideo",
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "flush",
+            "printedName": "flush()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Void",
+                "printedName": "()"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0aC4ViewC5flushyyF",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC5flushyyF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          },
+          {
+            "kind": "Var",
+            "name": "currentFrame",
+            "printedName": "currentFrame",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "BaresipKitVideo.BaresipVideoFrame?",
+                "children": [
+                  {
+                    "kind": "TypeNameAlias",
+                    "name": "BaresipVideoFrame",
+                    "printedName": "BaresipKitVideo.BaresipVideoFrame",
+                    "children": [
+                      {
+                        "kind": "TypeNominal",
+                        "name": "BaresipVideoFrame",
+                        "printedName": "BaresipKit.BaresipVideoFrame",
+                        "usr": "s:10BaresipKit0A10VideoFrameV"
+                      }
+                    ]
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:15BaresipKitVideo0aC4ViewC12currentFrame0aB00acF0VSgvp",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC12currentFrame0aB00acF0VSgvp",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Optional",
+                    "printedName": "BaresipKitVideo.BaresipVideoFrame?",
+                    "children": [
+                      {
+                        "kind": "TypeNameAlias",
+                        "name": "BaresipVideoFrame",
+                        "printedName": "BaresipKitVideo.BaresipVideoFrame",
+                        "children": [
+                          {
+                            "kind": "TypeNominal",
+                            "name": "BaresipVideoFrame",
+                            "printedName": "BaresipKit.BaresipVideoFrame",
+                            "usr": "s:10BaresipKit0A10VideoFrameV"
+                          }
+                        ]
+                      }
+                    ],
+                    "usr": "s:Sq"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:15BaresipKitVideo0aC4ViewC12currentFrame0aB00acF0VSgvg",
+                "mangledName": "$s15BaresipKitVideo0aC4ViewC12currentFrame0aB00acF0VSgvg",
+                "moduleName": "BaresipKitVideo",
+                "declAttributes": [
+                  "Final"
+                ],
+                "accessorKind": "get"
+              }
+            ]
+          },
+          {
+            "kind": "Function",
+            "name": "snapshot",
+            "printedName": "snapshot()",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "CoreGraphics.CGImage?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGImage",
+                    "printedName": "CoreGraphics.CGImage",
+                    "usr": "c:@T@CGImageRef"
+                  }
+                ],
+                "usr": "s:Sq"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:15BaresipKitVideo0aC4ViewC8snapshotSo10CGImageRefaSgyF",
+            "mangledName": "$s15BaresipKitVideo0aC4ViewC8snapshotSo10CGImageRefaSgyF",
+            "moduleName": "BaresipKitVideo",
+            "declAttributes": [
+              "Final",
+              "Custom"
+            ],
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Class",
+        "usr": "c:@M@BaresipKitVideo@objc(cs)BaresipVideoView",
+        "mangledName": "$s15BaresipKitVideo0aC4ViewC",
+        "moduleName": "BaresipKitVideo",
+        "declAttributes": [
+          "Final",
+          "Custom",
+          "ObjC"
+        ],
+        "superclassUsr": "c:objc(cs)UIView",
+        "inheritsConvenienceInitializers": true,
+        "superclassNames": [
+          "UIKit.UIView",
+          "UIKit.UIResponder",
+          "ObjectiveC.NSObject"
+        ],
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "NSCoding",
+            "printedName": "NSCoding",
+            "usr": "c:objc(pl)NSCoding"
+          },
+          {
+            "kind": "Conformance",
+            "name": "NSObjectProtocol",
+            "printedName": "NSObjectProtocol",
+            "usr": "c:objc(pl)NSObject"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CALayerDelegate",
+            "printedName": "CALayerDelegate",
+            "usr": "c:objc(pl)CALayerDelegate"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CVarArg",
+            "printedName": "CVarArg",
+            "usr": "s:s7CVarArgP",
+            "mangledName": "$ss7CVarArgP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomDebugStringConvertible",
+            "printedName": "CustomDebugStringConvertible",
+            "usr": "s:s28CustomDebugStringConvertibleP",
+            "mangledName": "$ss28CustomDebugStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "CustomStringConvertible",
+            "printedName": "CustomStringConvertible",
+            "usr": "s:s23CustomStringConvertibleP",
+            "mangledName": "$ss23CustomStringConvertibleP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Equatable",
+            "printedName": "Equatable",
+            "usr": "s:SQ",
+            "mangledName": "$sSQ"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Hashable",
+            "printedName": "Hashable",
+            "usr": "s:SH",
+            "mangledName": "$sSH"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIAccessibilityIdentification",
+            "printedName": "UIAccessibilityIdentification",
+            "usr": "c:objc(pl)UIAccessibilityIdentification"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIActivityItemsConfigurationProviding",
+            "printedName": "UIActivityItemsConfigurationProviding",
+            "usr": "c:objc(pl)UIActivityItemsConfigurationProviding"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIAppearance",
+            "printedName": "UIAppearance",
+            "usr": "c:objc(pl)UIAppearance"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIAppearanceContainer",
+            "printedName": "UIAppearanceContainer",
+            "usr": "c:objc(pl)UIAppearanceContainer"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIDynamicItem",
+            "printedName": "UIDynamicItem",
+            "usr": "c:objc(pl)UIDynamicItem"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIFocusEnvironment",
+            "printedName": "UIFocusEnvironment",
+            "usr": "c:objc(pl)UIFocusEnvironment"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIFocusItem",
+            "printedName": "UIFocusItem",
+            "usr": "c:objc(pl)UIFocusItem"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIFocusItemContainer",
+            "printedName": "UIFocusItemContainer",
+            "usr": "c:objc(pl)UIFocusItemContainer"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UILargeContentViewerItem",
+            "printedName": "UILargeContentViewerItem",
+            "usr": "c:objc(pl)UILargeContentViewerItem"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIPasteConfigurationSupporting",
+            "printedName": "UIPasteConfigurationSupporting",
+            "usr": "c:objc(pl)UIPasteConfigurationSupporting"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIPopoverPresentationControllerSourceItem",
+            "printedName": "UIPopoverPresentationControllerSourceItem",
+            "usr": "c:objc(pl)UIPopoverPresentationControllerSourceItem"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIResponderStandardEditActions",
+            "printedName": "UIResponderStandardEditActions",
+            "usr": "c:objc(pl)UIResponderStandardEditActions"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UITraitChangeObservable",
+            "printedName": "UITraitChangeObservable",
+            "usr": "s:5UIKit23UITraitChangeObservableP",
+            "mangledName": "$s5UIKit23UITraitChangeObservableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UITraitEnvironment",
+            "printedName": "UITraitEnvironment",
+            "usr": "c:objc(pl)UITraitEnvironment"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UIUserActivityRestoring",
+            "printedName": "UIUserActivityRestoring",
+            "usr": "c:objc(pl)UIUserActivityRestoring"
+          },
+          {
+            "kind": "Conformance",
+            "name": "UICoordinateSpace",
+            "printedName": "UICoordinateSpace",
+            "usr": "c:objc(pl)UICoordinateSpace"
+          }
+        ]
+      },
+      {
+        "kind": "TypeDecl",
+        "name": "BaresipVideoFrame",
+        "printedName": "BaresipVideoFrame",
+        "children": [
+          {
+            "kind": "Function",
+            "name": "makeImage",
+            "printedName": "makeImage(context:)",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Optional",
+                "printedName": "CoreGraphics.CGImage?",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "CGImage",
+                    "printedName": "CoreGraphics.CGImage",
+                    "usr": "c:@T@CGImageRef"
+                  }
+                ],
+                "usr": "s:Sq"
+              },
+              {
+                "kind": "TypeNominal",
+                "name": "CIContext",
+                "printedName": "CoreImage.CIContext",
+                "hasDefaultArg": true,
+                "usr": "c:objc(cs)CIContext"
+              }
+            ],
+            "declKind": "Func",
+            "usr": "s:10BaresipKit0A10VideoFrameV0abC0E9makeImage7contextSo10CGImageRefaSgSo9CIContextC_tF",
+            "mangledName": "$s10BaresipKit0A10VideoFrameV0abC0E9makeImage7contextSo10CGImageRefaSgSo9CIContextC_tF",
+            "moduleName": "BaresipKitVideo",
+            "isFromExtension": true,
+            "funcSelfKind": "NonMutating"
+          }
+        ],
+        "declKind": "Struct",
+        "usr": "s:10BaresipKit0A10VideoFrameV",
+        "mangledName": "$s10BaresipKit0A10VideoFrameV",
+        "moduleName": "BaresipKit",
+        "isExternal": true,
+        "conformances": [
+          {
+            "kind": "Conformance",
+            "name": "Copyable",
+            "printedName": "Copyable",
+            "usr": "s:s8CopyableP",
+            "mangledName": "$ss8CopyableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Escapable",
+            "printedName": "Escapable",
+            "usr": "s:s9EscapableP",
+            "mangledName": "$ss9EscapableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "Sendable",
+            "printedName": "Sendable",
+            "usr": "s:s8SendableP",
+            "mangledName": "$ss8SendableP"
+          },
+          {
+            "kind": "Conformance",
+            "name": "SendableMetatype",
+            "printedName": "SendableMetatype",
+            "usr": "s:s16SendableMetatypeP",
+            "mangledName": "$ss16SendableMetatypeP"
+          }
+        ]
+      }
+    ],
+    "json_format_version": 8,
+    "tool_arguments": [
+      "-dump-sdk",
+      "-module",
+      "BaresipKitVideo",
+      "-o",
+      "\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/swift-api\/dumps\/BaresipKitVideo.json",
+      "-avoid-location",
+      "-sdk",
+      "\/Applications\/Xcode_26.6.app\/Contents\/Developer\/Platforms\/iPhoneSimulator.platform\/Developer\/SDKs\/iPhoneSimulator26.5.sdk",
+      "-target",
+      "arm64-apple-ios16.0-simulator",
+      "-I",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-F",
+      "\/Users\/runner\/Library\/Developer\/Xcode\/DerivedData\/baresipkit-bdinuduorhoijihgwjacbtolugfk\/Build\/Products\/Debug-iphonesimulator",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Sources\/BaresipKitBridge\/include",
+      "-Xcc",
+      "-I\/Users\/runner\/work\/baresipkit\/baresipkit\/Build\/out\/BaresipKitCore.xcframework\/ios-arm64-simulator\/Headers",
+      "-sdk-version",
+      "23F81a"
+    ]
+  }
+}
