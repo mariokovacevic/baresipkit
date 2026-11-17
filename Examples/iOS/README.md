@@ -44,7 +44,8 @@ for ringing and opening doors, a bell with a keyhole as its icon, and five tabs.
 - **In call** (full screen): the other side's video, your camera in the top right corner while
   it is sent (`BaresipSelfView`), the status and whether the call is encrypted, then mute, sound
   output (iPhone, speaker, headphones, Bluetooth, car or the system route picker), your camera,
-  keypad, hold and More, and Open door for a door. More holds transfer (consult first or blind),
+  keypad, hold and More, and Open door for a door. More holds transfer (consult first or blind,
+  to a saved door, a contact, a recent call or any address),
   recording (stereo WAV in Documents/Recordings, visible in the Files app), switching cameras,
   restarting ICE, the sound output and the call's quality: MOS, loss, jitter, round trip, codec
   and ICE path. The chevron returns to the app while the call goes on; with several calls the

@@ -91,6 +91,7 @@ import io.github.mariokovacevic.baresipkit.sample.model.CallRow
 import io.github.mariokovacevic.baresipkit.sample.model.CallText
 import io.github.mariokovacevic.baresipkit.sample.model.OutputChoice
 import io.github.mariokovacevic.baresipkit.sample.model.OutputKind
+import io.github.mariokovacevic.baresipkit.sample.model.SipNames
 import io.github.mariokovacevic.baresipkit.sample.model.activeCall
 import io.github.mariokovacevic.baresipkit.sample.model.blindTransfer
 import io.github.mariokovacevic.baresipkit.sample.model.callOnScreen
@@ -665,42 +666,13 @@ private fun TransferContent(
         return
     }
     val target = model.transferTarget.trim()
-    val name =
-        if (target.isEmpty()) {
-            "them"
-        } else {
-            io.github.mariokovacevic.baresipkit.sample.model.SipNames
-                .user(target)
-        }
+    val name = if (target.isEmpty()) "them" else SipNames.user(target)
     Note("${row.title} waits on hold while you ask.")
     StackedField("Transfer to", model.transferTarget, { model.transferTarget = it }, "Number or address", tag = "transfer.target")
-    val recent =
-        model.history
-            .filter { it.uri.isNotEmpty() && it.uri != row.remoteUri }
-            .distinctBy { it.uri }
-            .take(4)
-    if (recent.isNotEmpty()) {
-        TitledSection("Recent") {
-            Card {
-                recent.forEachIndexed { index, record ->
-                    if (index > 0) RowDivider()
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 52.dp)
-                            .clickable { model.transferTarget = record.uri }
-                            .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        Text(record.name, style = Type.body, color = Palette.text, modifier = Modifier.weight(1f))
-                        Text(record.user, style = Type.subheadline, color = Palette.secondary)
-                        if (model.transferTarget == record.uri) Icon(Icons.Filled.Check, contentDescription = "Chosen", tint = Palette.info)
-                    }
-                }
-            }
-        }
-    }
+    val choices = transferChoices(model, row)
+    TransferChoiceSection("Doors", choices.doors, model)
+    TransferChoiceSection("Contacts", choices.contacts, model)
+    TransferChoiceSection("Recent", choices.recent, model)
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         FilledButton("Ask $name first", ButtonKind.LIGHT, height = 56.dp, enabled = target.isNotEmpty()) { model.act { consult() } }
         Note("You talk to $name, then hand the call over or come back.")
@@ -713,6 +685,83 @@ private fun TransferContent(
             }
         }
         Note("The call rings $name and you leave it at once.")
+    }
+}
+
+/** Someone the call can be transferred to. */
+private data class TransferChoice(
+    val title: String,
+    val detail: String,
+    val address: String,
+) {
+    /** The SIP user, so that `1002`, `sip:1002@pbx` and `sips:1002@pbx;transport=tls` are one. */
+    val key: String get() = key(address)
+
+    companion object {
+        fun key(address: String): String = SipNames.user(address.trim()).lowercase()
+    }
+}
+
+private data class TransferChoiceLists(
+    val doors: List<TransferChoice>,
+    val contacts: List<TransferChoice>,
+    val recent: List<TransferChoice>,
+)
+
+/**
+ * The doors, contacts and recent calls to transfer to, without the current call and without an
+ * address twice: a door or contact is listed under its own name only.
+ */
+private fun transferChoices(
+    model: CallModel,
+    row: CallRow,
+): TransferChoiceLists {
+    val seen = mutableSetOf(TransferChoice.key(row.remoteUri))
+
+    fun unique(
+        list: List<TransferChoice>,
+        limit: Int = Int.MAX_VALUE,
+    ): List<TransferChoice> = list.asSequence().filter { seen.add(it.key) }.take(limit).toList()
+    val doors =
+        unique(
+            model.doors.filter { it.address.isNotBlank() }.map { TransferChoice(it.title, it.user, it.address.trim()) },
+        )
+    val contacts =
+        unique(
+            model.contacts.filter { it.address.isNotBlank() }.map {
+                TransferChoice(it.title, SipNames.user(it.address.trim()), it.address.trim())
+            },
+        )
+    val recent = unique(model.history.filter { it.uri.isNotEmpty() }.map { TransferChoice(it.name, it.user, it.uri) }, limit = 4)
+    return TransferChoiceLists(doors, contacts, recent)
+}
+
+@Composable
+private fun TransferChoiceSection(
+    title: String,
+    list: List<TransferChoice>,
+    model: CallModel,
+) {
+    if (list.isEmpty()) return
+    TitledSection(title) {
+        Card {
+            list.forEachIndexed { index, choice ->
+                if (index > 0) RowDivider()
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 52.dp)
+                        .clickable { model.transferTarget = choice.address }
+                        .padding(horizontal = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(choice.title, style = Type.body, color = Palette.text, modifier = Modifier.weight(1f))
+                    Text(choice.detail, style = Type.subheadline, color = Palette.secondary)
+                    if (model.transferTarget == choice.address) Icon(Icons.Filled.Check, contentDescription = "Chosen", tint = Palette.info)
+                }
+            }
+        }
     }
 }
 

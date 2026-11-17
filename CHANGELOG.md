@@ -53,6 +53,8 @@ All notable changes to this project are documented here. The format follows
   the active call stayed on the held call, so the camera and mute buttons of a call screen changed
   the held call, and when the resumed call ended before it was connected, the other call stayed on
   hold instead of being resumed.
+- Sample apps: the transfer screen lists the saved doors, the contacts and up to four recent
+  calls, without the current call and without an address twice.
 
 ## [1.0.0-rc.1] - 2026-11-14
 
