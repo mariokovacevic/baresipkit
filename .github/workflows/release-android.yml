@@ -65,38 +65,38 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake nasm zlib1g-dev
-          source Build/versions.env
+          source Core/Build/versions.env
           { yes || true; } | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$ANDROID_NDK_VERSION" >/dev/null
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION" >> "$GITHUB_ENV"
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
       - name: Build the core for Android
-        run: PLATFORM=android MODULE_SET=full JOBS=4 Build/build-xcframework.sh
+        run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
       - name: Build, check the ABI and test the libraries
         working-directory: Android
         run: ./gradlew --no-daemon -PVERSION_NAME="$VERSION" assembleRelease checkKotlinAbi testDebugUnitTest
       - name: Assemble the SBOM and SHA256SUMS
         run: |
-          mkdir -p Build/out/android-release
+          mkdir -p Core/Build/out/android-release
           for module in baresipkit baresipkit-audio baresipkit-video baresipkit-telecom baresipkit-push baresipkit-compose; do
-            cp "Android/$module/build/outputs/aar/$module-release.aar" "Build/out/android-release/$module-$VERSION.aar"
+            cp "Android/$module/build/outputs/aar/$module-release.aar" "Core/Build/out/android-release/$module-$VERSION.aar"
           done
           SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)" python3 Scripts/sbom.py --version "$VERSION" \
             --module-set full --name baresipkit-android \
-            --artifact "Build/out/android-release/baresipkit-$VERSION.aar" > Build/out/android-release/baresipkit-android.spdx.json
-          (cd Build/out/android-release && sha256sum ./*.aar baresipkit-android.spdx.json > SHA256SUMS)
-          cat Build/out/android-release/SHA256SUMS
+            --artifact "Core/Build/out/android-release/baresipkit-$VERSION.aar" > Core/Build/out/android-release/baresipkit-android.spdx.json
+          (cd Core/Build/out/android-release && sha256sum ./*.aar baresipkit-android.spdx.json > SHA256SUMS)
+          cat Core/Build/out/android-release/SHA256SUMS
       - name: Upload the assembled libraries for review
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: android-release-${{ inputs.version }}
-          path: Build/out/android-release
+          path: Core/Build/out/android-release
       - name: Attest the provenance of the libraries
         if: inputs.dry_run == false
         uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
         with:
           subject-path: |
-            Build/out/android-release/*.aar
-            Build/out/android-release/baresipkit-android.spdx.json
+            Core/Build/out/android-release/*.aar
+            Core/Build/out/android-release/baresipkit-android.spdx.json
       - name: Stage the deployment on Maven Central
         if: inputs.dry_run == false
         working-directory: Android

@@ -33,7 +33,7 @@ def read_env(path):
 
 
 def modules(module_set):
-    text = (ROOT / "Build/module-sets.env").read_text()
+    text = (ROOT / "Core/Build/module-sets.env").read_text()
     sets = dict(re.findall(r'^MODULES_(\w+)="([^"]*)"', text, re.M))
     if module_set not in sets:
         sys.exit(f"unknown module set {module_set}")
@@ -44,7 +44,7 @@ def modules(module_set):
 
 
 def patches(project):
-    return sorted(p.name for p in (ROOT / "Patches").glob(f"*-{project}-*.patch"))
+    return sorted(p.name for p in (ROOT / "Core" / "Patches").glob(f"*-{project}-*.patch"))
 
 
 def spdx_id(name):
@@ -79,7 +79,7 @@ def main():
     if not VERSION_PATTERN.match(args.version):
         sys.exit(f"{args.version} is not a version like 1.2.3 or 1.2.3-rc.1")
 
-    pins = read_env(ROOT / "Build/versions.env")
+    pins = read_env(ROOT / "Core/Build/versions.env")
     selected = modules(args.module_set)
     epoch = os.environ.get("SOURCE_DATE_EPOCH")
     created = datetime.datetime.fromtimestamp(int(epoch), datetime.timezone.utc) if epoch else datetime.datetime.now(datetime.timezone.utc)
@@ -101,7 +101,7 @@ def main():
         if key == "LIBVPX" and "vp8" not in selected:
             continue
         applied = patches(project) if project else []
-        comment = f"Patched with {', '.join(applied)} from Patches/" if applied else None
+        comment = f"Patched with {', '.join(applied)} from Core/Patches/" if applied else None
         packages.append(
             package(
                 name,

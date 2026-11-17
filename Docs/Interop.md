@@ -10,8 +10,8 @@ issue form.
 
 | Counterpart | Version | How | What is covered |
 |---|---|---|---|
-| Asterisk, PJSIP | 23.5.0 (pinned image) | `Tests/Integration`, CI job `integration`, on every push | registration over TLS with a private CA, audio calls with RTP statistics, early media (183 with SDP), DTMF over RFC 4733 and SIP INFO, hold and resume, a second call and swapping, ICE through TURN |
-| coturn | 4.6.3 | `Tests/Integration`, on every push | TURN over UDP, TCP and TLS with the relay-only policy, and failures within 20 seconds when the TURN server cannot be used |
+| Asterisk, PJSIP | 23.5.0 (pinned image) | `Core/Tests/Integration`, CI job `integration`, on every push | registration over TLS with a private CA, audio calls with RTP statistics, early media (183 with SDP), DTMF over RFC 4733 and SIP INFO, hold and resume, a second call and swapping, ICE through TURN |
+| coturn | 4.6.3 | `Core/Tests/Integration`, on every push | TURN over UDP, TCP and TLS with the relay-only policy, and failures within 20 seconds when the TURN server cannot be used |
 | Asterisk as an intercom PBX, baresip 4.13.0 as the door station | 23.5.0 | `Tools/DoorStack/simulators.sh`, by hand with the sample app on two simulators | registration over TLS, a ring from the door, calls and messages between residents on G.711, hold with the phone's music on hold passed through |
 
 The sample app's UI test and screenshots run against a minimal TLS registrar

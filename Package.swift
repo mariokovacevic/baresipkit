@@ -5,7 +5,7 @@ import PackageDescription
 let coreReleaseURL = ""
 let coreReleaseChecksum = ""
 
-let localCorePath = "Build/out/BaresipKitCore.xcframework"
+let localCorePath = "Core/Build/out/BaresipKitCore.xcframework"
 let useLocalCore = coreReleaseURL.isEmpty || ProcessInfo.processInfo.environment["BARESIPKIT_LOCAL_CORE"] == "1"
 
 let coreTarget: Target = useLocalCore
@@ -32,7 +32,7 @@ let package = Package(
         .target(
             name: "BaresipKitBridge",
             dependencies: ["BaresipKitCore"],
-            path: "Sources/BaresipKitBridge",
+            path: "Apple/Sources/BaresipKitBridge",
             linkerSettings: [
                 .linkedFramework("AudioToolbox"),
                 .linkedFramework("AVFoundation"),
@@ -50,43 +50,43 @@ let package = Package(
         .target(
             name: "BaresipKit",
             dependencies: ["BaresipKitCore", "BaresipKitBridge"],
-            path: "Sources/BaresipKit",
+            path: "Apple/Sources/BaresipKit",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
         ),
         .target(
             name: "BaresipKitAudio",
             dependencies: ["BaresipKit"],
-            path: "Sources/BaresipKitAudio"
+            path: "Apple/Sources/BaresipKitAudio"
         ),
         .target(
             name: "BaresipKitVideo",
             dependencies: ["BaresipKit"],
-            path: "Sources/BaresipKitVideo"
+            path: "Apple/Sources/BaresipKitVideo"
         ),
         .target(
             name: "BaresipKitSystemCall",
             dependencies: ["BaresipKit"],
-            path: "Sources/BaresipKitSystemCall"
+            path: "Apple/Sources/BaresipKitSystemCall"
         ),
         .target(
             name: "BaresipKitCallKit",
             dependencies: ["BaresipKit", "BaresipKitSystemCall"],
-            path: "Sources/BaresipKitCallKit"
+            path: "Apple/Sources/BaresipKitCallKit"
         ),
         .target(
             name: "BaresipKitLiveCommunication",
             dependencies: ["BaresipKit", "BaresipKitSystemCall"],
-            path: "Sources/BaresipKitLiveCommunication"
+            path: "Apple/Sources/BaresipKitLiveCommunication"
         ),
         .target(
             name: "BaresipKitPushKit",
             dependencies: ["BaresipKit", "BaresipKitSystemCall"],
-            path: "Sources/BaresipKitPushKit"
+            path: "Apple/Sources/BaresipKitPushKit"
         ),
         .target(
             name: "BaresipKitSwiftUI",
             dependencies: ["BaresipKit", "BaresipKitVideo", "BaresipKitSystemCall"],
-            path: "Sources/BaresipKitSwiftUI"
+            path: "Apple/Sources/BaresipKitSwiftUI"
         ),
         .testTarget(
             name: "BaresipKitTests",
@@ -95,7 +95,7 @@ let package = Package(
                 "BaresipKitVideo", "BaresipKitSystemCall", "BaresipKitCallKit", "BaresipKitLiveCommunication",
                 "BaresipKitPushKit", "BaresipKitSwiftUI",
             ],
-            path: "Tests/BaresipKitTests"
+            path: "Apple/Tests/BaresipKitTests"
         ),
     ],
     swiftLanguageModes: [.v6]

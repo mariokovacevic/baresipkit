@@ -2,14 +2,14 @@
 
 Real failure modes, grounded in the engine's error codes, call state and log domains
 (`BaresipError`, `BaresipCallInfo`, `BaresipICEEvent`, `BaresipLogDomain` in
-`Sources/BaresipKit/Diagnostics` and `Sources/BaresipKit/Network`). For the integration itself,
-see [Integration.md](Integration.md); for the SDK's own log redaction and format, see its
+`Apple/Sources/BaresipKit/Diagnostics` and `Apple/Sources/BaresipKit/Network`). For the integration itself,
+see [Apple/Integration.md](Apple/Integration.md); for the SDK's own log redaction and format, see its
 "Logging" section.
 
 The examples use the Swift names; the Kotlin types on Android have the same names, and the log,
 SIP, media and ICE behave the same on both platforms. The sections about the audio session,
 PushKit and the background describe iOS; for Android, check the app checklist in
-[Android.md](Android.md#app-checklist).
+[Android/Setup.md](Android/Setup.md#app-checklist).
 
 ## Reading the log
 
@@ -41,7 +41,7 @@ Check `.registration(_, .failed, _, let error)` from `engine.events`; `error.cod
   (`BaresipTLSConfiguration.caCertificatesPEM`); a wrong SPKI pin
   (`BaresipTLSConfiguration.pinnedSPKISHA256`); the server's certificate does not cover the host
   name or IP address used to reach it (libre 4.12.0 requires an IP SAN when the registrar is
-  given as an IP address, see `Patches/README.md`); or a client certificate the server requires
+  given as an IP address, see `Core/Patches/README.md`); or a client certificate the server requires
   was not provided. The log's `media`/`core` lines around the failure name the TLS error from
   OpenSSL. Verify the pin independently:
 
@@ -106,7 +106,7 @@ Check `.registration(_, .failed, _, let error)` from `engine.events`; `error.cod
 3. **The self view or local preview is black.** `BaresipVideoView`/`AVSampleBufferDisplayLayer`
    only displays an `IOSurface`-backed, bi-planar pixel buffer. Frames straight from the camera or
    the hardware decoder already are; a camera frame the engine converted for the encoder is copied
-   into such a buffer automatically (see [Integration.md](Integration.md#video)). If a custom
+   into such a buffer automatically (see [Apple/Integration.md](Apple/Integration.md#video)). If a custom
    `BaresipVideoRenderer` shows nothing for the local preview specifically, check it is not
    assuming a planar `CVPixelBuffer` format it never receives.
 4. **Picture freezes after the app returns from the background.** iOS invalidates VideoToolbox
@@ -116,7 +116,7 @@ Check `.registration(_, .failed, _, let error)` from `engine.events`; `error.cod
    a second or two after foregrounding, request one explicitly with `requestKeyframe(callID:)`
    (or `BaresipAccountConfiguration.pictureUpdateOverSIPInfo` for peers that ignore RTCP).
 5. Camera never starts in the simulator: there is no camera; use the `fakevideo` source for
-   development, or test on a device (`Docs/DeviceTesting.md`).
+   development, or test on a device (`Docs/Apple/DeviceTesting.md`).
 
 ## ICE and connectivity failures
 
@@ -127,7 +127,7 @@ Watch `.ice(let event)` on `engine.events` (`BaresipICEEvent`/`BaresipICEState`)
   network that blocks the candidate pairs tried. Add a TURN server; with `nat.mode == .ice` TURN
   candidates are gathered automatically when a `BaresipTURNServer` is configured.
 - **`failed` with TURN over TCP or TLS**: the connection, TLS handshake or allocation did not
-  finish within 10 seconds (fixed limit, see `Patches/0007-...`), so the call attempt fails. Check
+  finish within 10 seconds (fixed limit, see `Core/Patches/0007-...`), so the call attempt fails. Check
   the TURN server's reachability on that exact transport and its certificate if `turns:`.
 - **Media stops mid-call, ICE state `failed`, call stays up**: the TURN connection was lost
   (network change, server restart, allocation expired). The connection is not retried by itself —
@@ -158,7 +158,7 @@ simulator never routes audio through CallKit's activation, so a preview there is
 still ringing, which does not reproduce on a device. To make a preview actually audible before
 answering, the app must activate the audio session itself
 (`BaresipAudioSessionController.activate()`) instead of waiting for CallKit; see the early media
-section of [Integration.md](Integration.md#callkit) and the AudioSession DocC article. A
+section of [Apple/Integration.md](Apple/Integration.md#callkit) and the AudioSession DocC article. A
 video-only preview needs no audio session and previews correctly either way.
 
 ## Push notifications not arriving

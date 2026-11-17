@@ -57,23 +57,23 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/host/prefix
-          key: linux-asan-ubsan-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/host/prefix
+          key: linux-asan-ubsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build host prefix (full module set, libre and baresip under ASan/UBSan)
-        run: PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Build/build-xcframework.sh
+        run: PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Core/Build/build-xcframework.sh
       - name: Check that LICENSES matches the pinned sources
         run: Scripts/check-licenses.sh
       - name: Run core test suite under ASan/UBSan
-        run: HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Build/out/host/prefix Tests/Core/run_tests.sh
+        run: HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
       - name: Fuzz the facade parsers (libFuzzer, 300k runs)
-        run: CC=clang RUNS=300000 PREFIX=Build/out/host/prefix Tests/Fuzz/run_fuzz.sh
+        run: CC=clang RUNS=300000 PREFIX=Core/Build/out/host/prefix Core/Tests/Fuzz/run_fuzz.sh
       - name: Upload traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: linux-core-logs
-          path: Build/out/host/core-tests/*.txt
+          path: Core/Build/out/host/core-tests/*.txt
 
   android:
     name: Android core, libraries and JVM tests
@@ -84,22 +84,22 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake nasm zlib1g-dev
-          source Build/versions.env
+          source Core/Build/versions.env
           { yes || true; } | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$ANDROID_NDK_VERSION" >/dev/null
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION" >> "$GITHUB_ENV"
       - name: Cache pinned sources and built prefixes
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/host/prefix
-            Build/out/android-arm64-v8a/prefix
-            Build/out/android-x86_64/prefix
-          key: android-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/host/prefix
+            Core/Build/out/android-arm64-v8a/prefix
+            Core/Build/out/android-x86_64/prefix
+          key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build the core for the host and for Android
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Build/build-xcframework.sh
-          PLATFORM=android MODULE_SET=full JOBS=4 Build/build-xcframework.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
       - name: Validate the Gradle wrapper
         uses: gradle/actions/wrapper-validation@7296c772c13d12d9871528814b51fb2143c138ef # v6.4.1
       - name: Build and test the Android modules
@@ -151,7 +151,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake nasm zlib1g-dev
-          source Build/versions.env
+          source Core/Build/versions.env
           { yes || true; } | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;$ANDROID_NDK_VERSION" >/dev/null
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION" >> "$GITHUB_ENV"
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
@@ -159,27 +159,27 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/host/prefix
-            Build/out/android-arm64-v8a/prefix
-            Build/out/android-x86_64/prefix
-          key: android-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/host/prefix
+            Core/Build/out/android-arm64-v8a/prefix
+            Core/Build/out/android-x86_64/prefix
+          key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build the core for Android
-        run: PLATFORM=android MODULE_SET=full JOBS=4 Build/build-xcframework.sh
+        run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
       - name: Build the host core and the call peer
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Build/build-xcframework.sh
-          P="$PWD/Build/out/host/prefix"
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          P="$PWD/Core/Build/out/host/prefix"
           EXTRA="$P/lib/libopus.a;$P/lib/libssl.a;$P/lib/libcrypto.a;z;resolv;pthread;m;dl"
           if [[ -f "$P/lib/libvpx.a" ]]; then EXTRA="$P/lib/libvpx.a;$EXTRA"; fi
-          cmake -S Core -B Build/out/host/core-tests -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH="$P" \
+          cmake -S Core -B Core/Build/out/host/core-tests -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH="$P" \
             -DBARESIP_INCLUDE_DIR="$P/include/baresip" -DBARESIP_LIBRARY="$P/lib/libbaresip.a" \
             -DBARESIPKIT_EXTRA_LIBS="$EXTRA" -DBARESIPKIT_BUILD_TESTS=ON >/dev/null
-          cmake --build Build/out/host/core-tests -j4 --target bsk_test_call >/dev/null
+          cmake --build Core/Build/out/host/core-tests -j4 --target bsk_test_call >/dev/null
       - name: Start the TLS registrar and the call peer for the Android sample
         run: |
           HOSTIP=$(hostname -I | awk '{print $1}')
-          OUT="$PWD/Build/out/uitest"
+          OUT="$PWD/Core/Build/out/uitest"
           mkdir -p "$OUT"
           openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes \
             -keyout "$OUT/key.pem" -out "$OUT/cert.pem" -days 2 \
@@ -193,7 +193,7 @@ jobs:
           REGISTRAR_HOST="$HOSTIP" REGISTRAR_PORT=5081 REGISTRAR_IDLE_TIMEOUT=2400 REGISTRAR_PEER="$HOSTIP:5270" \
             nohup python3 Tools/ContactParameterProof/tls_registrar.py "$OUT/cert.pem" "$OUT/key.pem" "$OUT/registrar-trace.txt" > "$OUT/registrar.out" 2>&1 &
           BSK_PEER_TIMEOUT=2400 BSK_TEST_TURN=udp BSK_TEST_RTCP_MUX=1 BSK_TEST_CA_PEM="$OUT/cert.pem" BSK_TEST_VERBOSE=1 \
-            nohup Build/out/host/core-tests/tests/bsk_test_call peer "$HOSTIP" ice > "$OUT/peer.out" 2> "$OUT/peer.err" &
+            nohup Core/Build/out/host/core-tests/tests/bsk_test_call peer "$HOSTIP" ice > "$OUT/peer.out" 2> "$OUT/peer.err" &
           for i in $(seq 1 50); do grep -q READY "$OUT/peer.out" 2>/dev/null && break; sleep 0.2; done
           grep -q READY "$OUT/peer.out"
           echo "UITEST_HOST=$HOSTIP" >> "$GITHUB_ENV"
@@ -221,10 +221,10 @@ jobs:
       - name: Show the registrar and peer logs
         if: failure()
         run: |
-          echo "--- peer"; tail -n 40 Build/out/uitest/peer.out Build/out/uitest/peer.err || true
-          echo "--- registrar"; tail -n 80 Build/out/uitest/registrar-trace.txt || true
-          echo "--- coturn"; grep -iE "session|alloc|permission|channel|refused|denied|error" Build/out/uitest/coturn.out | tail -n 60 || true
-          echo "--- peer ice"; grep -iE "ice|turn|candidate|stream|rtp" Build/out/uitest/peer.err | tail -n 60 || true
+          echo "--- peer"; tail -n 40 Core/Build/out/uitest/peer.out Core/Build/out/uitest/peer.err || true
+          echo "--- registrar"; tail -n 80 Core/Build/out/uitest/registrar-trace.txt || true
+          echo "--- coturn"; grep -iE "session|alloc|permission|channel|refused|denied|error" Core/Build/out/uitest/coturn.out | tail -n 60 || true
+          echo "--- peer ice"; grep -iE "ice|turn|candidate|stream|rtp" Core/Build/out/uitest/peer.err | tail -n 60 || true
           echo "--- sample"; grep -iE "ice|turn|candidate|stream|rtp|call" Android/build/registration/sample.log | tail -n 80 || true
       - name: Upload instrumented test reports
         if: always()
@@ -257,16 +257,16 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/ios-arm64/prefix
-            Build/out/ios-arm64-simulator/prefix
-            Build/out/macos-arm64/prefix
-            Build/out/host/prefix
-          key: macos-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/ios-arm64/prefix
+            Core/Build/out/ios-arm64-simulator/prefix
+            Core/Build/out/macos-arm64/prefix
+            Core/Build/out/host/prefix
+          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build XCFramework (default module set)
-        run: MODULE_SET=default JOBS=4 Build/build-xcframework.sh
+        run: MODULE_SET=default JOBS=4 Core/Build/build-xcframework.sh
       - name: Check the privacy manifest against the APIs the XCFramework uses
-        run: Scripts/check-privacy-apis.sh
+        run: Apple/Scripts/check-privacy-apis.sh
       - name: Build Swift package for the simulator and a device, warnings as errors
         run: |
           for destination in 'generic/platform=iOS Simulator' 'generic/platform=iOS'; do
@@ -285,14 +285,14 @@ jobs:
             SWIFT_TREAT_WARNINGS_AS_ERRORS=YES 2>&1 \
             | tee macos-test.log | grep -E "Test Suite|Executed|error:|Test Case .*failed|TEST (SUCCEEDED|FAILED)|Undefined symbols|referenced from|ld: " || true
           grep -q "TEST SUCCEEDED" macos-test.log
-      - name: Check the public Swift API against API/Swift
-        run: Scripts/swift-api.sh check
+      - name: Check the public Swift API against Apple/API
+        run: Apple/Scripts/swift-api.sh check
       - name: Upload the Swift API dumps
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: swift-api
-          path: Build/out/swift-api/dumps
+          path: Core/Build/out/swift-api/dumps
           if-no-files-found: ignore
       - name: Build documentation, warnings as errors
         run: |
@@ -307,7 +307,7 @@ jobs:
       - name: Run XCTest on a simulator
         run: |
           xcrun simctl list runtimes
-          UDID=$(Scripts/newest-iphone-simulator.sh)
+          UDID=$(Apple/Scripts/newest-iphone-simulator.sh)
           test -n "$UDID"
           echo "Using simulator: $UDID"
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
@@ -319,9 +319,9 @@ jobs:
         with:
           name: BaresipKitCore.xcframework
           path: |
-            Build/out/BaresipKitCore.xcframework.zip
-            Build/out/checksum.txt
-            Build/out/sizes.txt
+            Core/Build/out/BaresipKitCore.xcframework.zip
+            Core/Build/out/checksum.txt
+            Core/Build/out/sizes.txt
 
   macos-core:
     name: macOS host build and core tests
@@ -337,16 +337,16 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/ios-arm64/prefix
-            Build/out/ios-arm64-simulator/prefix
-            Build/out/macos-arm64/prefix
-            Build/out/host/prefix
-          key: macos-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/ios-arm64/prefix
+            Core/Build/out/ios-arm64-simulator/prefix
+            Core/Build/out/macos-arm64/prefix
+            Core/Build/out/host/prefix
+          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Host build and core tests
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Build/build-xcframework.sh
-          HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) PREFIX=Build/out/host/prefix Tests/Core/run_tests.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
 
   sample-app:
     name: Sample app build, UI test and screenshots
@@ -362,21 +362,21 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/ios-arm64/prefix
-            Build/out/ios-arm64-simulator/prefix
-            Build/out/macos-arm64/prefix
-            Build/out/host/prefix
-          key: macos-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/ios-arm64/prefix
+            Core/Build/out/ios-arm64-simulator/prefix
+            Core/Build/out/macos-arm64/prefix
+            Core/Build/out/host/prefix
+          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build XCFramework (default module set)
-        run: MODULE_SET=default JOBS=4 Build/build-xcframework.sh
+        run: MODULE_SET=default JOBS=4 Core/Build/build-xcframework.sh
       - name: Host build and the test peer
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Build/build-xcframework.sh
-          BUILD_ONLY=1 HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) PREFIX=Build/out/host/prefix Tests/Core/run_tests.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          BUILD_ONLY=1 HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
       - name: Pick a simulator
         run: |
-          UDID=$(Scripts/newest-iphone-simulator.sh)
+          UDID=$(Apple/Scripts/newest-iphone-simulator.sh)
           test -n "$UDID"
           echo "Using simulator: $UDID"
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
@@ -395,14 +395,14 @@ jobs:
       - name: Sample app UI test (TLS registration with a private CA, pinning, call to a host peer)
         run: |
           HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1)
-          OUT="$PWD/Build/out/uitest"
+          OUT="$PWD/Core/Build/out/uitest"
           mkdir -p "$OUT"
           openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 -nodes \
             -keyout "$OUT/key.pem" -out "$OUT/cert.pem" -days 2 \
             -subj "/CN=baresipkit-uitest" -addext "subjectAltName=IP:$HOSTIP" >/dev/null 2>&1
           REGISTRAR_HOST="$HOSTIP" REGISTRAR_PORT=5081 REGISTRAR_IDLE_TIMEOUT=900 \
             python3 Tools/ContactParameterProof/tls_registrar.py "$OUT/cert.pem" "$OUT/key.pem" "$OUT/registrar-trace.txt" > "$OUT/registrar.out" 2>&1 &
-          BSK_PEER_TIMEOUT=900 Build/out/host/core-tests/tests/bsk_test_call peer "$HOSTIP" > "$OUT/peer.out" 2> "$OUT/peer.err" &
+          BSK_PEER_TIMEOUT=900 Core/Build/out/host/core-tests/tests/bsk_test_call peer "$HOSTIP" > "$OUT/peer.out" 2> "$OUT/peer.err" &
           PEER_PID=$!
           for i in $(seq 1 50); do grep -q READY "$OUT/peer.out" 2>/dev/null && break; sleep 0.2; done
           xcrun simctl boot "$SIM_UDID" || true
@@ -445,21 +445,21 @@ jobs:
         with:
           name: sample-screenshots
           path: |
-            Build/out/screenshots/*.png
-            Build/out/screenshots/*.out
-            Build/out/screenshots/*.log
-            Build/out/screenshots/*.txt
-            Build/out/screenshots/*.json
+            Core/Build/out/screenshots/*.png
+            Core/Build/out/screenshots/*.out
+            Core/Build/out/screenshots/*.log
+            Core/Build/out/screenshots/*.txt
+            Core/Build/out/screenshots/*.json
       - name: Upload UI test logs
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: sample-uitest-logs
           path: |
-            Build/out/uitest/*.txt
-            Build/out/uitest/*.log
-            Build/out/uitest/*.out
-            Build/out/uitest/*.err
+            Core/Build/out/uitest/*.txt
+            Core/Build/out/uitest/*.log
+            Core/Build/out/uitest/*.out
+            Core/Build/out/uitest/*.err
           if-no-files-found: ignore
 
   integration:
@@ -475,18 +475,18 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/host/prefix
-          key: linux-asan-ubsan-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/host/prefix
+          key: linux-asan-ubsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build host prefix and test binaries (ASan/UBSan)
         run: |
-          PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Build/build-xcframework.sh
-          BUILD_ONLY=1 HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Build/out/host/prefix Tests/Core/run_tests.sh
+          PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Core/Build/build-xcframework.sh
+          BUILD_ONLY=1 HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
       - name: Run integration suite
         run: |
           HOSTIP=$(hostname -I | awk '{print $1}')
           echo "HOSTIP=$HOSTIP"
-          PREFIX=Build/out/host/prefix HOSTIP=$HOSTIP Tests/Integration/run_integration.sh
+          PREFIX=Core/Build/out/host/prefix HOSTIP=$HOSTIP Core/Tests/Integration/run_integration.sh
 
   linux-core-tsan:
     name: Linux host build, ThreadSanitizer, core tests
@@ -503,18 +503,18 @@ jobs:
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: |
-            Build/.deps
-            Build/out/host/prefix
-          key: linux-tsan-${{ hashFiles('Build/versions.env', 'Build/module-sets.env', 'Build/build-xcframework.sh', 'Build/cmake/**', 'Patches/*.patch') }}
+            Core/Build/.deps
+            Core/Build/out/host/prefix
+          key: linux-tsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build host prefix (full module set, libre and baresip under TSan)
-        run: PLATFORM=host MODULE_SET=full SANITIZE=thread JOBS=4 Build/build-xcframework.sh
+        run: PLATFORM=host MODULE_SET=full SANITIZE=thread JOBS=4 Core/Build/build-xcframework.sh
       - name: Run core test suite under TSan
         env:
           TSAN_OPTIONS: halt_on_error=1 second_deadlock_stack=1
-        run: SANITIZE=thread HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Build/out/host/prefix Tests/Core/run_tests.sh
+        run: SANITIZE=thread HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
       - name: Upload traces
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: linux-core-tsan-logs
-          path: Build/out/host/core-tests/*.txt
+          path: Core/Build/out/host/core-tests/*.txt

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PBX="$ROOT/Tests/Integration"
+PBX="$ROOT/Core/Tests/Integration"
 KEYS="$PBX/asterisk/keys"
 TURN_CONFIG="$PBX/coturn/turnserver.conf"
 DEV_TURN_CONFIG="$PBX/coturn/turnserver.dev.conf"

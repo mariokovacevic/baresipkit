@@ -14,7 +14,7 @@ your computer, for the phones in your network.
 | `init` | Runs once: creates the passwords and the certificates in `state/`. |
 | `phone-sim` | A scripted phone for `doorstack.sh test`; not started otherwise. |
 
-All services use the host's network, like the integration tests in `Tests/Integration`, so the
+All services use the host's network, like the integration tests in `Core/Tests/Integration`, so the
 phone reaches the PBX at the computer's address; on macOS Asterisk publishes its ports instead
 (see the end of this file). The stack and `Scripts/dev-pbx.sh` use the same ports and cannot run together.
 

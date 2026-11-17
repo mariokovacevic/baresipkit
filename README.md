@@ -54,8 +54,8 @@ setup recipes, an app checklist and the sample app.
 
 | Platform | Language and tools | Setup guide | Sample app |
 |---|---|---|---|
-| iOS 16 or later; macOS 13 or later on Apple silicon (partial) | Swift 6, Xcode 16, Swift Package Manager | [iOS and macOS setup](Docs/iOS.md) | [Examples/iOS](Examples/iOS) |
-| Android 9 or later (API 28) | Kotlin, coroutines, Gradle | [Android setup](Docs/Android.md) | [Examples/Android](Examples/Android/README.md) |
+| iOS 16 or later; macOS 13 or later on Apple silicon (partial) | Swift 6, Xcode 16, Swift Package Manager | [iOS and macOS setup](Docs/Apple/Setup.md) | [Examples/iOS](Examples/iOS) |
+| Android 9 or later (API 28) | Kotlin, coroutines, Gradle | [Android setup](Docs/Android/Setup.md) | [Examples/Android](Examples/Android/README.md) |
 
 Install a released version with Swift Package Manager:
 
@@ -156,38 +156,43 @@ in [Docs/Limitations.md](Docs/Limitations.md).
 
 ## Documentation
 
-| Where | What |
+Each platform has the same set of guides; [Docs/README.md](Docs/README.md) lists them all.
+
+| Guide | Apple (Swift) | Android (Kotlin) |
+|---|---|---|
+| Setup | [Docs/Apple/Setup.md](Docs/Apple/Setup.md) | [Docs/Android/Setup.md](Docs/Android/Setup.md) |
+| Building and tests | [Docs/Apple/Building.md](Docs/Apple/Building.md) | [Docs/Android/Building.md](Docs/Android/Building.md) |
+| Releasing | [Docs/Apple/Releasing.md](Docs/Apple/Releasing.md) | [Docs/Android/Releasing.md](Docs/Android/Releasing.md) |
+| Integration guide | [Docs/Apple/Integration.md](Docs/Apple/Integration.md) | not written yet |
+| API reference | DocC (Product > Build Documentation in Xcode) | Dokka (`./gradlew :dokkaGeneratePublicationHtml` in `Android/`) |
+
+| Shared | What |
 |---|---|
-| [Docs/iOS.md](Docs/iOS.md) | iOS and macOS setup: modules, installation, quick start, recipes, app checklist |
-| [Docs/Android.md](Docs/Android.md) | Android setup: modules, installation, quick start, recipes, app checklist, building and releasing |
-| DocC (Product > Build Documentation in Xcode) | The Swift API reference and articles |
-| Dokka (`./gradlew :dokkaGeneratePublicationHtml` in `Android/`) | The Kotlin API reference |
-| [Docs/Integration.md](Docs/Integration.md) | The full integration guide for the Swift package |
+| [Docs/Core/Building.md](Docs/Core/Building.md) | Building the C core, the core tests, the integration suite and fuzzing |
+| [Docs/Core/C-ABI.md](Docs/Core/C-ABI.md) | Conventions of the C ABI in `baresip_kit.h`, which both SDKs bind |
+| [Docs/Core/CompatibilityMatrix.md](Docs/Core/CompatibilityMatrix.md) | Each requirement and how baresip covers it |
+| [Core/Patches/README.md](Core/Patches/README.md) | The patches applied to baresip and libre, and why |
 | [Docs/Platforms.md](Docs/Platforms.md) | How the platforms share the core, and parity type by type and test by test |
 | [Docs/Architecture.md](Docs/Architecture.md) | Layers, threading and ownership on both platforms |
 | [Docs/STABILITY.md](Docs/STABILITY.md) | What Semantic Versioning covers, enumerations that grow, deprecation and OS support |
-| [Docs/C-ABI.md](Docs/C-ABI.md) | Conventions of the C ABI in `baresip_kit.h`, which both SDKs bind |
 | [Docs/Troubleshooting.md](Docs/Troubleshooting.md) | Common failures and how to read the log for each |
 | [Docs/Interop.md](Docs/Interop.md) | Servers, door stations and TURN servers BaresipKit has been tried with, and how to report yours |
 | [Docs/Limitations.md](Docs/Limitations.md) | Known limits and what is not tested |
-| [Docs/Building.md](Docs/Building.md), [Docs/Releasing.md](Docs/Releasing.md) | Building the XCFramework and the host core, CI, and cutting a release |
-| [Docs/CompatibilityMatrix.md](Docs/CompatibilityMatrix.md) | Each requirement and how baresip covers it |
-| [Patches/README.md](Patches/README.md) | The patches applied to baresip and libre, and why |
+| [Docs/Building.md](Docs/Building.md), [Docs/Releasing.md](Docs/Releasing.md) | The build steps, the repository layout, CI, versioning and the order of the release workflows |
 
 ## Repository layout
 
 ```
-Package.swift   Swift package; the C core is the BaresipKitCore binary target
-Core/           the C facade (include/baresip_kit.h, src/), built into the XCFramework and the Android libraries
-Sources/        BaresipKitBridge (C helpers), BaresipKit (Swift API) and the adapters
-Tests/          BaresipKitTests (XCTest), Core (C tests), Fuzz, Integration (Asterisk and coturn)
-Examples/       the sample apps: iOS/ (SwiftUI, XcodeGen project) and Android/ (Compose, built by Android/)
-Build/          pinned versions, module sets and the build script for the XCFramework and the Android core
-Patches/        small patches applied to the pinned baresip and libre sources
-Scripts/        lint.sh and format.sh
-Android/        the Android libraries (Kotlin over JNI), a Gradle project that also builds Examples/Android
-Docs/           the setup guides for both platforms, the C ABI reference and research notes
+Core/           the shared C core: the facade (include/baresip_kit.h, src/), the pinned build (Build/),
+                the patches to baresip and libre (Patches/) and the core tests (Tests/: C tests, Fuzz, Integration)
+Apple/          the Swift package: Sources/ (BaresipKitBridge, BaresipKit and the adapters), Tests/,
+                the public API baseline (API/), its scripts and the SwiftFormat and SwiftLint settings
+Android/        the Kotlin libraries over JNI, a Gradle project with their API baselines; it also builds Examples/Android
+Examples/       the sample apps: iOS/ (SwiftUI, XcodeGen project) and Android/ (Compose)
+Docs/           shared documents, and Core/, Apple/ and Android/ with the same guides per platform
+Scripts/        lint.sh, format.sh and the license, SBOM and local PBX scripts for both platforms
 Tools/          the Contact parameter proof, test registrars and the door stack
+Package.swift   the Swift package manifest; SwiftPM needs it at the root, its sources are in Apple/
 ```
 
 ## Contributing and security
