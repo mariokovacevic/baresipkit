@@ -37,7 +37,7 @@ The script clones each pinned source (`Core/Build/versions.env`), verifies the c
 slice. For `ios` it merges the archives with `libtool -static` and runs
 `xcodebuild -create-xcframework`; the archive contains libre, baresip (static modules), OpenSSL,
 Opus, the BaresipKitCore facade and, on Apple platforms, the VideoToolbox and camera modules.
-`OUT_DIR` must not contain symlinks (CMake path resolution). A checkout in `Core/Build/.deps`
+`OUT_DIR` and `DEPS_DIR` may be relative to the current directory; the script makes them absolute. `OUT_DIR` must not contain symlinks (CMake path resolution). A checkout in `Core/Build/.deps`
 that is not at the pinned commit is deleted and cloned again, and the libre and baresip checkouts
 are reset and cleaned (`git clean -fdx`) before the patches are applied, so do not keep work in
 them. OpenSSL is configured with `no-autoload-config` and with fixed directories (`/etc/ssl` for
@@ -56,11 +56,11 @@ HOSTIP=<interface address> PREFIX=Core/Build/out/host/prefix Core/Tests/run_test
 
 `SANITIZE` builds libre, baresip, Opus and the facade of the host prefix with the given sanitizers (OpenSSL and libvpx are built without); CI does this on Linux, so the patched network code runs under ASan and UBSan in the core tests, the fuzzer and the integration suite. Delete `Core/Build/out/host` when you change `SANITIZE`, because Opus is not rebuilt once it is in the prefix. `BUILD_ONLY=1` makes `run_tests.sh` stop after building the test binaries.
 
-ThreadSanitizer needs its own prefix, and `SANITIZE=thread` for the build and for the tests. `OUT_DIR` must be an absolute path, because OpenSSL accepts only an absolute install prefix:
+ThreadSanitizer needs its own prefix, and `SANITIZE=thread` for the build and for the tests:
 
 ```bash
-OUT_DIR="$PWD/Core/Build/out/tsan" PLATFORM=host MODULE_SET=full SANITIZE=thread Core/Build/build-xcframework.sh
-SANITIZE=thread BUILD_DIR="$PWD/Core/Build/out/tsan/core-tests" HOSTIP=<interface address> PREFIX=Core/Build/out/tsan/host/prefix Core/Tests/run_tests.sh
+OUT_DIR=Core/Build/out/tsan PLATFORM=host MODULE_SET=full SANITIZE=thread Core/Build/build-xcframework.sh
+SANITIZE=thread BUILD_DIR=Core/Build/out/tsan/core-tests HOSTIP=<interface address> PREFIX=Core/Build/out/tsan/host/prefix Core/Tests/run_tests.sh
 ```
 
 With `thread`, libre, baresip and the facade use libre's pthread wrappers instead of C11 threads, because ThreadSanitizer does not intercept glibc's `thrd_create` and crashes in the first thread it creates. CI runs this suite in its own job.

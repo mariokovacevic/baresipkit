@@ -34,10 +34,12 @@ All notable changes to this project are documented here. The format follows
 - A DTMF digit sent in the `.auto` mode that goes out as SIP INFO, because the peer did not
   negotiate telephone-event, reports `viaSIPInfo` (Kotlin `viaSipInfo`) as `true`; before, only
   the `.sipInfo` mode did (patch 0029).
-- An event handler that answers a call no longer meets a lock-order inversion when the call's
-  first RTP packet arrives: baresip called the RTP established handler while holding its RTP
-  receiver mutex, which answering takes too, and ThreadSanitizer reported a potential deadlock
-  in the core tests (patch 0030).
+- C ABI: a `bsk_*` call that answers, holds or changes a call from the `bsk_event_handler` for
+  `BSK_MEDIA_AUDIO_STARTED` no longer hangs the engine thread. baresip delivered that event
+  while holding its RTP receiver mutex, which those operations take too, so an app that
+  answered an incoming call from the callback as soon as its early media arrived never sent
+  the 200, and every later call into the engine blocked (patch 0030). The Swift and Kotlin SDKs
+  hand events to the app outside that callback and were not affected.
 
 ## [1.0.0-rc.1] - 2026-11-14
 

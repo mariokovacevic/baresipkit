@@ -6,7 +6,7 @@ responses.
 
 Usage: sip_peer.py SCENARIO HOST CALLEE_PORT
 Scenarios: refer-ringing, fake-replace, reentrant, remove-live, stop-live,
-require-timer, cancel-elsewhere, dtmf, dtmf-info.
+require-timer, cancel-elsewhere, dtmf, dtmf-info, answer-on-media.
 Exits 0 when the callee behaved as expected, else 1.
 """
 
@@ -300,6 +300,34 @@ def send_telephone_event(peer, address, digit):
         time.sleep(0.02)
 
 
+def send_audio(peer, address, packets):
+    ssrc = random.getrandbits(32)
+    timestamp = random.getrandbits(32)
+    for seq in range(packets):
+        header = struct.pack("!BBHII", 0x80, 0x80 if seq == 0 else 0, seq,
+                             (timestamp + 160 * seq) & 0xFFFFFFFF, ssrc)
+        peer.rtp.sendto(header + b"\xff" * 160, address)
+        time.sleep(0.02)
+
+
+def answer_on_media(peer):
+    peer.invite()
+    if peer.status(10, "INVITE", lambda code: code == 183) != 183:
+        return "no 183 with early media"
+    address = media_address(peer.last_response)
+    if not address:
+        return "no audio address in the 183"
+    send_audio(peer, address, 10)
+    if peer.status(5, "INVITE", lambda code: code >= 200) != 200:
+        return "the call was not answered when audio arrived"
+    peer.ack()
+    time.sleep(0.3)
+    peer.request("BYE")
+    if peer.status(3, "BYE", lambda code: code >= 200) != 200:
+        return "BYE not accepted"
+    return None
+
+
 def receive_telephone_event(peer, payload_type, digit, seconds):
     peer.rtp.settimeout(0.2)
     deadline = time.time() + seconds
@@ -376,6 +404,7 @@ SCENARIOS = {
     "cancel-elsewhere": cancel_elsewhere,
     "dtmf": dtmf,
     "dtmf-info": dtmf_info,
+    "answer-on-media": answer_on_media,
 }
 
 

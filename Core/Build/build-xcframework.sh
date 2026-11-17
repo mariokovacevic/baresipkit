@@ -39,6 +39,9 @@ MODULE_SET="${MODULE_SET:-default}"
 PLATFORM="${PLATFORM:-ios}"
 DEPS_DIR="${DEPS_DIR:-$ROOT/Core/Build/.deps}"
 OUT_DIR="${OUT_DIR:-$ROOT/Core/Build/out}"
+mkdir -p "$DEPS_DIR" "$OUT_DIR"
+DEPS_DIR="$(cd "$DEPS_DIR" && pwd)"
+OUT_DIR="$(cd "$OUT_DIR" && pwd)"
 SANITIZE="${SANITIZE:-}"
 OPENSSL_CONFIG_DIR=/etc/ssl
 OPENSSL_PLUGIN_DIR=/usr/lib/ossl-modules
@@ -361,7 +364,6 @@ create_xcframework() {
 }
 
 main() {
-  mkdir -p "$DEPS_DIR" "$OUT_DIR"
   : > "$OUT_DIR/pins.txt"
   touch "$OUT_DIR/sizes.txt"
   grep -v "^$MODULE_SET " "$OUT_DIR/sizes.txt" > "$OUT_DIR/sizes.txt.tmp" || true

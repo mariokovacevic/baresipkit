@@ -7,24 +7,27 @@ Subject: [PATCH] rtprecv: call the RTP established handler without the
 In the default receive mode rtprecv_decode() called the RTP established
 handler while it held the receiver's mutex. The handler raises
 CALL_EVENT_RTPESTAB and with it the application's event handlers, which
-may call back into baresip: answering a call, changing a media direction
-or updating a stream takes the same mutex through rtprecv_enable(). The
-mutex is not recursive, so such a call from the handler waits for
-itself, and an application that serializes its event handlers with a
-lock of its own gets the opposite lock order to rtprecv_enable() called
-under that lock, which ThreadSanitizer reports as a potential deadlock.
+may call back into baresip. call_answer(), call_progress() and
+call_modify() (and so call_hold() and the media direction setters) run
+call_update_media(), which reaches rtprecv_enable() through
+stream_update() and audio_update(), and rtprecv_enable() takes the same
+mutex. The mutex is not recursive, so such a call from the handler
+waits for itself and the main thread hangs: an application that answers
+an incoming call when its early media arrives never sends the 200.
 
 Note under the mutex that the receiver has just been established and
 call the handler after the mutex is released. The rest of the function
 already runs without the mutex, and the handler still runs before the
-packet is decoded. With the RX thread the handler was already deferred
-to the main thread and nothing changes.
+packet is decoded. The handler may have disabled the receiver, so check
+that again before the packet goes on to the jitter buffer or decoder.
+With the RX thread the handler was already deferred to the main thread
+and nothing changes.
 ---
- src/rtprecv.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ src/rtprecv.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
 diff --git a/src/rtprecv.c b/src/rtprecv.c
-index b261782..691cfb8 100644
+index b261782..1ca3c18 100644
 --- a/src/rtprecv.c
 +++ b/src/rtprecv.c
 @@ -434,6 +434,7 @@ void rtprecv_decode(const struct sa *src, const struct rtp_header *hdr,
@@ -44,12 +47,21 @@ index b261782..691cfb8 100644
  		}
  
  		tmr_start(&rx->tmr_decode, 0, decode_tmr, rx);
-@@ -486,6 +487,9 @@ void rtprecv_decode(const struct sa *src, const struct rtp_header *hdr,
+@@ -486,6 +487,18 @@ void rtprecv_decode(const struct sa *src, const struct rtp_header *hdr,
  	}
  	mtx_unlock(rx->mtx);
  
-+	if (estab)
++	if (estab) {
++		bool enabled;
++
 +		pass_rtpestab_work(rx);
++
++		mtx_lock(rx->mtx);
++		enabled = rx->enabled;
++		mtx_unlock(rx->mtx);
++		if (!enabled)
++			return;
++	}
 +
  	rtprecv_strip_padding(hdr, mb);
  
