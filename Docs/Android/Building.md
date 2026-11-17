@@ -13,7 +13,7 @@ JDK 21, the Android SDK with platform 36, NDK `30.0.16248370` and CMake 3.22.1, 
 Build the C core for both Android ABIs, from the repository root:
 
 ```bash
-PLATFORM=android MODULE_SET=full ANDROID_NDK_HOME="$ANDROID_HOME/ndk/30.0.16248370" Core/Build/build-xcframework.sh
+PLATFORM=android MODULE_SET=full ANDROID_NDK_HOME="$ANDROID_HOME/ndk/30.0.16248370" Core/Build/build-core.sh
 ```
 
 The variables are in [Core/Building.md](../Core/Building.md#the-build-script).
@@ -32,7 +32,7 @@ The JVM unit tests load the JNI bridge built against the core for the Linux host
 once, then run the tests:
 
 ```bash
-PLATFORM=host MODULE_SET=full Core/Build/build-xcframework.sh
+PLATFORM=host MODULE_SET=full Core/Build/build-core.sh
 ```
 
 ```bash

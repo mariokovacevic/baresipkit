@@ -70,7 +70,7 @@ jobs:
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION" >> "$GITHUB_ENV"
           echo "JAVA_HOME=$JAVA_HOME_21_X64" >> "$GITHUB_ENV"
       - name: Build the core for Android
-        run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+        run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-core.sh
       - name: Build, check the ABI and test the libraries
         working-directory: Android
         run: ./gradlew --no-daemon -PVERSION_NAME="$VERSION" assembleRelease checkKotlinAbi testDebugUnitTest

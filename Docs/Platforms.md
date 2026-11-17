@@ -114,7 +114,7 @@ patches and the tests are shared; only the layers that talk to the operating sys
    counterpart of CallKit and LiveCommunicationKit), `baresipkit-push` (FCM and push `Contact`
    parameters, the counterpart of PushKit), `baresipkit-compose` (the counterpart of
    `BaresipKitSwiftUI`), and the sample app `sample`.
-4. **Native build:** `PLATFORM=android Core/Build/build-xcframework.sh` cross-compiles OpenSSL, Opus,
+4. **Native build:** `PLATFORM=android Core/Build/build-core.sh` cross-compiles OpenSSL, Opus,
    libvpx, libre, baresip (with every patch) and the core with the NDK for `arm64-v8a` and
    `x86_64`, with the same pins and patches as for Apple. Gradle links the result into
    `libbaresipkit.so` with the JNI bridge, and the AAR carries it for both ABIs. Alternative: a

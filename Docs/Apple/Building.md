@@ -11,7 +11,7 @@ and linting also `swiftformat`, `swiftlint` and `xcodegen` (`brew install`).
 ## The core
 
 ```bash
-Core/Build/build-xcframework.sh
+Core/Build/build-core.sh
 ```
 
 Builds `Core/Build/out/BaresipKitCore.xcframework` with separate iOS device arm64, iOS simulator

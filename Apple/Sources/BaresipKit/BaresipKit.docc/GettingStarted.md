@@ -12,7 +12,7 @@ arrive later, such as a successful registration or an answered call, come throug
 ### Add the package
 
 There is no release yet. Clone `https://github.com/mariokovacevic/baresipkit.git`, build the C
-core with `Core/Build/build-xcframework.sh`, add the checkout as a local package and link the
+core with `Core/Build/build-core.sh`, add the checkout as a local package and link the
 `BaresipKit` product. Add `NSMicrophoneUsageDescription` to the app's Info.plist, and
 `NSCameraUsageDescription` for video. The package includes a privacy manifest for the SDK; the
 app declares its own data use and API use in its own manifest.

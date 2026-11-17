@@ -28,7 +28,7 @@ run against a build for the machine you are on, with AddressSanitizer and
 UndefinedBehaviorSanitizer:
 
 ```bash
-PLATFORM=host MODULE_SET=full Core/Build/build-xcframework.sh
+PLATFORM=host MODULE_SET=full Core/Build/build-core.sh
 PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
 ```
 
@@ -48,7 +48,7 @@ checkout of a release tag, set `BARESIPKIT_LOCAL_CORE=1` to use it instead of th
 binary.
 
 ```bash
-Core/Build/build-xcframework.sh
+Core/Build/build-core.sh
 ```
 
 ```bash
@@ -70,8 +70,8 @@ tests that need a physical iPhone are listed in
 Build the core for both Android ABIs, and for the host, whose core the JVM tests load:
 
 ```bash
-PLATFORM=android MODULE_SET=full ANDROID_NDK_HOME="$ANDROID_HOME/ndk/30.0.16248370" Core/Build/build-xcframework.sh
-PLATFORM=host MODULE_SET=full Core/Build/build-xcframework.sh
+PLATFORM=android MODULE_SET=full ANDROID_NDK_HOME="$ANDROID_HOME/ndk/30.0.16248370" Core/Build/build-core.sh
+PLATFORM=host MODULE_SET=full Core/Build/build-core.sh
 ```
 
 ```bash

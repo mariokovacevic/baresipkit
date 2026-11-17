@@ -4,7 +4,7 @@ GitHub Actions covers the C core, the Swift package, the simulator tests, the sa
 
 ## Setup
 
-1. On a Mac with Xcode, build the core: `Core/Build/build-xcframework.sh`.
+1. On a Mac with Xcode, build the core: `Core/Build/build-core.sh`.
 2. Install XcodeGen (`brew install xcodegen`), then in `Examples/iOS` set your bundle identifier and development team in `project.yml` and run `xcodegen generate`.
 3. Build and run the sample app on an iPhone with iOS 16 or later.
 4. Without a SIP server of your own, run a local one on the Mac: `Scripts/dev-pbx.sh start` starts the Asterisk and coturn setup of the integration tests, creates a certificate for the Mac's address and prints the account settings, the CA file to import on the phone and the numbers to call (`echo`, `early`, `alice`, `bob`). The phone must be in the same network. It needs Docker with host networking: on Linux as is, in Docker Desktop for Mac after turning on host networking (Settings, Resources, Network). `Scripts/dev-pbx.sh stop` stops it.

@@ -17,7 +17,7 @@ modules=(BaresipKit BaresipKitAudio BaresipKitVideo BaresipKitCallKit BaresipKit
   BaresipKitSwiftUI)
 
 [[ -d "$root/Core/Build/out/BaresipKitCore.xcframework" ]] || {
-  echo "Core/Build/out/BaresipKitCore.xcframework is missing; run Core/Build/build-xcframework.sh first" >&2
+  echo "Core/Build/out/BaresipKitCore.xcframework is missing; run Core/Build/build-core.sh first" >&2
   exit 1
 }
 

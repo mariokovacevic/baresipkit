@@ -17,7 +17,7 @@ for pair in "${pairs[@]}"; do
   upstream="$deps/${pair%%:*}"
   copy="$root/LICENSES/${pair##*:}"
   if [[ ! -f "$upstream" ]]; then
-    echo "error: $upstream is missing; fetch the pinned sources with Core/Build/build-xcframework.sh" >&2
+    echo "error: $upstream is missing; fetch the pinned sources with Core/Build/build-core.sh" >&2
     status=1
   elif ! cmp -s "$upstream" "$copy"; then
     echo "error: LICENSES/${pair##*:} differs from ${pair%%:*} at the pinned commit; copy it again" >&2

@@ -39,7 +39,7 @@ if [[ -z "$PASSWORD" || ! -f "$CA" ]] || ! curl -fsS http://127.0.0.1:8089/statu
 fi
 if [[ ! -d "$ROOT/Core/Build/out/BaresipKitCore.xcframework" ]]; then
   echo "Building the XCFramework (the first time takes a while)"
-  (cd "$ROOT" && MODULE_SET=default Core/Build/build-xcframework.sh)
+  (cd "$ROOT" && MODULE_SET=default Core/Build/build-core.sh)
 fi
 
 echo "Building the sample app for the simulator"

@@ -44,7 +44,7 @@ one, build the core and publish the libraries to your local Maven repository:
 ```bash
 git clone https://github.com/mariokovacevic/baresipkit.git
 cd baresipkit
-PLATFORM=android MODULE_SET=full ANDROID_NDK_HOME="$ANDROID_HOME/ndk/30.0.16248370" Core/Build/build-xcframework.sh
+PLATFORM=android MODULE_SET=full ANDROID_NDK_HOME="$ANDROID_HOME/ndk/30.0.16248370" Core/Build/build-core.sh
 cd Android && ./gradlew publishToMavenLocal
 ```
 

@@ -14,7 +14,7 @@ same patches. The Apple and Android builds that follow are in
 ## The build script
 
 ```bash
-Core/Build/build-xcframework.sh
+Core/Build/build-core.sh
 ```
 
 The script builds the core for one platform at a time; `PLATFORM` selects which:
@@ -50,7 +50,7 @@ Changes to baresip or libre are patches in `Core/Patches/`, each with a row and 
 ## Host build and core tests
 
 ```bash
-PLATFORM=host MODULE_SET=full SANITIZE=address,undefined Core/Build/build-xcframework.sh
+PLATFORM=host MODULE_SET=full SANITIZE=address,undefined Core/Build/build-core.sh
 HOSTIP=<interface address> PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
 ```
 
@@ -59,7 +59,7 @@ HOSTIP=<interface address> PREFIX=Core/Build/out/host/prefix Core/Tests/run_test
 ThreadSanitizer needs its own prefix, and `SANITIZE=thread` for the build and for the tests:
 
 ```bash
-OUT_DIR=Core/Build/out/tsan PLATFORM=host MODULE_SET=full SANITIZE=thread Core/Build/build-xcframework.sh
+OUT_DIR=Core/Build/out/tsan PLATFORM=host MODULE_SET=full SANITIZE=thread Core/Build/build-core.sh
 SANITIZE=thread BUILD_DIR=Core/Build/out/tsan/core-tests HOSTIP=<interface address> PREFIX=Core/Build/out/tsan/host/prefix Core/Tests/run_tests.sh
 ```
 

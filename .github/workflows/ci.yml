@@ -59,9 +59,9 @@ jobs:
           path: |
             Core/Build/.deps
             Core/Build/out/host/prefix
-          key: linux-asan-ubsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: linux-asan-ubsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build host prefix (full module set, libre and baresip under ASan/UBSan)
-        run: PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Core/Build/build-xcframework.sh
+        run: PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Core/Build/build-core.sh
       - name: Check that LICENSES matches the pinned sources
         run: Scripts/check-licenses.sh
       - name: Run core test suite under ASan/UBSan
@@ -95,11 +95,11 @@ jobs:
             Core/Build/out/host/prefix
             Core/Build/out/android-arm64-v8a/prefix
             Core/Build/out/android-x86_64/prefix
-          key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build the core for the host and for Android
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
-          PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-core.sh
+          PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-core.sh
       - name: Validate the Gradle wrapper
         uses: gradle/actions/wrapper-validation@7296c772c13d12d9871528814b51fb2143c138ef # v6.4.1
       - name: Build and test the Android modules
@@ -163,12 +163,12 @@ jobs:
             Core/Build/out/host/prefix
             Core/Build/out/android-arm64-v8a/prefix
             Core/Build/out/android-x86_64/prefix
-          key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build the core for Android
-        run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+        run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-core.sh
       - name: Build the host core and the call peer
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-core.sh
           P="$PWD/Core/Build/out/host/prefix"
           EXTRA="$P/lib/libopus.a;$P/lib/libssl.a;$P/lib/libcrypto.a;z;resolv;pthread;m;dl"
           if [[ -f "$P/lib/libvpx.a" ]]; then EXTRA="$P/lib/libvpx.a;$EXTRA"; fi
@@ -262,9 +262,9 @@ jobs:
             Core/Build/out/ios-arm64-simulator/prefix
             Core/Build/out/macos-arm64/prefix
             Core/Build/out/host/prefix
-          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build XCFramework (default module set)
-        run: MODULE_SET=default JOBS=4 Core/Build/build-xcframework.sh
+        run: MODULE_SET=default JOBS=4 Core/Build/build-core.sh
       - name: Check the privacy manifest against the APIs the XCFramework uses
         run: Apple/Scripts/check-privacy-apis.sh
       - name: Build Swift package for the simulator and a device, warnings as errors
@@ -342,10 +342,10 @@ jobs:
             Core/Build/out/ios-arm64-simulator/prefix
             Core/Build/out/macos-arm64/prefix
             Core/Build/out/host/prefix
-          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Host build and core tests
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-core.sh
           HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
 
   sample-app:
@@ -367,12 +367,12 @@ jobs:
             Core/Build/out/ios-arm64-simulator/prefix
             Core/Build/out/macos-arm64/prefix
             Core/Build/out/host/prefix
-          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: macos-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build XCFramework (default module set)
-        run: MODULE_SET=default JOBS=4 Core/Build/build-xcframework.sh
+        run: MODULE_SET=default JOBS=4 Core/Build/build-core.sh
       - name: Host build and the test peer
         run: |
-          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-xcframework.sh
+          PLATFORM=host MODULE_SET=full JOBS=4 Core/Build/build-core.sh
           BUILD_ONLY=1 HOSTIP=$(ipconfig getifaddr en0 || ipconfig getifaddr en1) PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
       - name: Pick a simulator
         run: |
@@ -477,10 +477,10 @@ jobs:
           path: |
             Core/Build/.deps
             Core/Build/out/host/prefix
-          key: linux-asan-ubsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: linux-asan-ubsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build host prefix and test binaries (ASan/UBSan)
         run: |
-          PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Core/Build/build-xcframework.sh
+          PLATFORM=host MODULE_SET=full SANITIZE="$HOST_SANITIZE" JOBS=4 Core/Build/build-core.sh
           BUILD_ONLY=1 HOSTIP=$(hostname -I | awk '{print $1}') PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
       - name: Run integration suite
         run: |
@@ -505,9 +505,9 @@ jobs:
           path: |
             Core/Build/.deps
             Core/Build/out/host/prefix
-          key: linux-tsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-xcframework.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+          key: linux-tsan-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
       - name: Build host prefix (full module set, libre and baresip under TSan)
-        run: PLATFORM=host MODULE_SET=full SANITIZE=thread JOBS=4 Core/Build/build-xcframework.sh
+        run: PLATFORM=host MODULE_SET=full SANITIZE=thread JOBS=4 Core/Build/build-core.sh
       - name: Run core test suite under TSan
         env:
           TSAN_OPTIONS: halt_on_error=1 second_deadlock_stack=1

@@ -1,6 +1,6 @@
 # Dependencies
 
-All third-party code is built from pinned source by `Core/Build/build-xcframework.sh`; nothing is downloaded as a prebuilt binary. Pins: `Core/Build/versions.env`.
+All third-party code is built from pinned source by `Core/Build/build-core.sh`; nothing is downloaded as a prebuilt binary. Pins: `Core/Build/versions.env`.
 
 | Component | Version | License | Role | Notes |
 |---|---|---|---|---|
@@ -13,9 +13,9 @@ All third-party code is built from pinned source by `Core/Build/build-xcframewor
 | H.264 | VideoToolbox (system) on Apple platforms, MediaCodec (system) on Android | Apple SDK, Android SDK | video codec, BaresipKit `vidtoolbox` and `mediacodec` modules | **patent-encumbered**: AVC/H.264 is licensed through the Via-LA (formerly MPEG LA) pool. Using the OS-provided encoder/decoder on iOS is covered by Apple's license for the platform's codec; on Android the codec is the device's own; no FFmpeg or x264 code is shipped |
 | G.722 | sippy/libg722 `a2688d2`, vendored in `Core/third_party/g722` | BSD-2-Clause, CMU (unrestricted), public domain | audio codec, registered by `bsk_g722.c` | baresip's own `g722` module needs spandsp (LGPL) and is not used; ITU-T G.722 patents expired |
 
-Apple frameworks linked by the XCFramework: AudioToolbox, AVFoundation, CoreAudio, CoreFoundation, CoreMedia, CoreVideo, Foundation, Security, SystemConfiguration, VideoToolbox, plus `libresolv` and `libz`. The same list is in `Package.swift` and in the module map written by `Core/Build/build-xcframework.sh`.
+Apple frameworks linked by the XCFramework: AudioToolbox, AVFoundation, CoreAudio, CoreFoundation, CoreMedia, CoreVideo, Foundation, Security, SystemConfiguration, VideoToolbox, plus `libresolv` and `libz`. The same list is in `Package.swift` and in the module map written by `Core/Build/build-core.sh`.
 
-On Android, `PLATFORM=android Core/Build/build-xcframework.sh` builds the same components from the same pins with the NDK, for `arm64-v8a` and `x86_64`, and the `baresipkit` library carries them in `libbaresipkit.so`. The native code links the NDK's `libaaudio`, `libmediandk`, `liblog`, `libz` and `libm`. The Kotlin libraries depend on kotlinx-coroutines, AndroidX Lifecycle, Jetpack core-telecom (`baresipkit-telecom`) and Jetpack Compose (`baresipkit-compose`), all Apache-2.0, resolved by Gradle from Maven Central and Google's Maven repository.
+On Android, `PLATFORM=android Core/Build/build-core.sh` builds the same components from the same pins with the NDK, for `arm64-v8a` and `x86_64`, and the `baresipkit` library carries them in `libbaresipkit.so`. The native code links the NDK's `libaaudio`, `libmediandk`, `liblog`, `libz` and `libm`. The Kotlin libraries depend on kotlinx-coroutines, AndroidX Lifecycle, Jetpack core-telecom (`baresipkit-telecom`) and Jetpack Compose (`baresipkit-compose`), all Apache-2.0, resolved by Gradle from Maven Central and Google's Maven repository.
 
 BaresipKit itself is BSD-3-Clause (`LICENSE`).
 

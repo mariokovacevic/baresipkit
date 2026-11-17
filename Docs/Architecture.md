@@ -13,7 +13,7 @@ C ABI, are the same code on every platform; the top three are each platform's ow
 
 ## Layer 1: the C libraries (shared)
 
-Built from pinned upstream sources by `Core/Build/build-xcframework.sh` with the patches in
+Built from pinned upstream sources by `Core/Build/build-core.sh` with the patches in
 `Core/Patches/` applied, with the same pins and patches for every platform (for Android
 cross-compiled with the NDK, `PLATFORM=android`). baresip modules are linked statically
 (`STATIC=ON`); the set is chosen at build time (`Core/Build/module-sets.env`). Only the platform

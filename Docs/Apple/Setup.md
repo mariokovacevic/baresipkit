@@ -40,7 +40,7 @@ a local package:
 ```bash
 git clone https://github.com/mariokovacevic/baresipkit.git
 cd baresipkit
-Core/Build/build-xcframework.sh
+Core/Build/build-core.sh
 ```
 
 Then add the folder in Xcode (File > Add Package Dependencies > Add Local), or in

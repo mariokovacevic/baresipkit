@@ -6,7 +6,7 @@ manifest="$root/Apple/Sources/BaresipKit/Resources/PrivacyInfo.xcprivacy"
 framework="$root/Core/Build/out/BaresipKitCore.xcframework"
 
 [[ -d "$framework" ]] || {
-  echo "Core/Build/out/BaresipKitCore.xcframework is missing; run Core/Build/build-xcframework.sh first" >&2
+  echo "Core/Build/out/BaresipKitCore.xcframework is missing; run Core/Build/build-core.sh first" >&2
   exit 1
 }
 

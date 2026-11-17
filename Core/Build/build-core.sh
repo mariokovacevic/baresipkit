@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
 # Reproducible build of the BaresipKit C core (libre + baresip + OpenSSL + Opus
-# [+ libvpx]) for iOS device arm64 and iOS simulator arm64, packaged as an
-# XCFramework consumed by the SPM binaryTarget.
+# [+ libvpx]) for one platform at a time: Apple platforms (an XCFramework for
+# the Swift package), Android (both ABIs for the AAR) or the host (tests).
 #
 # Usage:
-#   Core/Build/build-xcframework.sh                # all iOS slices, MODULE_SET=default
-#   MODULE_SET=minimal Core/Build/build-xcframework.sh
-#   SLICES="ios-arm64" Core/Build/build-xcframework.sh
-#   PLATFORM=host Core/Build/build-xcframework.sh  # native build for CI / sanitizers
-#   PLATFORM=android Core/Build/build-xcframework.sh  # arm64-v8a and x86_64 for the AAR
+#   Core/Build/build-core.sh                # iOS and macOS slices, MODULE_SET=default
+#   MODULE_SET=minimal Core/Build/build-core.sh
+#   SLICES="ios-arm64" Core/Build/build-core.sh
+#   PLATFORM=host Core/Build/build-core.sh  # native build for CI / sanitizers
+#   PLATFORM=android Core/Build/build-core.sh  # arm64-v8a and x86_64 for the AAR
 #
 # Environment:
 #   MODULE_SET     minimal | default | full            (default: default)

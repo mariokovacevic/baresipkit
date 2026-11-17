@@ -25,6 +25,9 @@ All notable changes to this project are documented here. The format follows
   `Core/Patches/`, `Core/Tests/`, before `Build/`, `Patches/` and `Tests/Core`, `Tests/Fuzz`,
   `Tests/Integration`). `Package.swift` stays at the root, so the package URL is unchanged. The
   build writes to `Core/Build/out`; delete an old `Build/` folder after updating.
+- The build script for the C core is `Core/Build/build-core.sh` (before
+  `build-xcframework.sh`): it builds the core for Apple platforms, Android and the host, not
+  only the XCFramework. It also accepts a relative `OUT_DIR` and `DEPS_DIR`.
 - Documentation with the same guides per platform: `Docs/Apple/` and `Docs/Android/` each have
   `Setup.md`, `Building.md` and `Releasing.md` (before `Docs/iOS.md` and `Docs/Android.md`), and
   `Docs/Core/` has the core build, the C ABI and the compatibility matrix.

@@ -39,12 +39,12 @@ fi
 
 if [[ ! -d Core/Build/out/BaresipKitCore.xcframework ]]; then
   echo "Building the XCFramework (the first time takes a while)"
-  MODULE_SET=default Core/Build/build-xcframework.sh
+  MODULE_SET=default Core/Build/build-core.sh
 fi
 if [[ ! -x "$PEER" ]]; then
   echo "Building the test peer"
   if [[ ! -d Core/Build/out/host/prefix ]]; then
-    PLATFORM=host MODULE_SET=full Core/Build/build-xcframework.sh
+    PLATFORM=host MODULE_SET=full Core/Build/build-core.sh
   fi
   BUILD_ONLY=1 PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
 fi

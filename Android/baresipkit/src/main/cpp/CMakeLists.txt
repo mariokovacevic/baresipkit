@@ -11,7 +11,7 @@ else()
 endif()
 set(BSK_CORE "${BSK_ROOT}/Core/Build/out/${BSK_SLICE}/lib/libBaresipKitCore.a")
 if(NOT EXISTS "${BSK_CORE}")
-  message(FATAL_ERROR "${BSK_CORE} is missing. Build the core first: PLATFORM=${BSK_PLATFORM} Core/Build/build-xcframework.sh")
+  message(FATAL_ERROR "${BSK_CORE} is missing. Build the core first: PLATFORM=${BSK_PLATFORM} Core/Build/build-core.sh")
 endif()
 
 add_library(BaresipKitCore STATIC IMPORTED)
