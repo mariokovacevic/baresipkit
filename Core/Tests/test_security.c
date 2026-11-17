@@ -22,6 +22,7 @@ static struct {
 	bool via_sip_info;
 } dtmf_events[8];
 static int dtmf_event_count;
+static int media_answer_status = -1;
 
 
 static bool mode_is(const char *name)
@@ -84,6 +85,21 @@ static void on_dtmf(const bsk_event *ev)
 }
 
 
+static void on_media(const bsk_event *ev)
+{
+	bsk_error err;
+	bsk_status st;
+
+	if (!mode_is("answer-on-media") ||
+	    ev->u.media.event != BSK_MEDIA_AUDIO_STARTED ||
+	    __atomic_load_n(&media_answer_status, __ATOMIC_SEQ_CST) != -1)
+		return;
+
+	st = bsk_call_answer(engine, ev->call, false, &err);
+	__atomic_store_n(&media_answer_status, (int)st, __ATOMIC_SEQ_CST);
+}
+
+
 static void on_event(bsk_engine *e, const bsk_event *ev, void *user)
 {
 	(void)e;
@@ -91,6 +107,8 @@ static void on_event(bsk_engine *e, const bsk_event *ev, void *user)
 
 	if (ev->type == BSK_EVENT_CALL_DTMF)
 		on_dtmf(ev);
+	if (ev->type == BSK_EVENT_CALL_MEDIA)
+		on_media(ev);
 
 	if (ev->type == BSK_EVENT_CALL_INCOMING)
 		on_incoming(ev);
@@ -374,6 +392,18 @@ static int run_dtmf_info(const char *host)
 }
 
 
+static int run_answer_on_media(const char *host)
+{
+	(void)start(host, true);
+	CHECK(wait_until(&w, has_connected, 10000));
+	CHECK(__atomic_load_n(&media_answer_status, __ATOMIC_SEQ_CST) ==
+	      BSK_OK);
+	CHECK(wait_until(&w, one_released, 10000));
+	finish("answered from the callback that reports the first audio");
+	return 0;
+}
+
+
 int main(int argc, char **argv)
 {
 	if (argc < 3) {
@@ -398,6 +428,8 @@ int main(int argc, char **argv)
 		return run_dtmf(argv[2]);
 	if (mode_is("dtmf-info"))
 		return run_dtmf_info(argv[2]);
+	if (mode_is("answer-on-media"))
+		return run_answer_on_media(argv[2]);
 
 	fprintf(stderr, "unknown mode %s\n", mode);
 	return 2;

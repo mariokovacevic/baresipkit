@@ -37,7 +37,7 @@ The script clones each pinned source (`Core/Build/versions.env`), verifies the c
 slice. For `ios` it merges the archives with `libtool -static` and runs
 `xcodebuild -create-xcframework`; the archive contains libre, baresip (static modules), OpenSSL,
 Opus, the BaresipKitCore facade and, on Apple platforms, the VideoToolbox and camera modules.
-`OUT_DIR` must not contain symlinks (CMake path resolution). A checkout in `Core/Build/.deps`
+`OUT_DIR` and `DEPS_DIR` may be relative to the current directory; the script makes them absolute. `OUT_DIR` must not contain symlinks (CMake path resolution). A checkout in `Core/Build/.deps`
 that is not at the pinned commit is deleted and cloned again, and the libre and baresip checkouts
 are reset and cleaned (`git clean -fdx`) before the patches are applied, so do not keep work in
 them. OpenSSL is configured with `no-autoload-config` and with fixed directories (`/etc/ssl` for
