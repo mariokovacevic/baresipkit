@@ -56,7 +56,7 @@ implementation("io.github.mariokovacevic:baresipkit:1.0.0")
 
 The other Android libraries (`baresipkit-audio`, `-video`, `-telecom`, `-push`, `-compose`)
 use the same group and version. The platform guides,
-[Docs/iOS.md](../iOS.md) and [Docs/Android.md](../Android.md), have a quick start, the setup
+[Docs/iOS.md](../Apple/Setup.md) and [Docs/Android.md](../Android/Setup.md), have a quick start, the setup
 recipes and an app checklist.
 
 ## Verifying the release

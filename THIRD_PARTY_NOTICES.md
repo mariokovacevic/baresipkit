@@ -1,7 +1,7 @@
 # Third-party notices
 
 BaresipKit includes software developed by third parties. The full license texts of the pinned
-versions in `Build/versions.env` are in [`LICENSES/`](LICENSES); CI checks that they match the
+versions in `Core/Build/versions.env` are in [`LICENSES/`](LICENSES); CI checks that they match the
 pinned upstream sources. The iOS release ships them as `BaresipKitCore-licenses.zip`, and the
 `baresipkit` AAR carries them in `META-INF/baresipkit/`, so they are packaged into every app that
 uses the Android libraries. The `baresipkit` POM lists the licenses of the code in its native

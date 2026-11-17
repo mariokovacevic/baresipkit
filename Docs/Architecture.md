@@ -1,28 +1,35 @@
 # Architecture
 
-```
- App (SwiftUI / UIKit)
-   │
-   ├── BaresipKitCallKit   BaresipKitLiveCommunication   BaresipKitPushKit   BaresipKitAudio
-   │   BaresipKitVideo     BaresipKitSwiftUI                                                   (Layer 5, optional)
-   │     └── BaresipKitSystemCall   call bookkeeping and push-to-INVITE matching shared by both call adapters (internal)
-   │
-   └── BaresipKit          idiomatic Swift API: BaresipEngine, AsyncStream<BaresipEvent>   (Layer 4)
-         │
-         ├── BaresipKitBridge   C helpers for the event union, module map                    (Layer 3)
-         │
-         └── BaresipKitCore     C ABI: baresip_kit.h, Core/src/*.c                            (Layer 2)
-               │
-               └── baresip + libre (+librem) + OpenSSL + Opus [+ libvpx]                     (Layer 1)
-                   VideoToolbox H.264 (Core/src/apple/vidtoolbox.c, RTP depacketizer in
-                   Core/src/bsk_h264.c), camera (bskcapture.m)
-```
+Both SDKs have five layers. The bottom two, the C libraries and the BaresipKitCore facade with its
+C ABI, are the same code on every platform; the top three are each platform's own.
 
-## Layer 1: the C core
+| Layer | Apple (Swift) | Android (Kotlin) |
+|---|---|---|
+| 5, optional adapters | `BaresipKitCallKit`, `BaresipKitLiveCommunication`, `BaresipKitPushKit`, `BaresipKitAudio`, `BaresipKitVideo`, `BaresipKitSwiftUI` | `baresipkit-telecom`, `baresipkit-push`, `baresipkit-audio`, `baresipkit-video`, `baresipkit-compose` |
+| 4, the SDK | `BaresipKit` | `baresipkit` |
+| 3, the bridge | `BaresipKitBridge` | the JNI bridge |
+| 2, the facade | BaresipKitCore, `Core/include/baresip_kit.h` | the same |
+| 1, the C libraries | baresip, libre, OpenSSL, Opus [, libvpx] | the same |
 
-Built from pinned upstream sources by `Build/build-xcframework.sh` with the patches in `Patches/` applied. baresip modules are linked statically (`STATIC=ON`); the set is chosen at build time (`Build/module-sets.env`). On Apple platforms the facade also registers two BaresipKit-owned modules that upstream baresip does not have: the `vidtoolbox` H.264 codec and the `bskcapture` camera source.
+## Layer 1: the C libraries (shared)
 
-## Layer 2: BaresipKitCore
+Built from pinned upstream sources by `Core/Build/build-xcframework.sh` with the patches in
+`Core/Patches/` applied, with the same pins and patches for every platform (for Android
+cross-compiled with the NDK, `PLATFORM=android`). baresip modules are linked statically
+(`STATIC=ON`); the set is chosen at build time (`Core/Build/module-sets.env`). Only the platform
+modules differ:
+
+| | Apple | Android |
+|---|---|---|
+| Audio | `audiounit` | `aaudio` |
+| H.264 | `vidtoolbox` (`Core/src/apple/vidtoolbox.c`) | `mediacodec` (`Core/src/android/mediacodec.c`) |
+| Camera | `bskcapture` (`Core/src/apple/bskcapture.m`) | `bskcamera` (`Core/src/android/bskcamera.c`), fed from Camera2 |
+
+`vidtoolbox`, `bskcapture`, `mediacodec` and `bskcamera` are BaresipKit's own modules, which
+upstream baresip does not have; the facade registers them. The H.264 RTP depacketizer they share
+is `Core/src/bsk_h264.c`.
+
+## Layer 2: BaresipKitCore (shared)
 
 `Core/include/baresip_kit.h` is the only header a binding sees. It contains no libre or baresip types. The implementation in `Core/src`:
 
@@ -57,17 +64,37 @@ Built from pinned upstream sources by `Build/build-xcframework.sh` with the patc
 - **Incoming headers.** baresip keeps the headers named in an account's incoming header list for incoming calls; `bsk_call_get_header` reads them.
 - **VideoToolbox sessions in the background.** iOS invalidates compression and decompression sessions while the app is in the background, and a decoder failure may only reach the output callback. A lost encoder session is dropped, so the next frame opens a new one and sends a key frame. A lost decoder session is reopened at the next key frame, and `EPROTO` makes baresip ask the peer for one.
 
-Threading and ownership rules are in [C-ABI.md](C-ABI.md). In one sentence: every `bsk_*` call is thread-safe and executes on the engine thread; events arrive on the engine thread; camera frames arrive on the capture queue and remote frames on the engine thread.
+Threading and ownership rules are in [Core/C-ABI.md](Core/C-ABI.md). In one sentence: every `bsk_*` call is thread-safe and executes on the engine thread; events arrive on the engine thread; camera frames arrive on the capture queue and remote frames on the engine thread.
 
-## Layer 3: BaresipKitBridge
+## Apple: layers 3 to 5
+
+```
+ App (SwiftUI / UIKit)
+   │
+   ├── BaresipKitCallKit   BaresipKitLiveCommunication   BaresipKitPushKit   BaresipKitAudio
+   │   BaresipKitVideo     BaresipKitSwiftUI                                                   (Layer 5, optional)
+   │     └── BaresipKitSystemCall   call bookkeeping and push-to-INVITE matching shared by both call adapters (internal)
+   │
+   └── BaresipKit          idiomatic Swift API: BaresipEngine, AsyncStream<BaresipEvent>   (Layer 4)
+         │
+         ├── BaresipKitBridge   C helpers for the event union, module map                    (Layer 3)
+         │
+         └── BaresipKitCore     C ABI: baresip_kit.h, Core/src/*.c                            (Layer 2)
+               │
+               └── baresip + libre (+librem) + OpenSSL + Opus [+ libvpx]                     (Layer 1)
+                   VideoToolbox H.264 (Core/src/apple/vidtoolbox.c, RTP depacketizer in
+                   Core/src/bsk_h264.c), camera (bskcapture.m)
+```
+
+### Layer 3: BaresipKitBridge
 
 Static inline C helpers that copy union members of `bsk_event` into plain structs so Swift never touches the union, plus the module map.
 
-## Layer 4: BaresipKit
+### Layer 4: BaresipKit
 
 `BaresipEngine` wraps the opaque engine handle. Calls are `async` and run on a private queue because the C calls block until the engine thread has executed them. Events are delivered through `AsyncStream<BaresipEvent>`; every subscriber gets every event. All public types are `Sendable`.
 
-## Layer 5: adapters
+### Layer 5: adapters
 
 - `BaresipKitAudio`: `BaresipAudioSessionController` forwards activation, route changes and interruptions to the engine; it never configures the session unless `configureForVoIP()` is called explicitly.
 - `BaresipKitCallKit`: `BaresipCallKitAdapter` maps call IDs to UUIDs, drives `CXProvider`, handles answer-before-INVITE after a push, and forwards audio activation.
@@ -76,7 +103,7 @@ Static inline C helpers that copy union members of `bsk_event` into plain struct
 - `BaresipKitVideo`: `BaresipVideoView` renders frames with `AVSampleBufferDisplayLayer`; `BaresipVideoFrameRelay` forwards frames to closures. From iOS 17 frames go straight to the layer's renderer, which accepts them from any thread; before iOS 17 the newest frame is handed to the main thread, one hop at a time. A failed renderer shows nothing until it is flushed, and iOS asks for a flush after an interruption such as the app going to the background, so the view flushes it in both cases; otherwise the picture freezes while frames keep arriving.
 - `BaresipKitSwiftUI`: `BaresipPhone` and `BaresipPhoneCall` apply the engine's events to published registration and call state for SwiftUI, and keep the active call. Actions go through a `BaresipCallController` such as the CallKit adapter for the calls it controls, and to the engine otherwise. `BaresipCallVideo` (in `BaresipKitVideo`) and `BaresipSelfView` show a call's video and your own camera.
 
-## Android
+## Android: layers 3 to 5
 
 ```
  App (Compose / Views)
@@ -95,26 +122,19 @@ Static inline C helpers that copy union members of `bsk_event` into plain struct
                    (Core/src/android/bskcamera.c) fed from Camera2
 ```
 
-Layers 1 and 2 are the same code as on Apple platforms, cross-compiled with the NDK by
-`PLATFORM=android Build/build-xcframework.sh` with the same pins and patches. Only the platform
-modules differ: `aaudio` instead of `audiounit`, `mediacodec` instead of `vidtoolbox`, and
-`bskcamera` instead of `bskcapture`.
+### Layer 3: the JNI bridge
 
-- **Layer 3, the JNI bridge**, is the counterpart of `BaresipKitBridge`: it turns `bsk_*` calls
-  into native methods and each `bsk_event` into a Kotlin object, attaching the engine and media
-  threads to the JVM as needed. It also builds for the Linux host, so the JVM unit tests run
-  against the real core.
-- **Layer 4, `baresipkit`**: `BaresipEngine` runs every C call on one dedicated thread through a
-  coroutine dispatcher, so operations are `suspend` functions; events go to a `SharedFlow` that
-  every collector receives in full. The type names follow the Swift API.
-- **Layer 5, the adapters**: `BaresipTelecomAdapter` adds calls to Telecom through Jetpack
-  core-telecom, with the same push-to-INVITE matching as the iOS call adapters;
-  `BaresipPushAdapter` turns Firebase tokens into `Contact` parameters and reports pushed calls;
-  `BaresipAudioController` holds audio focus and routes the output; `BaresipVideoView` renders
-  frames with OpenGL ES and `BaresipCamera` feeds Camera2 frames to the core; `BaresipPhone` and
-  `BaresipPhoneCall` are the Compose state holders.
+The counterpart of `BaresipKitBridge`: it turns `bsk_*` calls into native methods and each `bsk_event` into a Kotlin object, attaching the engine and media threads to the JVM as needed. It also builds for the Linux host, so the JVM unit tests run against the real core.
 
-The differences from iOS, and why, are listed in [Platforms.md](Platforms.md#parity-with-ios).
+### Layer 4: baresipkit
+
+`BaresipEngine` runs every C call on one dedicated thread through a coroutine dispatcher, so operations are `suspend` functions; events go to a `SharedFlow` that every collector receives in full. The type names match the Swift API.
+
+### Layer 5: adapters
+
+`BaresipTelecomAdapter` adds calls to Telecom through Jetpack core-telecom, with the same push-to-INVITE matching as the iOS call adapters; `BaresipPushAdapter` turns Firebase tokens into `Contact` parameters and reports pushed calls; `BaresipAudioController` holds audio focus and routes the output; `BaresipVideoView` renders frames with OpenGL ES and `BaresipCamera` feeds Camera2 frames to the core; `BaresipPhone` and `BaresipPhoneCall` are the Compose state holders.
+
+The differences between the platforms, and why, are listed in [Platforms.md](Platforms.md#parity-type-by-type).
 
 ## What the core never does
 

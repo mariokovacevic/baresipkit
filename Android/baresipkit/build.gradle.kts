@@ -57,7 +57,7 @@ kotlin {
 }
 
 val hostJniDir = layout.buildDirectory.dir("host-jni")
-val hostCore = rootProject.layout.projectDirectory.file("../Build/out/host/lib/libBaresipKitCore.a")
+val hostCore = rootProject.layout.projectDirectory.file("../Core/Build/out/host/lib/libBaresipKitCore.a")
 val isLinuxHost = System.getProperty("os.name") == "Linux"
 
 val buildHostJni by tasks.registering(Exec::class) {

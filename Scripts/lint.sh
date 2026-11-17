@@ -13,11 +13,11 @@ if ! c_sources | xargs clang-format --dry-run --Werror; then
 fi
 
 if [[ "${SKIP_SWIFT:-0}" != 1 ]]; then
-  if ! swift_sources | xargs swiftformat --lint --quiet --config .swiftformat; then
+  if ! swift_sources | xargs swiftformat --lint --quiet --config Apple/.swiftformat; then
     echo "Swift sources are not formatted; run Scripts/format.sh" >&2
     status=1
   fi
-  if ! swiftlint lint --strict --quiet --config .swiftlint.yml; then
+  if ! swiftlint lint --strict --quiet --config Apple/.swiftlint.yml Apple/Sources Apple/Tests Examples/iOS; then
     status=1
   fi
 fi

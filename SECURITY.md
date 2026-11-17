@@ -23,5 +23,5 @@ one. Fixes that change behaviour are listed under "Security" in `CHANGELOG.md`.
 ## Scope
 
 In scope: the BaresipKit facade (`Core/`), the Swift modules, the Android libraries, the patches
-in `Patches/` and the build and release scripts. Vulnerabilities in baresip, libre, OpenSSL or Opus themselves should also be
+in `Core/Patches/` and the build and release scripts. Vulnerabilities in baresip, libre, OpenSSL or Opus themselves should also be
 reported to their projects; we update the pinned versions when they publish fixes.

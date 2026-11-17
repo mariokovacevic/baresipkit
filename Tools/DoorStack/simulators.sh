@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 STATE="$ROOT/Tools/DoorStack/state"
 APP_DIR="$ROOT/Examples/iOS"
-DERIVED="$ROOT/Build/out/simulators"
+DERIVED="$ROOT/Core/Build/out/simulators"
 BUNDLE=com.example.BaresipKitSample
 COUNT="${COUNT:-2}"
 
@@ -37,9 +37,9 @@ if [[ -z "$PASSWORD" || ! -f "$CA" ]] || ! curl -fsS http://127.0.0.1:8089/statu
   echo "The door stack is not running; start it with: Tools/DoorStack/doorstack.sh start" >&2
   exit 1
 fi
-if [[ ! -d "$ROOT/Build/out/BaresipKitCore.xcframework" ]]; then
+if [[ ! -d "$ROOT/Core/Build/out/BaresipKitCore.xcframework" ]]; then
   echo "Building the XCFramework (the first time takes a while)"
-  (cd "$ROOT" && MODULE_SET=default Build/build-xcframework.sh)
+  (cd "$ROOT" && MODULE_SET=default Core/Build/build-xcframework.sh)
 fi
 
 echo "Building the sample app for the simulator"

@@ -19,6 +19,15 @@ All notable changes to this project are documented here. The format follows
   the libraries are unchanged.
 - The iOS release workflow is `release-ios.yml` and shows as "Release iOS" in the Actions tab
   (before `release.yml` and "Release"), named like `release-android.yml` and "Release Android".
+- Repository layout with no primary platform: the Swift package's sources, tests, API baseline
+  and scripts moved to `Apple/` (before `Sources/`, `Tests/BaresipKitTests`, `API/Swift`), next
+  to `Android/`; the shared build, patches and core tests moved under `Core/` (`Core/Build/`,
+  `Core/Patches/`, `Core/Tests/`, before `Build/`, `Patches/` and `Tests/Core`, `Tests/Fuzz`,
+  `Tests/Integration`). `Package.swift` stays at the root, so the package URL is unchanged. The
+  build writes to `Core/Build/out`; delete an old `Build/` folder after updating.
+- Documentation with the same guides per platform: `Docs/Apple/` and `Docs/Android/` each have
+  `Setup.md`, `Building.md` and `Releasing.md` (before `Docs/iOS.md` and `Docs/Android.md`), and
+  `Docs/Core/` has the core build, the C ABI and the compatibility matrix.
 
 ### Fixed
 

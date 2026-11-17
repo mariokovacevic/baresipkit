@@ -3,8 +3,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
-SHOTS="${SHOTS:-$ROOT/Build/out/screenshots}"
-PEER="$ROOT/Build/out/host/core-tests/tests/bsk_test_call"
+SHOTS="${SHOTS:-$ROOT/Core/Build/out/screenshots}"
+PEER="$ROOT/Core/Build/out/host/core-tests/tests/bsk_test_call"
 
 if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   cat <<USAGE
@@ -18,7 +18,7 @@ Environment:
   PAUSE     seconds to stay on each screen, to watch it in Simulator (default 0)
   SIM_UDID  simulator to use (default: the newest iPhone)
   HOSTIP    this Mac's LAN address (default: en0, then en1)
-  SHOTS     folder for the screenshots (default Build/out/screenshots)
+  SHOTS     folder for the screenshots (default Core/Build/out/screenshots)
 USAGE
   exit 0
 fi
@@ -37,20 +37,20 @@ if [[ -z "$HOSTIP" ]]; then
   exit 1
 fi
 
-if [[ ! -d Build/out/BaresipKitCore.xcframework ]]; then
+if [[ ! -d Core/Build/out/BaresipKitCore.xcframework ]]; then
   echo "Building the XCFramework (the first time takes a while)"
-  MODULE_SET=default Build/build-xcframework.sh
+  MODULE_SET=default Core/Build/build-xcframework.sh
 fi
 if [[ ! -x "$PEER" ]]; then
   echo "Building the test peer"
-  if [[ ! -d Build/out/host/prefix ]]; then
-    PLATFORM=host MODULE_SET=full Build/build-xcframework.sh
+  if [[ ! -d Core/Build/out/host/prefix ]]; then
+    PLATFORM=host MODULE_SET=full Core/Build/build-xcframework.sh
   fi
-  BUILD_ONLY=1 PREFIX=Build/out/host/prefix Tests/Core/run_tests.sh
+  BUILD_ONLY=1 PREFIX=Core/Build/out/host/prefix Core/Tests/run_tests.sh
 fi
 
 if [[ -z "${SIM_UDID:-}" ]]; then
-  SIM_UDID=$(Scripts/newest-iphone-simulator.sh)
+  SIM_UDID=$(Apple/Scripts/newest-iphone-simulator.sh)
 fi
 if [[ -z "$SIM_UDID" ]]; then
   echo "No iPhone simulator found; add one in Xcode, Settings, Components." >&2

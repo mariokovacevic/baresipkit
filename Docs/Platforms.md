@@ -1,20 +1,74 @@
 # Platforms
 
-How BaresipKit spans iOS and Android: one C core with two SDKs on top. The Swift package came
-first; this document records why the Android SDK exists, the decisions behind it, how it was
-built, and how the two SDKs match, type by type and test by test. To use either SDK, start with
-its setup guide: [iOS.md](iOS.md) or [Android.md](Android.md).
+How BaresipKit spans Apple platforms and Android: one C core with two SDKs on top, with the same
+features and the same type names, each following its language's conventions. This document shows
+how the two SDKs match, type by type and test by test, and where they differ because the
+platforms do. To use either SDK, start with its setup guide:
+[Apple/Setup.md](Apple/Setup.md) or [Android/Setup.md](Android/Setup.md). The end of the document
+records how the Android SDK was built after the Swift package, and the decisions behind it.
 
-Status: every phase below is done. The libraries and the Android sample app run in CI, the JVM tests against the
+Status: every phase of the Android plan below is done. The Android libraries and sample app run in CI, the JVM tests against the
 host core and the UI tests on an emulator; nothing has run on a physical Android device yet.
 
-## Why
+## Parity, type by type
+
+Every public type has a counterpart on the other platform with the same name and meaning, apart
+from these platform differences:
+
+| Apple (Swift) | Android (Kotlin) | Why |
+|---|---|---|
+| `BaresipCallKitAdapter`, `BaresipLiveCommunicationAdapter` | `BaresipTelecomAdapter` | One system call framework on Android (Jetpack core-telecom) |
+| `BaresipAudioSessionController` | `BaresipAudioController` | Audio focus and `AudioManager` instead of `AVAudioSession` |
+| `BaresipPushKitAdapter` | `BaresipPushAdapter` | Firebase Cloud Messaging instead of VoIP pushes |
+| `BaresipOSLog` | `BaresipLogcat` | The system log of each platform |
+| `BaresipCertificateError` | `BaresipCertificateException` | Kotlin names failures as exceptions |
+| `BaresipRedialRequest(activity:)` | `BaresipRedialRequest.from(intent)` | iOS continues the app with a user activity from Recents, Android with a `sip:`/`tel:` intent |
+| `BaresipVideoFrame.pixelBuffer` | `BaresipVideoFrame.planes` | `CVPixelBuffer` exists only on Apple platforms |
+| `CallKit` settings `ringtoneSound`, `iconTemplateImageData`, `includesCallsInRecents`, `maximumCallsPerCallGroup` | none | Self-managed Telecom calls have no system ringer, icon, Recents or call groups; the app rings and shows the call itself (the Android sample does) |
+| `BaresipAppLifecycle.disconnectsOnTermination` | none | Android does not tell an app reliably that it is being ended, so there is no moment to unregister; registrations expire on the server |
+
+The two sample apps match screen by screen, including the git-ignored deployment profile
+(`Examples/iOS/Local/`, `Examples/Android/src/local/`), redial from outside the app, the ring
+picture in the notification (a notification content extension on iOS), shortcuts for doors (an
+Open Door intent on iOS, launcher shortcuts on Android) and the call integration switch.
+
+## Parity, test by test
+
+The test suites in `Apple/Tests/BaresipKitTests` and `Android/*/src/test` check the same
+behaviour, each through its own API:
+
+| Apple tests | Android tests | Notes |
+|---|---|---|
+| `AccountConfigurationTests`, `ContactParameterTests` (8) | `AccountConfigurationTest` (7), `EventDecoderTest.hugeDurationsAreClamped` | Same validation, secure defaults, `Contact` parameter encoding, clamped durations |
+| `EngineLifecycleTests` (4) | `EngineLifecycleTest` (6) | Plus a closed engine and unknown calls |
+| `AppLifecycleTests` (5) | `AppLifecycleTest` (4) | No `TerminationStopsTheEngine`: Android has no reliable termination callback |
+| `CallEndReasonTests` (5), `NetworkEventTests` (2) | `EventDecoderTest` (9), `EngineLifecycleTest.capabilitiesAndVersions` | Answered or declined elsewhere, replaced calls and the call they replace, network events, ABI version |
+| `FileLogTests` (5) | `FileLogTest` (5) | One to one |
+| `CertificatesTests` (11) | `CertificatesTest` (7) | Kotlin takes non-null bundles, so the nil cases do not exist |
+| `NetworkMonitorTests` (5) | `NetworkMonitorTest` (3) | Same rules for first, changed, lost and repeated networks |
+| `VideoSinkTests` (7) | `VideoTest` (3), `VideoGeometryTest` (8), `H264LoopbackTest` (emulator), `EventDecoderTest` | `CVPixelBuffer`/IOSurface cases are Apple only; Android adds rendering geometry and MediaCodec H.264 |
+| `AudioInterruptionTests` (6), `AudioOptionsTests` (4) | `AudioControllerTest` (7) | Focus loss pauses, regained focus resumes only what the controller activated, Telecom-owned audio waits; iOS media-services reset and Bluetooth profile flags have no Android counterpart |
+| `CallKitActionResultTests` (9), `LiveCommunicationAdapterTests` (8) | `TelecomActionsTest` (4), `DisconnectCauseTest` (4), `PushCallLedgerTest` | Successful, refused and timed-out actions, abandoned starts, calls ended elsewhere, SIP URI or number handles; ending an unknown call succeeds |
+| `PushCallLedgerTests` (25), `PushMatchTests` (8) | `PushCallLedgerTest` (24), `PushMatchTest` (7) | Ported one to one |
+| `SystemCallBookTests` (19) | `PushCallLedgerTest`, `TelecomActionsTest` | The call bookkeeping both iOS adapters share: pushed and unannounced calls, early answers and declines, placed and abandoned starts, the camera on answer, calls handed over to the call that replaces them; on Android it lives in `BaresipTelecomAdapter` |
+| `ContactParameterUpdatesTests` (7), `IncomingPushReportTests` (2) | `PushTest` (5) | PushKit's "report before returning" rule does not apply to FCM |
+| `BaresipPhoneTests` (14), `BaresipPhoneControlTests` (16), `MessagePeerTests` (4) | `BaresipPhoneTest` (12), `BaresipPhoneControlTest` (18) | Ported one to one; snapshot cases merged |
+| `RedialRequestTests` (3) | `BaresipRedialRequestTest` (5), `RedialTest` (emulator) | Intents instead of user activities, with the trusted `CALL` rule |
+| Calls against a SIP peer (C suite, `test_call.c`) | `CallTest`, `OutgoingCallTest` (JVM against the host core) | Incoming and outgoing calls, hold, mute, DTMF in RTP and SIP INFO, messages, rejection |
+| Sample app UI test (`RegistrationCallUITests`) and screenshots | Android sample `RegistrationCallTest`, `ScreenshotTest`, `RedialTest`, 34 unit tests | TLS registration with a private CA, a wrong SPKI pin failing and clearing it, a call through the registrar to a peer on the host that runs until media flows, and every screen of the iOS sample. The emulator's NAT hides the phone's own address, so the Android call takes its media through a TURN relay (coturn) on the runner |
+
+## History: how the Android SDK was built
+
+BaresipKit started as a Swift package; the sections below are the plan the Android SDK was built
+from, kept as the record of its decisions.
+
+### Why
 
 BaresipKit started as an open-source SIP SDK for iOS over baresip and libre. Android gets the same SDK,
 with the same features, for any developer who builds a VoIP or intercom app. The C core, the
 patches and the tests are shared; only the layers that talk to the operating system differ.
 
-## Goals
+### Goals
 
 - Everything the iOS SDK does, on Android: accounts and registration over UDP, TCP and TLS with
   private CAs, client certificates and SPKI pins; push `Contact` parameters; audio and video
@@ -29,22 +83,22 @@ patches and the tests are shared; only the layers that talk to the operating sys
   same design.
 - The same quality bar as iOS: CI, tests at every layer, documentation.
 
-## Non-goals
+### Non-goals
 
 - A different feature set or API shape from iOS where Android does not force one.
 - Java-first APIs; the API is Kotlin, usable from Java where it costs nothing.
 - Devices below Android 9 (API 28). baresip's `aaudio` module needs API 28 for the
   voice-communication usage, input preset and audio session it sets.
 
-## Anti-goals
+### Anti-goals
 
 - Forking the C core or the patches for Android. A fix in the core is a fix on both platforms.
 - Naming any vendor whose devices are used for testing.
 
-## How it is built (decisions)
+### How it is built (decisions)
 
 1. **One repository.** Android lives under `Android/` next to the Swift package, and builds the
-   same `Core/`, `Patches/` and pinned sources (`Build/versions.env`). Alternative: a separate
+   same `Core/`, `Core/Patches/` and pinned sources (`Core/Build/versions.env`). Alternative: a separate
    repository with the core as a submodule; rejected because every core change would need two
    synchronized pull requests. With Android in it, the repository was renamed from
    `baresip-swift` to `baresipkit`.
@@ -60,7 +114,7 @@ patches and the tests are shared; only the layers that talk to the operating sys
    counterpart of CallKit and LiveCommunicationKit), `baresipkit-push` (FCM and push `Contact`
    parameters, the counterpart of PushKit), `baresipkit-compose` (the counterpart of
    `BaresipKitSwiftUI`), and the sample app `sample`.
-4. **Native build:** `PLATFORM=android Build/build-xcframework.sh` cross-compiles OpenSSL, Opus,
+4. **Native build:** `PLATFORM=android Core/Build/build-xcframework.sh` cross-compiles OpenSSL, Opus,
    libvpx, libre, baresip (with every patch) and the core with the NDK for `arm64-v8a` and
    `x86_64`, with the same pins and patches as for Apple. Gradle links the result into
    `libbaresipkit.so` with the JNI bridge, and the AAR carries it for both ABIs. Alternative: a
@@ -79,10 +133,10 @@ patches and the tests are shared; only the layers that talk to the operating sys
    plugin 8.13 and NDK r30.
 7. **Tests without a device first:** the JNI bridge also builds for the Linux host, so the
    Kotlin layer runs its unit tests on the JVM against the real core (calls between two engines,
-   as `Tests/Core` does in C). Instrumented tests on an emulator come with audio, video and
+   as `Core/Tests` does in C). Instrumented tests on an emulator come with audio, video and
    telecom.
 
-## Phases, as built
+### Phases, as built
 
 Each phase ended green in CI and was usable on its own.
 
@@ -120,53 +174,6 @@ Each phase ended green in CI and was usable on its own.
 9. **Documentation and release.** The README in `Android/` as the integration guide, API docs
    with Dokka, and publishing to Maven Central with the `Release Android` workflow (the Maven
    publish plugin, Central Portal, signed artifacts with sources and Dokka javadoc jars).
-
-## Parity with iOS
-
-Every public type of the Swift package has a Kotlin counterpart with the same name and meaning,
-apart from these platform differences:
-
-| iOS | Android | Why |
-|---|---|---|
-| `BaresipCallKitAdapter`, `BaresipLiveCommunicationAdapter` | `BaresipTelecomAdapter` | One system call framework on Android (Jetpack core-telecom) |
-| `BaresipAudioSessionController` | `BaresipAudioController` | Audio focus and `AudioManager` instead of `AVAudioSession` |
-| `BaresipPushKitAdapter` | `BaresipPushAdapter` | Firebase Cloud Messaging instead of VoIP pushes |
-| `BaresipOSLog` | `BaresipLogcat` | The system log of each platform |
-| `BaresipCertificateError` | `BaresipCertificateException` | Kotlin names failures as exceptions |
-| `BaresipRedialRequest(activity:)` | `BaresipRedialRequest.from(intent)` | iOS continues the app with a user activity from Recents, Android with a `sip:`/`tel:` intent |
-| `BaresipVideoFrame.pixelBuffer` | `BaresipVideoFrame.planes` | `CVPixelBuffer` exists only on Apple platforms |
-| `CallKit` settings `ringtoneSound`, `iconTemplateImageData`, `includesCallsInRecents`, `maximumCallsPerCallGroup` | none | Self-managed Telecom calls have no system ringer, icon, Recents or call groups; the app rings and shows the call itself (the Android sample does) |
-| `BaresipAppLifecycle.disconnectsOnTermination` | none | Android does not tell an app reliably that it is being ended, so there is no moment to unregister; registrations expire on the server |
-
-The Android sample mirrors the iOS sample screen by screen, including the git-ignored deployment profile
-(`AppProfile`, `Examples/Android/src/local/`), redial from outside the app, the ring picture in the
-notification (the iOS notification content extension), launcher shortcuts for doors (the iOS Open
-Door intent) and the call integration switch (the iOS call screen choice).
-
-## Behavioral parity, test by test
-
-Every iOS test suite in `Tests/BaresipKitTests` has its Android counterpart, which checks the
-same behaviour through the Kotlin API:
-
-| iOS tests | Android tests | Notes |
-|---|---|---|
-| `AccountConfigurationTests`, `ContactParameterTests` (8) | `AccountConfigurationTest` (7), `EventDecoderTest.hugeDurationsAreClamped` | Same validation, secure defaults, `Contact` parameter encoding, clamped durations |
-| `EngineLifecycleTests` (4) | `EngineLifecycleTest` (6) | Plus a closed engine and unknown calls |
-| `AppLifecycleTests` (5) | `AppLifecycleTest` (4) | No `TerminationStopsTheEngine`: Android has no reliable termination callback |
-| `CallEndReasonTests` (5), `NetworkEventTests` (2) | `EventDecoderTest` (9), `EngineLifecycleTest.capabilitiesAndVersions` | Answered or declined elsewhere, replaced calls and the call they replace, network events, ABI version |
-| `FileLogTests` (5) | `FileLogTest` (5) | One to one |
-| `CertificatesTests` (11) | `CertificatesTest` (7) | Kotlin takes non-null bundles, so the nil cases do not exist |
-| `NetworkMonitorTests` (5) | `NetworkMonitorTest` (3) | Same rules for first, changed, lost and repeated networks |
-| `VideoSinkTests` (7) | `VideoTest` (3), `VideoGeometryTest` (8), `H264LoopbackTest` (emulator), `EventDecoderTest` | `CVPixelBuffer`/IOSurface cases are Apple only; Android adds rendering geometry and MediaCodec H.264 |
-| `AudioInterruptionTests` (6), `AudioOptionsTests` (4) | `AudioControllerTest` (7) | Focus loss pauses, regained focus resumes only what the controller activated, Telecom-owned audio waits; iOS media-services reset and Bluetooth profile flags have no Android counterpart |
-| `CallKitActionResultTests` (9), `LiveCommunicationAdapterTests` (8) | `TelecomActionsTest` (4), `DisconnectCauseTest` (4), `PushCallLedgerTest` | Successful, refused and timed-out actions, abandoned starts, calls ended elsewhere, SIP URI or number handles; ending an unknown call succeeds |
-| `PushCallLedgerTests` (25), `PushMatchTests` (8) | `PushCallLedgerTest` (24), `PushMatchTest` (7) | Ported one to one |
-| `SystemCallBookTests` (19) | `PushCallLedgerTest`, `TelecomActionsTest` | The call bookkeeping both iOS adapters share: pushed and unannounced calls, early answers and declines, placed and abandoned starts, the camera on answer, calls handed over to the call that replaces them; on Android it lives in `BaresipTelecomAdapter` |
-| `ContactParameterUpdatesTests` (7), `IncomingPushReportTests` (2) | `PushTest` (5) | PushKit's "report before returning" rule does not apply to FCM |
-| `BaresipPhoneTests` (14), `BaresipPhoneControlTests` (16), `MessagePeerTests` (4) | `BaresipPhoneTest` (12), `BaresipPhoneControlTest` (18) | Ported one to one; snapshot cases merged |
-| `RedialRequestTests` (3) | `BaresipRedialRequestTest` (5), `RedialTest` (emulator) | Intents instead of user activities, with the trusted `CALL` rule |
-| Calls against a SIP peer (C suite, `test_call.c`) | `CallTest`, `OutgoingCallTest` (JVM against the host core) | Incoming and outgoing calls, hold, mute, DTMF in RTP and SIP INFO, messages, rejection |
-| Sample app UI test (`RegistrationCallUITests`) and screenshots | Android sample `RegistrationCallTest`, `ScreenshotTest`, `RedialTest`, 34 unit tests | TLS registration with a private CA, a wrong SPKI pin failing and clearing it, a call through the registrar to a peer on the host that runs until media flows, and every screen of the iOS sample. The emulator's NAT hides the phone's own address, so the Android call takes its media through a TURN relay (coturn) on the runner |
 
 ## Open questions
 
