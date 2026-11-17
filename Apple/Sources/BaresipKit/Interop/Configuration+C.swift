@@ -93,6 +93,7 @@ extension bsk_account_config {
         reject_transfers = !account.acceptTransfers
         rtcp_mux = account.nat.rtcpMultiplexing
         nat_pinhole = account.nat.pinhole
+        rtp_timeout_prefers_audio = account.nat.rtpTimeoutPrefersAudio
         vfu_info = account.pictureUpdateOverSIPInfo
         incoming_headers = arena.cStringArray(account.incomingHeaders)
         incoming_header_count = account.incomingHeaders.count

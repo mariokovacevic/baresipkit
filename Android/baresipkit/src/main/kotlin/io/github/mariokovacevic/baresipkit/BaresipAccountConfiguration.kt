@@ -322,8 +322,22 @@ public class BaresipNatConfiguration private constructor(
     /** The TURN relay used by ICE. At most one server is supported. */
     public val turnServers: List<BaresipTurnServer> = builder.turnServers
 
-    /** How long an established call may receive no RTP before it is ended. */
+    /**
+     * How long an established call may receive no RTP before it is ended. Every stream that is
+     * sent and received counts, so a video call ends when either its audio or its video stops
+     * arriving; see [rtpTimeoutPrefersAudio]. The time on hold does not count.
+     */
     public val rtpTimeout: Duration = builder.rtpTimeout
+
+    /**
+     * Whether [rtpTimeout] watches only the audio while the call's audio is sent and received.
+     *
+     * Some devices stop sending video in the middle of a call without a new offer, for example a
+     * door station whose camera turns off while the conversation goes on. With this on, such a
+     * call stays up as long as its audio arrives; the video is watched only in a call whose audio
+     * is not sent and received. Off by default: video that stops ends the call.
+     */
+    public val rtpTimeoutPrefersAudio: Boolean = builder.rtpTimeoutPrefersAudio
 
     /** Whether RTCP shares the RTP port (RFC 5761). On by default. */
     public val rtcpMultiplexing: Boolean = builder.rtcpMultiplexing
@@ -349,11 +363,12 @@ public class BaresipNatConfiguration private constructor(
             "stunUri" to stunUri,
             "turnServers" to turnServers,
             "rtpTimeout" to rtpTimeout,
+            "rtpTimeoutPrefersAudio" to rtpTimeoutPrefersAudio,
             "rtcpMultiplexing" to rtcpMultiplexing,
             "pinhole" to pinhole,
         )
 
-    private fun values(): List<Any?> = listOf(mode, stunUri, turnServers, rtpTimeout, rtcpMultiplexing, pinhole)
+    private fun values(): List<Any?> = listOf(mode, stunUri, turnServers, rtpTimeout, rtpTimeoutPrefersAudio, rtcpMultiplexing, pinhole)
 
     /** Collects the settings of a [BaresipNatConfiguration]; see the [BaresipNatConfiguration] function. */
     @BaresipConfigurationDsl
@@ -370,6 +385,9 @@ public class BaresipNatConfiguration private constructor(
         /** How long an established call may receive no RTP before it is ended, 30 seconds by default. */
         public var rtpTimeout: Duration = 30.seconds
 
+        /** Whether [rtpTimeout] watches only the audio while the call's audio is sent and received. Off by default. */
+        public var rtpTimeoutPrefersAudio: Boolean = false
+
         /** Whether RTCP shares the RTP port (RFC 5761). On by default. */
         public var rtcpMultiplexing: Boolean = true
 
@@ -382,6 +400,7 @@ public class BaresipNatConfiguration private constructor(
             stunUri = configuration.stunUri
             turnServers = configuration.turnServers
             rtpTimeout = configuration.rtpTimeout
+            rtpTimeoutPrefersAudio = configuration.rtpTimeoutPrefersAudio
             rtcpMultiplexing = configuration.rtcpMultiplexing
             pinhole = configuration.pinhole
         }

@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `BaresipNATConfiguration.rtpTimeoutPrefersAudio` (Kotlin
+  `BaresipNatConfiguration.rtpTimeoutPrefersAudio`, C `rtp_timeout_prefers_audio` in
+  `bsk_account_config`, capability `nat.rtp-timeout-prefers-audio`, C ABI 0.14): while a call's
+  audio is sent and received, the RTP timeout watches the audio only, so a peer that stops its
+  video without a new offer does not end the call. A call whose audio is off, on hold or one-way
+  keeps the timeout on its video. Off by default, where video that stops ends the call as
+  before; both sample apps turn it on ("Keep the call when video stops" on the Account screen).
+
 ### Changed
 
 - Both sample apps live in `Examples/`: the iOS sample in `Examples/iOS` (before
@@ -31,6 +41,9 @@ All notable changes to this project are documented here. The format follows
 - Documentation with the same guides per platform: `Docs/Apple/` and `Docs/Android/` each have
   `Setup.md`, `Building.md` and `Releasing.md` (before `Docs/iOS.md` and `Docs/Android.md`), and
   `Docs/Core/` has the core build, the C ABI and the compatibility matrix.
+- `CONTRIBUTING.md` has the rule for behaviour that only some deployments need: an option that
+  is off by default, tested with both values, and turned on in the sample apps.
+  `Examples/README.md` lists the options the samples turn on.
 
 ### Fixed
 
@@ -43,6 +56,15 @@ All notable changes to this project are documented here. The format follows
   answered an incoming call from the callback as soon as its early media arrived never sent
   the 200, and every later call into the engine blocked (patch 0030). The Swift and Kotlin SDKs
   hand events to the app outside that callback and were not affected.
+- A call held for longer than `rtpTimeout` and then resumed is no longer ended at once with an
+  RTP timeout: the time on hold does not count (patch 0031).
+- `BaresipPhone.activeCall` (Swift and Kotlin) follows a swap on the system call screen: when the
+  active call is on hold and another call resumes or connects, that call becomes active. Before,
+  the active call stayed on the held call, so the camera and mute buttons of a call screen changed
+  the held call, and when the resumed call ended before it was connected, the other call stayed on
+  hold instead of being resumed.
+- Sample apps: the transfer screen lists the saved doors, the contacts and up to four recent
+  calls, without the current call and without an address twice.
 
 ## [1.0.0-rc.1] - 2026-11-14
 

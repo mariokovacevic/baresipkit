@@ -26,7 +26,8 @@ for ringing and opening doors, a bell with a keyhole as its icon, and five tabs.
 - **Account** (from Settings): domain, transport, port, outbound proxy, credentials (Keychain),
   server CA (PEM or DER), client certificate (imported or pasted as PEM), SPKI pins, media
   encryption, and settings for testing: NAT traversal (none, STUN, ICE with TURN, relay only),
-  rtcp-mux, NAT pinhole, RTP timeout, IPv6, SIP Outbound, registration time up to a week, DTMF
+  rtcp-mux, NAT pinhole, RTP timeout, keeping a call whose video stops, IPv6, SIP Outbound,
+  registration time up to a week, DTMF
   method, transfers, codec order and video size, frame rate, bitrate and adaptive bitrate.
   Engine settings (relay only, IPv6, video) restart the engine when saved. Certificates and the
   client key are kept in app storage that can be read once the phone has been unlocked after a
@@ -44,7 +45,8 @@ for ringing and opening doors, a bell with a keyhole as its icon, and five tabs.
 - **In call** (full screen): the other side's video, your camera in the top right corner while
   it is sent (`BaresipSelfView`), the status and whether the call is encrypted, then mute, sound
   output (iPhone, speaker, headphones, Bluetooth, car or the system route picker), your camera,
-  keypad, hold and More, and Open door for a door. More holds transfer (consult first or blind),
+  keypad, hold and More, and Open door for a door. More holds transfer (consult first or blind,
+  to a saved door, a contact, a recent call or any address),
   recording (stereo WAV in Documents/Recordings, visible in the Files app), switching cameras,
   restarting ICE, the sound output and the call's quality: MOS, loss, jitter, round trip, codec
   and ICE path. The chevron returns to the app while the call goes on; with several calls the

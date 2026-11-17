@@ -41,8 +41,9 @@ public final class BaresipPhone: ObservableObject {
     /// The call a call screen shows: the call placed or answered last, also on the system call
     /// screen, or the one made active with ``makeActive(_:)``.
     ///
-    /// The first call that appears becomes active. When the active call ends, the next call
-    /// becomes active, a held one first.
+    /// The first call that appears becomes active. When the active call is on hold and another
+    /// call connects, for example after a swap on the system call screen, that call becomes
+    /// active. When the active call ends, the next call becomes active, a held one first.
     @Published public private(set) var activeCall: BaresipPhoneCall?
 
     /// Takes call actions through a system call interface such as CallKit, for the calls it
@@ -210,10 +211,15 @@ public final class BaresipPhone: ObservableObject {
         let wasRinging = current.isRinging
         current.update(state: state, error: error)
         let answeredElsewhere = wasRinging && current.isConnected
-        if answeredElsewhere {
+        if answeredElsewhere || takesOverFromHeldActiveCall(current, state: state) {
             activeCall = current
         }
         current.refresh()
+    }
+
+    private func takesOverFromHeldActiveCall(_ call: BaresipPhoneCall, state: BaresipCallState) -> Bool {
+        guard let activeCall, activeCall !== call, activeCall.isOnHold else { return false }
+        return call.isConnected || state == .resuming
     }
 
     private func release(_ id: BaresipCallID) {

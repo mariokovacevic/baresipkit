@@ -153,6 +153,8 @@ internal class NativeAccountConfig(
 
     @JvmField val rtpTimeoutMs = account.nat.rtpTimeout.wholeMilliseconds()
 
+    @JvmField val rtpTimeoutPrefersAudio = account.nat.rtpTimeoutPrefersAudio
+
     @JvmField val turnUri =
         account.nat.turnServers
             .firstOrNull()

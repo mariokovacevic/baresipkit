@@ -288,6 +288,7 @@ fun accountConfiguration(
                     )
             }
             rtpTimeout = settings.rtpTimeoutSeconds.coerceAtLeast(0).seconds
+            rtpTimeoutPrefersAudio = settings.rtpTimeoutPrefersAudio
             rtcpMultiplexing = settings.rtcpMux
             pinhole = settings.pinhole
         }

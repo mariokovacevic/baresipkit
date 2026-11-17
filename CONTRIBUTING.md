@@ -108,6 +108,12 @@ CI runs `Scripts/lint.sh` and fails on any difference. C code follows the style 
 - Changes to baresip or libre go into `Core/Patches/` as a small diff with a row in
   `Core/Patches/README.md`, never into downloaded sources.
 - Never log credentials, authorization headers or full push tokens.
+- The defaults suit any SIP peer. Behaviour that only some deployments, devices or test setups
+  need is an option that is off by default, never a change to the default. Such an option is a
+  typed setting on both platforms with a DocC and a KDoc comment that say when to turn it on, a
+  capability in `bsk_capabilities` when the core implements it, and a core test for each of its
+  values. The sample apps turn it on, as one of their settings, and
+  [Examples/README.md](Examples/README.md) lists it under "Options the samples turn on".
 
 ## Commits
 
@@ -128,3 +134,5 @@ the body when it is not obvious.
   203.0.113.0/24, 2001:db8::/32), and fictional numbers such as `+1 555 0100` to `+1 555 0199`.
 - [ ] No names of companies, commercial products, other SDKs or apps; describe the behaviour
   instead.
+- [ ] Behaviour that only some deployments need is an option that is off by default, tested with
+  both values, turned on in the sample apps and listed in `Examples/README.md`.

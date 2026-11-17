@@ -10,6 +10,7 @@
 - [ ] New or changed public API has DocC or KDoc comments; renames and removals are listed in `CHANGELOG.md`
 - [ ] The public API baselines are updated if the API changed (`Apple/Scripts/swift-api.sh dump` on macOS, `./gradlew updateKotlinAbi` in `Android/`)
 - [ ] A change on one platform has its counterpart on the other, or the pull request says why not
+- [ ] Behaviour that only some deployments need is an option that is off by default, tested with both values, turned on in the sample apps and listed in `Examples/README.md`
 - [ ] `CHANGELOG.md` has an entry under "Unreleased"
 - [ ] Changes to baresip or libre are patches in `Core/Patches/` with a row in `Core/Patches/README.md`
 - [ ] No credentials, real host names, IP addresses or phone numbers in code, tests or logs

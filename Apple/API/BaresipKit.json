@@ -25279,6 +25279,79 @@
           },
           {
             "kind": "Var",
+            "name": "rtpTimeoutPrefersAudio",
+            "printedName": "rtpTimeoutPrefersAudio",
+            "children": [
+              {
+                "kind": "TypeNominal",
+                "name": "Bool",
+                "printedName": "Swift.Bool",
+                "usr": "s:Sb"
+              }
+            ],
+            "declKind": "Var",
+            "usr": "s:10BaresipKit0A16NATConfigurationV22rtpTimeoutPrefersAudioSbvp",
+            "mangledName": "$s10BaresipKit0A16NATConfigurationV22rtpTimeoutPrefersAudioSbvp",
+            "moduleName": "BaresipKit",
+            "declAttributes": [
+              "HasInitialValue",
+              "HasStorage"
+            ],
+            "hasStorage": true,
+            "accessors": [
+              {
+                "kind": "Accessor",
+                "name": "Get",
+                "printedName": "Get()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:10BaresipKit0A16NATConfigurationV22rtpTimeoutPrefersAudioSbvg",
+                "mangledName": "$s10BaresipKit0A16NATConfigurationV22rtpTimeoutPrefersAudioSbvg",
+                "moduleName": "BaresipKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "get"
+              },
+              {
+                "kind": "Accessor",
+                "name": "Set",
+                "printedName": "Set()",
+                "children": [
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Void",
+                    "printedName": "()"
+                  },
+                  {
+                    "kind": "TypeNominal",
+                    "name": "Bool",
+                    "printedName": "Swift.Bool",
+                    "usr": "s:Sb"
+                  }
+                ],
+                "declKind": "Accessor",
+                "usr": "s:10BaresipKit0A16NATConfigurationV22rtpTimeoutPrefersAudioSbvs",
+                "mangledName": "$s10BaresipKit0A16NATConfigurationV22rtpTimeoutPrefersAudioSbvs",
+                "moduleName": "BaresipKit",
+                "implicit": true,
+                "declAttributes": [
+                  "Transparent"
+                ],
+                "accessorKind": "set"
+              }
+            ]
+          },
+          {
+            "kind": "Var",
             "name": "rtcpMultiplexing",
             "printedName": "rtcpMultiplexing",
             "children": [

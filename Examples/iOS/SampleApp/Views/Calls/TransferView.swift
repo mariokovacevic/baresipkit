@@ -29,38 +29,10 @@ struct TransferView: View {
         StackedField(title: "Transfer to", text: $model.transferTarget, prompt: "Number or address",
                      keyboard: .asciiCapable)
             .accessibilityIdentifier("transfer.target")
-        if !recent.isEmpty {
-            TitledSection(title: "Recent") {
-                Card {
-                    ForEach(Array(recent.enumerated()), id: \.element.uri) { index, record in
-                        if index > 0 {
-                            RowDivider()
-                        }
-                        Button {
-                            model.transferTarget = record.uri
-                        } label: {
-                            HStack(spacing: 12) {
-                                Text(record.name)
-                                    .foregroundStyle(Theme.text)
-                                Spacer()
-                                Text(record.user)
-                                    .font(.subheadline)
-                                    .foregroundStyle(Theme.secondary)
-                                if model.transferTarget == record.uri {
-                                    Image(systemName: "checkmark")
-                                        .foregroundStyle(Theme.info)
-                                        .accessibilityLabel("Chosen")
-                                }
-                            }
-                            .padding(.horizontal, 16)
-                            .frame(minHeight: 52)
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-        }
+        let choices = transferChoices
+        choiceSection("Doors", choices.doors)
+        choiceSection("Contacts", choices.contacts)
+        choiceSection("Recent", choices.recent)
         VStack(alignment: .leading, spacing: 6) {
             Button("Ask \(targetName) first") {
                 Task { await model.consult() }
@@ -131,16 +103,83 @@ struct TransferView: View {
         return target.isEmpty ? "them" : CallRow.displayName(target)
     }
 
-    /// People called recently, other than the current call, newest first.
-    private var recent: [CallRecord] {
-        var seen: Set<String> = [model.currentRow?.uri ?? ""]
-        var result: [CallRecord] = []
-        for record in model.history where !record.uri.isEmpty && seen.insert(record.uri).inserted {
-            result.append(record)
-            if result.count == 4 {
-                break
+    /// The doors, contacts and recent calls to transfer to, without the current call and without
+    /// an address twice: a door or contact is listed under its own name only.
+    private var transferChoices: (doors: [TransferChoice], contacts: [TransferChoice], recent: [TransferChoice]) {
+        var seen: Set<String> = [TransferChoice.key(model.currentRow?.uri ?? "")]
+        func unique(_ list: [TransferChoice], limit: Int = .max) -> [TransferChoice] {
+            var result: [TransferChoice] = []
+            for choice in list where result.count < limit && seen.insert(choice.key).inserted {
+                result.append(choice)
+            }
+            return result
+        }
+        let doors = unique(model.doors.filter { !$0.address.trimmed.isEmpty }.map {
+            TransferChoice(title: $0.title, detail: $0.user, address: $0.address.trimmed)
+        })
+        let contacts = unique(model.contacts.filter { !$0.address.trimmed.isEmpty }.map {
+            TransferChoice(title: $0.title, detail: CallRow.displayName($0.address.trimmed),
+                           address: $0.address.trimmed)
+        })
+        let recent = unique(model.history.filter { !$0.uri.isEmpty }.map {
+            TransferChoice(title: $0.name, detail: $0.user, address: $0.uri)
+        }, limit: 4)
+        return (doors, contacts, recent)
+    }
+
+    @ViewBuilder
+    private func choiceSection(_ title: String, _ list: [TransferChoice]) -> some View {
+        if !list.isEmpty {
+            TitledSection(title: title) {
+                Card {
+                    ForEach(Array(list.enumerated()), id: \.element.key) { index, choice in
+                        if index > 0 {
+                            RowDivider()
+                        }
+                        choiceRow(choice)
+                    }
+                }
             }
         }
-        return result
+    }
+
+    private func choiceRow(_ choice: TransferChoice) -> some View {
+        Button {
+            model.transferTarget = choice.address
+        } label: {
+            HStack(spacing: 12) {
+                Text(choice.title)
+                    .foregroundStyle(Theme.text)
+                Spacer()
+                Text(choice.detail)
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.secondary)
+                if model.transferTarget == choice.address {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Theme.info)
+                        .accessibilityLabel("Chosen")
+                }
+            }
+            .padding(.horizontal, 16)
+            .frame(minHeight: 52)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// Someone the call can be transferred to.
+private struct TransferChoice {
+    let title: String
+    let detail: String
+    let address: String
+
+    var key: String {
+        Self.key(address)
+    }
+
+    /// The SIP user, so that `1002`, `sip:1002@pbx` and `sips:1002@pbx;transport=tls` are one.
+    static func key(_ address: String) -> String {
+        CallRow.displayName(address.trimmed).lowercased()
     }
 }

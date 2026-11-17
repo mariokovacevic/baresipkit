@@ -234,6 +234,61 @@ class BaresipPhoneControlTest {
         }
 
     @Test
+    fun aCallResumedOnTheSystemScreenBecomesActive() =
+        runBlocking {
+            val phone = phone()
+            val first = BaresipCallID(1)
+            val second = BaresipCallID(2)
+            phone.apply(state(first, BaresipCallState.STREAMS_RUNNING))
+            phone.apply(state(first, BaresipCallState.PAUSED))
+            phone.apply(state(second, BaresipCallState.OUTGOING_INIT))
+            phone.apply(state(second, BaresipCallState.STREAMS_RUNNING))
+            assertEquals(second, phone.activeCall?.id)
+
+            phone.apply(state(second, BaresipCallState.PAUSING))
+            phone.apply(state(first, BaresipCallState.RESUMING))
+            phone.apply(state(first, BaresipCallState.STREAMS_RUNNING))
+            phone.apply(state(second, BaresipCallState.PAUSED))
+            assertEquals(first, phone.activeCall?.id)
+
+            phone.apply(state(first, BaresipCallState.PAUSING))
+            phone.apply(state(second, BaresipCallState.RESUMING))
+            phone.apply(state(second, BaresipCallState.STREAMS_RUNNING))
+            phone.apply(state(first, BaresipCallState.PAUSED))
+            assertEquals(second, phone.activeCall?.id)
+        }
+
+    @Test
+    fun aCallThatEndsWhileResumingOnTheSystemScreenResumesTheHeldCall() =
+        runBlocking {
+            val first = BaresipCallID(1)
+            val second = BaresipCallID(2)
+            val controller = RecordingController(setOf(first, second))
+            val phone = phone(controller)
+            phone.apply(state(first, BaresipCallState.PAUSED))
+            phone.apply(state(second, BaresipCallState.STREAMS_RUNNING))
+            assertEquals(second, phone.activeCall?.id)
+
+            phone.apply(state(second, BaresipCallState.PAUSING))
+            phone.apply(state(first, BaresipCallState.RESUMING))
+            assertEquals(first, phone.activeCall?.id)
+            phone.apply(state(first, BaresipCallState.RELEASED))
+            phone.apply(state(second, BaresipCallState.PAUSED))
+            assertEquals(second, phone.activeCall?.id)
+            waitUntil { controller.actions.contains("hold 2 false") }
+        }
+
+    @Test
+    fun anUpdateOfAnotherCallKeepsAnActiveCallThatIsNotHeld() =
+        runBlocking {
+            val phone = phone()
+            phone.apply(state(BaresipCallID(1), BaresipCallState.STREAMS_RUNNING))
+            phone.apply(state(BaresipCallID(2), BaresipCallState.PAUSED_BY_REMOTE))
+            phone.apply(state(BaresipCallID(2), BaresipCallState.STREAMS_RUNNING))
+            assertEquals(BaresipCallID(1), phone.activeCall?.id)
+        }
+
+    @Test
     fun samePeers() {
         assertTrue(BaresipPhoneCall.samePeer("\"Front door\" <sip:Door1@PBX.example.com:5061;transport=tls>", "sip:door1@pbx.example.com"))
         assertTrue(BaresipPhoneCall.samePeer("sips:door1@pbx.example.com?subject=x", "<sip:door1@pbx.example.com>"))

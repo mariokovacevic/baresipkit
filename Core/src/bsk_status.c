@@ -163,7 +163,7 @@ size_t bsk_capabilities(char *buf, size_t buf_len)
 		"message.sip "
 		"dtmf.rfc4733 dtmf.sip-info "
 		"nat.ice nat.stun nat.turn-udp nat.turn-tcp nat.turn-tls "
-		"nat.rtcp-mux nat.pinhole "
+		"nat.rtcp-mux nat.pinhole nat.rtp-timeout-prefers-audio "
 		"ice.restart ice.trickle:unsupported "
 		"media.srtp media.dtls-srtp "
 		"codec.opus codec.g722 codec.g711 " BSK_CAPS_H264

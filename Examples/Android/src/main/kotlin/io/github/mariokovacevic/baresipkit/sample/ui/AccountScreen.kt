@@ -272,7 +272,8 @@ private fun NatSection(model: CallModel) {
         note =
             "STUN only learns the public address; ICE also checks paths and can use a TURN relay. Relay only forces media " +
                 "through TURN. The pinhole sends empty RTP packets during a preview, so media relays forward the caller's media " +
-                "even without ICE. A call without RTP for the timeout ends. Relay only and IPv6 restart the engine.",
+                "even without ICE. A call without RTP for the timeout ends; with Keep the call when video stops, only the audio " +
+                "counts while it arrives. Relay only and IPv6 restart the engine.",
     ) {
         Card {
             SegmentRow("Traversal", settings.natMode, BaresipNatTraversal.entries, { if (it == BaresipNatTraversal.NONE) "None" else it.name }) { value ->
@@ -303,6 +304,8 @@ private fun NatSection(model: CallModel) {
                 { edit { it.copy(rtpTimeoutSeconds = (it.rtpTimeoutSeconds - 10).coerceAtLeast(0)) } },
                 { edit { it.copy(rtpTimeoutSeconds = (it.rtpTimeoutSeconds + 10).coerceAtMost(300)) } },
             )
+            RowDivider()
+            ToggleRow("Keep the call when video stops", settings.rtpTimeoutPrefersAudio, { value -> edit { it.copy(rtpTimeoutPrefersAudio = value) } })
             RowDivider()
             ToggleRow("IPv6", settings.engine.ipv6, { value -> edit { it.copy(engine = it.engine.copy(ipv6 = value)) } })
         }

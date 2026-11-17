@@ -58,8 +58,9 @@ public class BaresipPhone(
 
     /**
      * The call a call screen shows: the call placed or answered last, also on the system call
-     * screen, or the one made active with [makeActive]. When the active call ends, the next call
-     * becomes active, a held one first.
+     * screen, or the one made active with [makeActive]. When the active call is on hold and
+     * another call connects, for example after a swap on the system call screen, that call becomes
+     * active. When the active call ends, the next call becomes active, a held one first.
      */
     public var activeCall: BaresipPhoneCall? by mutableStateOf(null)
         private set
@@ -203,8 +204,18 @@ public class BaresipPhone(
         val current = trackedCall(id, state)
         val wasRinging = current.isRinging
         current.update(state, error)
-        if (wasRinging && current.isConnected) activeCall = current
+        val answeredElsewhere = wasRinging && current.isConnected
+        if (answeredElsewhere || takesOverFromHeldActiveCall(current, state)) activeCall = current
         current.refresh()
+    }
+
+    private fun takesOverFromHeldActiveCall(
+        call: BaresipPhoneCall,
+        state: BaresipCallState,
+    ): Boolean {
+        val active = activeCall ?: return false
+        if (active === call || !active.isOnHold) return false
+        return call.isConnected || state == BaresipCallState.RESUMING
     }
 
     private fun release(id: BaresipCallID) {

@@ -143,6 +143,7 @@ extension CallModel {
                                           rtpTimeout: .seconds(max(0, settings.rtpTimeoutSeconds)),
                                           rtcpMultiplexing: settings.rtcpMux,
                                           pinhole: settings.pinhole)
+        nat.rtpTimeoutPrefersAudio = settings.rtpTimeoutPrefersAudio
         if settings.natMode != .none, !settings.stunURI.trimmed.isEmpty {
             nat.stunURI = settings.stunURI.trimmed
         }

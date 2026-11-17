@@ -81,7 +81,9 @@ other side holds the call.
 `activeCall` is the call a call screen shows. The first call that appears becomes active; a call
 placed with `makeCall` becomes active unless an established call is, and a call answered with
 `answer`, or on the system call screen, becomes active. `makeActive(_:)` switches to another
-call; the engine puts the others on hold. When the active call ends, the next call becomes
+call; the engine puts the others on hold. When the active call is on hold and another call
+resumes or connects, for example after a swap on the system call screen, that call becomes
+active. When the active call ends, the next call becomes
 active, a held one first, and is resumed. Set `resumesHeldCallWhenActiveCallEnds` to `false`
 to leave it on hold.
 

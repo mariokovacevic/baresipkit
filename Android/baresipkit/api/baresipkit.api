@@ -1023,6 +1023,7 @@ public final class io/github/mariokovacevic/baresipkit/BaresipNatConfiguration {
 	public final fun getPinhole ()Z
 	public final fun getRtcpMultiplexing ()Z
 	public final fun getRtpTimeout-UwyO8pc ()J
+	public final fun getRtpTimeoutPrefersAudio ()Z
 	public final fun getStunUri ()Ljava/lang/String;
 	public final fun getTurnServers ()Ljava/util/List;
 	public fun hashCode ()I
@@ -1037,12 +1038,14 @@ public final class io/github/mariokovacevic/baresipkit/BaresipNatConfiguration$B
 	public final fun getPinhole ()Z
 	public final fun getRtcpMultiplexing ()Z
 	public final fun getRtpTimeout-UwyO8pc ()J
+	public final fun getRtpTimeoutPrefersAudio ()Z
 	public final fun getStunUri ()Ljava/lang/String;
 	public final fun getTurnServers ()Ljava/util/List;
 	public final fun setMode (Lio/github/mariokovacevic/baresipkit/BaresipNatTraversal;)V
 	public final fun setPinhole (Z)V
 	public final fun setRtcpMultiplexing (Z)V
 	public final fun setRtpTimeout-LRDsOJo (J)V
+	public final fun setRtpTimeoutPrefersAudio (Z)V
 	public final fun setStunUri (Ljava/lang/String;)V
 	public final fun setTurnServers (Ljava/util/List;)V
 }
