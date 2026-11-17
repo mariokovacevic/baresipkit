@@ -56,11 +56,11 @@ HOSTIP=<interface address> PREFIX=Core/Build/out/host/prefix Core/Tests/run_test
 
 `SANITIZE` builds libre, baresip, Opus and the facade of the host prefix with the given sanitizers (OpenSSL and libvpx are built without); CI does this on Linux, so the patched network code runs under ASan and UBSan in the core tests, the fuzzer and the integration suite. Delete `Core/Build/out/host` when you change `SANITIZE`, because Opus is not rebuilt once it is in the prefix. `BUILD_ONLY=1` makes `run_tests.sh` stop after building the test binaries.
 
-ThreadSanitizer needs its own prefix, and `SANITIZE=thread` for the build and for the tests:
+ThreadSanitizer needs its own prefix, and `SANITIZE=thread` for the build and for the tests. `OUT_DIR` must be an absolute path, because OpenSSL accepts only an absolute install prefix:
 
 ```bash
-OUT_DIR=Core/Build/out/tsan PLATFORM=host MODULE_SET=full SANITIZE=thread Core/Build/build-xcframework.sh
-SANITIZE=thread BUILD_DIR=Core/Build/out/tsan/core-tests HOSTIP=<interface address> PREFIX=Core/Build/out/tsan/host/prefix Core/Tests/run_tests.sh
+OUT_DIR="$PWD/Core/Build/out/tsan" PLATFORM=host MODULE_SET=full SANITIZE=thread Core/Build/build-xcframework.sh
+SANITIZE=thread BUILD_DIR="$PWD/Core/Build/out/tsan/core-tests" HOSTIP=<interface address> PREFIX=Core/Build/out/tsan/host/prefix Core/Tests/run_tests.sh
 ```
 
 With `thread`, libre, baresip and the facade use libre's pthread wrappers instead of C11 threads, because ThreadSanitizer does not intercept glibc's `thrd_create` and crashes in the first thread it creates. CI runs this suite in its own job.

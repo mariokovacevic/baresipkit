@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: BaresipKit <baresipkit@users.noreply.github.com>
+Date: Tue, 17 Nov 2026 14:00:00 +0100
+Subject: [PATCH] rtprecv: call the RTP established handler without the
+ receiver lock
+
+In the default receive mode rtprecv_decode() called the RTP established
+handler while it held the receiver's mutex. The handler raises
+CALL_EVENT_RTPESTAB and with it the application's event handlers, which
+may call back into baresip: answering a call, changing a media direction
+or updating a stream takes the same mutex through rtprecv_enable(). The
+mutex is not recursive, so such a call from the handler waits for
+itself, and an application that serializes its event handlers with a
+lock of its own gets the opposite lock order to rtprecv_enable() called
+under that lock, which ThreadSanitizer reports as a potential deadlock.
+
+Note under the mutex that the receiver has just been established and
+call the handler after the mutex is released. The rest of the function
+already runs without the mutex, and the handler still runs before the
+packet is decoded. With the RX thread the handler was already deferred
+to the main thread and nothing changes.
+---
+ src/rtprecv.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/rtprecv.c b/src/rtprecv.c
+index b261782..691cfb8 100644
+--- a/src/rtprecv.c
++++ b/src/rtprecv.c
+@@ -434,6 +434,7 @@ void rtprecv_decode(const struct sa *src, const struct rtp_header *hdr,
+ 	struct rtp_receiver *rx = arg;
+ 	uint32_t ssrc0;
+ 	bool ssrc_changed = false;
++	bool estab = false;
+ 	int err = 0;
+ 
+ 	if (!rx)
+@@ -462,7 +463,7 @@ void rtprecv_decode(const struct sa *src, const struct rtp_header *hdr,
+ 		if (rx->rtpestabh) {
+ 			debug("rtprecv: incoming rtp for '%s' established, "
+ 			      "receiving from %J\n", rx->name, src);
+-			pass_rtpestab_work(rx);
++			estab = true;
+ 		}
+ 
+ 		tmr_start(&rx->tmr_decode, 0, decode_tmr, rx);
+@@ -486,6 +487,9 @@ void rtprecv_decode(const struct sa *src, const struct rtp_header *hdr,
+ 	}
+ 	mtx_unlock(rx->mtx);
+ 
++	if (estab)
++		pass_rtpestab_work(rx);
++
+ 	rtprecv_strip_padding(hdr, mb);
+ 
+ 	if (ssrc_changed)
+-- 
+2.43.0
+

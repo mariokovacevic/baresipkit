@@ -34,6 +34,10 @@ All notable changes to this project are documented here. The format follows
 - A DTMF digit sent in the `.auto` mode that goes out as SIP INFO, because the peer did not
   negotiate telephone-event, reports `viaSIPInfo` (Kotlin `viaSipInfo`) as `true`; before, only
   the `.sipInfo` mode did (patch 0029).
+- An event handler that answers a call no longer meets a lock-order inversion when the call's
+  first RTP packet arrives: baresip called the RTP established handler while holding its RTP
+  receiver mutex, which answering takes too, and ThreadSanitizer reported a potential deadlock
+  in the core tests (patch 0030).
 
 ## [1.0.0-rc.1] - 2026-11-14
 
