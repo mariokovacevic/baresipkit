@@ -103,28 +103,41 @@ struct TransferView: View {
         return target.isEmpty ? "them" : CallRow.displayName(target)
     }
 
-    /// The doors, contacts and recent calls to transfer to, without the current call and without
-    /// an address twice: a door or contact is listed under its own name only.
     private var transferChoices: (doors: [TransferChoice], contacts: [TransferChoice], recent: [TransferChoice]) {
-        var seen: Set<String> = [TransferChoice.key(model.currentRow?.uri ?? "")]
-        func unique(_ list: [TransferChoice], limit: Int = .max) -> [TransferChoice] {
+        var seen: Set<String> = [addressKey(model.currentRow?.uri ?? "")]
+        func unique(_ list: some Sequence<TransferChoice>, limit: Int = .max) -> [TransferChoice] {
             var result: [TransferChoice] = []
-            for choice in list where result.count < limit && seen.insert(choice.key).inserted {
-                result.append(choice)
+            for choice in list {
+                if result.count == limit {
+                    break
+                }
+                if seen.insert(choice.key).inserted {
+                    result.append(choice)
+                }
             }
             return result
         }
-        let doors = unique(model.doors.filter { !$0.address.trimmed.isEmpty }.map {
-            TransferChoice(title: $0.title, detail: $0.user, address: $0.address.trimmed)
+        func choice(_ title: String, _ detail: String, _ address: String) -> TransferChoice {
+            TransferChoice(title: title, detail: detail, address: address, key: addressKey(address))
+        }
+        let doors = unique(model.doors.lazy.filter { !$0.address.trimmed.isEmpty }.map {
+            choice($0.title, $0.user, $0.address.trimmed)
         })
-        let contacts = unique(model.contacts.filter { !$0.address.trimmed.isEmpty }.map {
-            TransferChoice(title: $0.title, detail: CallRow.displayName($0.address.trimmed),
-                           address: $0.address.trimmed)
+        let contacts = unique(model.contacts.lazy.filter { !$0.address.trimmed.isEmpty }.map {
+            choice($0.title, CallRow.displayName($0.address.trimmed), $0.address.trimmed)
         })
-        let recent = unique(model.history.filter { !$0.uri.isEmpty }.map {
-            TransferChoice(title: $0.name, detail: $0.user, address: $0.uri)
+        let recent = unique(model.history.lazy.filter { !$0.uri.isEmpty }.map {
+            choice($0.name, $0.user, $0.uri)
         }, limit: 4)
         return (doors, contacts, recent)
+    }
+
+    private func addressKey(_ address: String) -> String {
+        var value = model.normalizedDestination(address)
+        for scheme in ["sips:", "sip:"] where value.hasPrefix(scheme) {
+            value = String(value.dropFirst(scheme.count))
+        }
+        return value.prefix { $0 != ";" && $0 != "?" }.lowercased()
     }
 
     @ViewBuilder
@@ -168,18 +181,9 @@ struct TransferView: View {
     }
 }
 
-/// Someone the call can be transferred to.
 private struct TransferChoice {
     let title: String
     let detail: String
     let address: String
-
-    var key: String {
-        Self.key(address)
-    }
-
-    /// The SIP user, so that `1002`, `sip:1002@pbx` and `sips:1002@pbx;transport=tls` are one.
-    static func key(_ address: String) -> String {
-        CallRow.displayName(address.trimmed).lowercased()
-    }
+    let key: String
 }

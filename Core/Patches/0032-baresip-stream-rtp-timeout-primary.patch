@@ -1,0 +1,107 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: BaresipKit <baresipkit@users.noreply.github.com>
+Date: Wed, 18 Nov 2026 10:00:00 +0100
+Subject: [PATCH] stream: let one stream stand in for another's RTP timeout
+
+A call ends when any of its sendrecv streams receives no RTP for the
+timeout. Some peers stop sending video in the middle of a call without
+a new offer while the conversation goes on, and an application may want
+such a call to stay up as long as its audio arrives.
+
+stream_set_rtp_timeout_primary() names a primary stream for a stream.
+While the primary stream is checked for the timeout, which means it has
+a timeout, has media and is sendrecv, the stream is not checked and the
+time of its last packet moves forward, so its own timeout counts from
+the moment the primary stream is no longer checked: when the audio is
+put on hold, becomes one-way or is removed, the video is watched again.
+
+The rule is evaluated at every check, so it follows the negotiated
+directions without the application acting on SDP events and without
+restarting the timeout. Both streams belong to one call and are freed
+together; the primary stream must live as long as the stream.
+---
+ include/baresip.h |  2 ++
+ src/stream.c      | 33 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
+diff --git a/include/baresip.h b/include/baresip.h
+index 1ffcc27..ce1d04b 100644
+--- a/include/baresip.h
++++ b/include/baresip.h
+@@ -1598,6 +1598,8 @@ const char *stream_peer(const struct stream *strm);
+ int  stream_bundle_init(struct stream *strm, bool offerer);
+ int  stream_debug(struct re_printf *pf, const struct stream *s);
+ void stream_enable_rtp_timeout(struct stream *strm, uint32_t timeout_ms);
++void stream_set_rtp_timeout_primary(struct stream *strm,
++				    const struct stream *primary);
+ 
+ 
+ /**
+diff --git a/src/stream.c b/src/stream.c
+index 5af01c6..40ea971 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -41,6 +41,7 @@ struct rtp_receiver;
+ struct rxmain {
+ 	struct tmr tmr_rtp;    /**< Timer for detecting RTP timeout  */
+ 	uint32_t rtp_timeout;  /**< RTP Timeout value in [ms]        */
++	const struct stream *rtp_primary; /**< Stream checked instead */
+ 	struct tmr tmr_rec;    /**< Timer for rtp_receiver start     */
+ 	bool use_rxthread;     /**< Use RX thread flag               */
+ };
+@@ -293,6 +294,15 @@ static void stream_close(struct stream *strm, int err)
+ }
+ 
+ 
++static bool rtp_timeout_is_checked(const struct stream *strm)
++{
++	return strm && strm->rxm.rtp_timeout &&
++	       sdp_media_has_media(strm->sdp) &&
++	       !sdp_media_disabled(strm->sdp) &&
++	       sdp_media_dir(strm->sdp) == SDP_SENDRECV;
++}
++
++
+ static void check_rtp_handler(void *arg)
+ {
+ 	struct stream *strm = arg;
+@@ -313,7 +323,8 @@ static void check_rtp_handler(void *arg)
+ 	/* We are in sendrecv mode, check when the last RTP packet
+ 	 * was received.
+ 	 */
+-	if (sdp_media_dir(strm->sdp) == SDP_SENDRECV) {
++	if (sdp_media_dir(strm->sdp) == SDP_SENDRECV &&
++	    !rtp_timeout_is_checked(strm->rxm.rtp_primary)) {
+ 
+ 		diff_ms = (int)(now - ts_last);
+ 
+@@ -1126,6 +1137,26 @@ void stream_enable_rtp_timeout(struct stream *strm, uint32_t timeout_ms)
+ }
+ 
+ 
++/**
++ * Let another stream of the same call stand in for this stream's RTP
++ * timeout: while the primary stream is checked for the timeout, this
++ * stream is not, and its timeout counts from the moment the primary
++ * stream is no longer checked. The primary stream must live as long as
++ * this stream.
++ *
++ * @param strm     Stream object
++ * @param primary  Stream that is checked instead, or NULL for none
++ */
++void stream_set_rtp_timeout_primary(struct stream *strm,
++				    const struct stream *primary)
++{
++	if (!strm)
++		return;
++
++	strm->rxm.rtp_primary = primary;
++}
++
++
+ /**
+  * Set optional session handlers
+  *
+-- 
+2.43.0
+

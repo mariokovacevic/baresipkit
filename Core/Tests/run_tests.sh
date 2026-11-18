@@ -349,8 +349,8 @@ if [[ -f "$PREFIX/lib/libvpx.a" ]]; then
   "$BUILD/tests/bsk_test_video" caller "$HOSTIP" 2> "$BUILD/vcaller.err"
   wait "$VCALLEE_PID"
   cat "$BUILD/vcallee.out"
-  echo "== scripted peer with video: video stops while audio flows (by default, and with the timeout on the audio), in a call without audio, and in a call with one-way audio"
-  scripted_peer video-stops-default video-stops video-only-timeout one-way-audio-timeout
+  echo "== scripted peer with video: video stops while audio flows (by default, and with the timeout on the audio), in a call without audio, in a call with one-way audio, and before the audio becomes one-way"
+  scripted_peer video-stops-default video-stops video-only-timeout one-way-audio-timeout audio-goes-one-way
 else
   echo "== video stages skipped (no libvpx in prefix; build with MODULE_SET=full)"
 fi

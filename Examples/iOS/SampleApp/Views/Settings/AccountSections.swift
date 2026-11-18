@@ -89,7 +89,7 @@ struct AccountNATSection: View {
 
 private extension AccountNATSection {
     var rtpTimeout: String {
-        model.settings.rtpTimeoutSeconds == 0 ? "Off" : "\(model.settings.rtpTimeoutSeconds) s"
+        model.settings.rtpTimeoutSeconds == 0 ? "Default" : "\(model.settings.rtpTimeoutSeconds) s"
     }
 }
 

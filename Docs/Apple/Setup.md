@@ -460,7 +460,7 @@ account.nat = BaresipNATConfiguration(
     stunURI: "stun:stun.example.com:3478",
     turnServers: [BaresipTURNServer(uri: "turns:turn.example.com:5349",
                                     username: "user", password: turnPassword)],
-    rtpTimeout: .seconds(30),                     // end a call without RTP; .zero turns it off
+    rtpTimeout: .seconds(30),                     // end a call without RTP; .zero means 30 seconds
     rtcpMultiplexing: true,                       // RTCP on the RTP port (RFC 5761)
     pinhole: true                                 // receive-only streams open the NAT for relays
 )

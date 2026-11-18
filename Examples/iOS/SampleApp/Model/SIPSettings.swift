@@ -24,9 +24,8 @@ struct SIPSettings: Codable, Equatable {
     var pinhole = true
     var pictureUpdateOverInfo = true
     var dtmfMode: BaresipDTMFMode = .sipInfo
-    /// Seconds without RTP before an established call ends; 0 never ends it.
+    /// Seconds without RTP before an established call ends; 0 uses the engine's 30 seconds.
     var rtpTimeoutSeconds = 30
-    /// Whether video that stops leaves a call up while its audio arrives.
     var rtpTimeoutPrefersAudio = true
     var sipOutbound = false
     var registerExpiresSeconds = 600

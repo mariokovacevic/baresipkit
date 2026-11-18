@@ -289,6 +289,26 @@ class BaresipPhoneControlTest {
         }
 
     @Test
+    fun aSwapMissedWhileNotRunningIsReadFromTheSnapshot() =
+        runBlocking {
+            val phone = phone()
+            val first = BaresipCallID(1)
+            val second = BaresipCallID(2)
+            phone.apply(state(first, BaresipCallState.STREAMS_RUNNING))
+            phone.apply(state(second, BaresipCallState.PAUSED))
+            assertEquals(first, phone.activeCall?.id)
+
+            phone.applySnapshot(first, BaresipCallState.PAUSED)
+            phone.applySnapshot(second, BaresipCallState.STREAMS_RUNNING)
+            assertEquals(second, phone.activeCall?.id)
+
+            phone.applySnapshot(first, BaresipCallState.STREAMS_RUNNING)
+            assertEquals(second, phone.activeCall?.id)
+            phone.applySnapshot(second, BaresipCallState.PAUSED)
+            assertEquals(first, phone.activeCall?.id)
+        }
+
+    @Test
     fun samePeers() {
         assertTrue(BaresipPhoneCall.samePeer("\"Front door\" <sip:Door1@PBX.example.com:5061;transport=tls>", "sip:door1@pbx.example.com"))
         assertTrue(BaresipPhoneCall.samePeer("sips:door1@pbx.example.com?subject=x", "<sip:door1@pbx.example.com>"))

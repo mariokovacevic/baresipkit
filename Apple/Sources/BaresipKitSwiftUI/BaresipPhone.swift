@@ -80,7 +80,8 @@ public final class BaresipPhone: ObservableObject {
     ///
     /// Each run first brings ``calls`` in line with the engine: calls that started or ended while
     /// it was not running are added or removed, and the calls it already tracks get their current
-    /// state and details, so a call answered in the meantime no longer reads as incoming. Run it
+    /// state and details, so a call answered in the meantime no longer reads as incoming, and a
+    /// call that connected while the active call was put on hold is the ``activeCall``. Run it
     /// from a SwiftUI `.task` modifier or another long-lived task; running it again after a
     /// cancellation is safe.
     public func run() async {
@@ -198,6 +199,9 @@ public final class BaresipPhone: ObservableObject {
         }
         let current = trackedCall(id, state: state)
         current.update(state: state, error: nil)
+        if let connected = connectedCallBesideHeldActiveCall() {
+            activeCall = connected
+        }
         return current
     }
 
@@ -220,6 +224,11 @@ public final class BaresipPhone: ObservableObject {
     private func takesOverFromHeldActiveCall(_ call: BaresipPhoneCall, state: BaresipCallState) -> Bool {
         guard let activeCall, activeCall !== call, activeCall.isOnHold else { return false }
         return call.isConnected || state == .resuming
+    }
+
+    private func connectedCallBesideHeldActiveCall() -> BaresipPhoneCall? {
+        guard let activeCall, activeCall.isOnHold else { return nil }
+        return calls.first { $0 !== activeCall && $0.isConnected }
     }
 
     private func release(_ id: BaresipCallID) {

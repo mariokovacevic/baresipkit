@@ -13,8 +13,10 @@ All notable changes to this project are documented here. The format follows
   `bsk_account_config`, capability `nat.rtp-timeout-prefers-audio`, C ABI 0.14): while a call's
   audio is sent and received, the RTP timeout watches the audio only, so a peer that stops its
   video without a new offer does not end the call. A call whose audio is off, on hold or one-way
-  keeps the timeout on its video. Off by default, where video that stops ends the call as
-  before; both sample apps turn it on ("Keep the call when video stops" on the Account screen).
+  keeps the timeout on its video, counted from the moment the audio stopped being watched. Off by
+  default, where video that stops ends the call as before; both sample apps turn it on ("Keep
+  the call when video stops" on the Account screen). baresip checks the rule itself at every
+  timeout check (patch 0032), so it follows every new offer and answer.
 
 ### Changed
 
@@ -62,9 +64,13 @@ All notable changes to this project are documented here. The format follows
   active call is on hold and another call resumes or connects, that call becomes active. Before,
   the active call stayed on the held call, so the camera and mute buttons of a call screen changed
   the held call, and when the resumed call ended before it was connected, the other call stayed on
-  hold instead of being resumed.
+  hold instead of being resumed. A swap made while `run()` was not running is read from the
+  engine when it runs again.
 - Sample apps: the transfer screen lists the saved doors, the contacts and up to four recent
-  calls, without the current call and without an address twice.
+  calls, without the current call and without an address twice; two addresses are the same when
+  user and domain match.
+- `rtpTimeout` of zero is documented as what it is, the default of 30 seconds, and the samples
+  show it as "Default". The setup guide and the samples said it turned the timeout off.
 
 ## [1.0.0-rc.1] - 2026-11-14
 
