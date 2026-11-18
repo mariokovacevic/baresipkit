@@ -24,7 +24,7 @@ deployment needs it.
 | `nat.pinhole` | off | on | A media relay that forwards the caller's media only after it has seen a packet from the app |
 | `nat.rtpTimeoutPrefersAudio` | off | on | A peer that stops its video without a new offer while the conversation goes on |
 | `answerEarlyMedia` | off | on | Seeing and hearing the door while it rings |
-| `pictureUpdateOverSIPInfo` | off | on | A peer that asks for a key frame with SIP INFO instead of RTCP |
+| `pictureUpdateOverSIPInfo` | off | on | A peer that sends a new picture only when it is asked with SIP INFO, not with RTCP |
 | `dtmfMode` | `.auto` | `.sipInfo` | A door opener that reads digits from SIP INFO |
 
 ## Local profiles

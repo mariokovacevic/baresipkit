@@ -90,7 +90,8 @@ public class BaresipPhone(
     /**
      * Applies the engine's events until the calling coroutine is cancelled, and returns when the
      * engine is closed. Each run first brings [calls] in line with the engine, so running it again
-     * after a cancellation is safe.
+     * after a cancellation is safe: a call that connected while the active call was put on hold is
+     * the [activeCall].
      */
     public suspend fun run() {
         synchronize()
@@ -188,7 +189,10 @@ public class BaresipPhone(
             release(id)
             return null
         }
-        return trackedCall(id, state).also { it.update(state, null) }
+        val current = trackedCall(id, state)
+        current.update(state, null)
+        connectedCallBesideHeldActiveCall()?.let { activeCall = it }
+        return current
     }
 
     private fun applyState(
@@ -216,6 +220,12 @@ public class BaresipPhone(
         val active = activeCall ?: return false
         if (active === call || !active.isOnHold) return false
         return call.isConnected || state == BaresipCallState.RESUMING
+    }
+
+    private fun connectedCallBesideHeldActiveCall(): BaresipPhoneCall? {
+        val active = activeCall ?: return null
+        if (!active.isOnHold) return null
+        return callList.firstOrNull { it !== active && it.isConnected }
     }
 
     private fun release(id: BaresipCallID) {

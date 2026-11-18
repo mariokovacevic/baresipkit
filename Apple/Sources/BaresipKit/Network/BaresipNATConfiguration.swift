@@ -10,7 +10,7 @@ public struct BaresipNATConfiguration: Sendable, Equatable {
     ///
     /// Every stream that is sent and received counts, so a video call ends when either its audio
     /// or its video stops arriving; see ``rtpTimeoutPrefersAudio``. The time on hold does not
-    /// count.
+    /// count. Zero does not turn the timeout off: it means the default of 30 seconds.
     public var rtpTimeout: Duration
     /// Whether ``rtpTimeout`` watches only the audio while the call's audio is sent and received.
     ///

@@ -444,89 +444,55 @@ static int run_hold_timeout(const char *host)
 }
 
 
-static int run_video_stops_default(const char *host)
+struct video_timeout_case {
+	const char *mode;
+	bool prefers_audio;
+	bool answers_audio;
+	bsk_media_direction audio_dir;
+	unsigned stays_up_ms;
+	unsigned ends_within_ms;
+	const char *passes;
+};
+
+
+static const struct video_timeout_case video_timeout_cases[] = {
+	{ "video-stops-default", false, true, BSK_DIR_SENDRECV, 0, 6000,
+	  "by default video that stops ends the call" },
+	{ "video-stops", true, true, BSK_DIR_SENDRECV, 6000, 10000,
+	  "video that stops does not end a call whose audio flows" },
+	{ "video-only-timeout", true, false, BSK_DIR_INACTIVE, 0, 10000,
+	  "a call without audio ends when its video stops" },
+	{ "one-way-audio-timeout", true, true, BSK_DIR_RECVONLY, 0, 10000,
+	  "a call with one-way audio ends when its video stops" },
+	{ "audio-goes-one-way", true, true, BSK_DIR_SENDRECV, 4000, 12000,
+	  "video that stopped ends the call once its audio is one-way" },
+};
+
+
+static int run_video_timeout(const char *host,
+			     const struct video_timeout_case *tc)
 {
 	bsk_call_info info;
 	bsk_error err;
 
 	rtp_timeout_ms = 2000;
 	with_video = true;
+	prefers_audio = tc->prefers_audio;
 	(void)start(host, false);
 	CHECK(wait_until(&w, has_incoming, 15000));
-	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
+	CHECK_OK(bsk_call_answer_media(engine, last_incoming, tc->answers_audio,
+				       true, &err),
+		 &err);
 	CHECK(wait_until(&w, has_connected, 5000));
 	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
-	CHECK(info.audio_dir == BSK_DIR_SENDRECV);
+	CHECK(info.audio_dir == tc->audio_dir);
 	CHECK(info.video_dir == BSK_DIR_SENDRECV);
-	CHECK(wait_until(&w, one_released, 6000));
-	finish("by default video that stops ends the call");
-	return 0;
-}
-
-
-static int run_video_stops(const char *host)
-{
-	bsk_call_info info;
-	bsk_error err;
-
-	rtp_timeout_ms = 2000;
-	with_video = true;
-	prefers_audio = true;
-	(void)start(host, false);
-	CHECK(wait_until(&w, has_incoming, 15000));
-	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
-	CHECK(wait_until(&w, has_connected, 5000));
-	usleep(6000 * 1000);
-	CHECK(__atomic_load_n(&released_count, __ATOMIC_SEQ_CST) == 0);
-	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
-	CHECK(info.audio_dir == BSK_DIR_SENDRECV);
-	CHECK(info.video_dir == BSK_DIR_SENDRECV);
-	CHECK(wait_until(&w, one_released, 10000));
-	finish("video that stops does not end a call whose audio flows");
-	return 0;
-}
-
-
-static int run_video_only_timeout(const char *host)
-{
-	bsk_call_info info;
-	bsk_error err;
-
-	rtp_timeout_ms = 2000;
-	with_video = true;
-	prefers_audio = true;
-	(void)start(host, false);
-	CHECK(wait_until(&w, has_incoming, 15000));
-	CHECK_OK(
-		bsk_call_answer_media(engine, last_incoming, false, true, &err),
-		&err);
-	CHECK(wait_until(&w, has_connected, 5000));
-	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
-	CHECK(info.audio_dir == BSK_DIR_INACTIVE);
-	CHECK(info.video_dir == BSK_DIR_SENDRECV);
-	CHECK(wait_until(&w, one_released, 10000));
-	finish("a call without audio ends when its video stops");
-	return 0;
-}
-
-
-static int run_one_way_audio_timeout(const char *host)
-{
-	bsk_call_info info;
-	bsk_error err;
-
-	rtp_timeout_ms = 2000;
-	with_video = true;
-	prefers_audio = true;
-	(void)start(host, false);
-	CHECK(wait_until(&w, has_incoming, 15000));
-	CHECK_OK(bsk_call_answer(engine, last_incoming, true, &err), &err);
-	CHECK(wait_until(&w, has_connected, 5000));
-	CHECK(BSK_OK == bsk_call_get_info(engine, last_incoming, &info));
-	CHECK(info.audio_dir == BSK_DIR_RECVONLY);
-	CHECK(info.video_dir == BSK_DIR_SENDRECV);
-	CHECK(wait_until(&w, one_released, 10000));
-	finish("a call with one-way audio ends when its video stops");
+	if (tc->stays_up_ms) {
+		usleep(tc->stays_up_ms * 1000);
+		CHECK(__atomic_load_n(&released_count, __ATOMIC_SEQ_CST) == 0);
+	}
+	CHECK(wait_until(&w, one_released, tc->ends_within_ms));
+	finish(tc->passes);
 	return 0;
 }
 
@@ -571,14 +537,13 @@ int main(int argc, char **argv)
 		return run_answer_on_media(argv[2]);
 	if (mode_is("hold-timeout"))
 		return run_hold_timeout(argv[2]);
-	if (mode_is("video-stops-default"))
-		return run_video_stops_default(argv[2]);
-	if (mode_is("video-stops"))
-		return run_video_stops(argv[2]);
-	if (mode_is("video-only-timeout"))
-		return run_video_only_timeout(argv[2]);
-	if (mode_is("one-way-audio-timeout"))
-		return run_one_way_audio_timeout(argv[2]);
+	for (size_t i = 0;
+	     i < sizeof(video_timeout_cases) / sizeof(video_timeout_cases[0]);
+	     i++) {
+		if (mode_is(video_timeout_cases[i].mode))
+			return run_video_timeout(argv[2],
+						 &video_timeout_cases[i]);
+	}
 
 	fprintf(stderr, "unknown mode %s\n", mode);
 	return 2;

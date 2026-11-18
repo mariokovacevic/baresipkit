@@ -460,7 +460,7 @@ account.nat = BaresipNATConfiguration(
     stunURI: "stun:stun.example.com:3478",
     turnServers: [BaresipTURNServer(uri: "turns:turn.example.com:5349",
                                     username: "user", password: turnPassword)],
-    rtpTimeout: .seconds(30),                     // end a call without RTP; .zero turns it off
+    rtpTimeout: .seconds(30),                     // end a call without RTP; .zero means 30 seconds
     rtcpMultiplexing: true,                       // RTCP on the RTP port (RFC 5761)
     pinhole: true                                 // receive-only streams open the NAT for relays
 )
@@ -539,6 +539,8 @@ Before shipping a VoIP app built on BaresipKit:
 | CallKit | An icon template (`iconTemplateImageData`) and, optionally, a ringtone in the bundle |
 | Licenses | Ship the third-party notices and license texts (see [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md)) |
 | Privacy | `BaresipKit` includes a privacy manifest; add your own app's entries |
+| Export compliance | The app contains encryption (TLS, DTLS-SRTP, SRTP): answer App Store Connect's question, or set `ITSAppUsesNonExemptEncryption` in the Info.plist |
+| Legal | Consent to recording, personal data and emergency calls are the publisher's; see [What the app's publisher handles](../Limitations.md#what-the-apps-publisher-handles) |
 
 ## Sample app
 

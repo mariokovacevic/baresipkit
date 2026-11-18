@@ -300,7 +300,7 @@ private fun NatSection(model: CallModel) {
             RowDivider()
             StepperRow(
                 "RTP timeout",
-                if (settings.rtpTimeoutSeconds == 0) "Off" else "${settings.rtpTimeoutSeconds} s",
+                if (settings.rtpTimeoutSeconds == 0) "Default" else "${settings.rtpTimeoutSeconds} s",
                 { edit { it.copy(rtpTimeoutSeconds = (it.rtpTimeoutSeconds - 10).coerceAtLeast(0)) } },
                 { edit { it.copy(rtpTimeoutSeconds = (it.rtpTimeoutSeconds + 10).coerceAtMost(300)) } },
             )

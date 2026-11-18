@@ -325,7 +325,8 @@ public class BaresipNatConfiguration private constructor(
     /**
      * How long an established call may receive no RTP before it is ended. Every stream that is
      * sent and received counts, so a video call ends when either its audio or its video stops
-     * arriving; see [rtpTimeoutPrefersAudio]. The time on hold does not count.
+     * arriving; see [rtpTimeoutPrefersAudio]. The time on hold does not count. Zero does not turn
+     * the timeout off: it means the default of 30 seconds.
      */
     public val rtpTimeout: Duration = builder.rtpTimeout
 

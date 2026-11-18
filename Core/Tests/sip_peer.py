@@ -7,7 +7,8 @@ responses.
 Usage: sip_peer.py SCENARIO HOST CALLEE_PORT
 Scenarios: refer-ringing, fake-replace, reentrant, remove-live, stop-live,
 require-timer, cancel-elsewhere, dtmf, dtmf-info, answer-on-media, hold-timeout,
-video-stops-default, video-stops, video-only-timeout, one-way-audio-timeout.
+video-stops-default, video-stops, video-only-timeout, one-way-audio-timeout,
+audio-goes-one-way.
 Exits 0 when the callee behaved as expected, else 1.
 """
 
@@ -440,33 +441,66 @@ def video_stops_default(peer):
     return video_stops(peer, ends_the_call=True)
 
 
-def video_only_timeout(peer):
+def ends_when_video_stops(peer, answered_audio, complaint):
     peer.offers_video = True
     if not establish(peer):
         return "call not answered"
-    if not re.search(r"^m=audio.*?^a=inactive", peer.last_response, re.M | re.S):
-        return "the audio of the answer is not inactive"
+    if not re.search(r"^m=audio.*?^a=%s" % answered_audio, peer.last_response, re.M | re.S):
+        return "the audio of the answer is not %s" % answered_audio
     failure = send_video_for_a_second(peer)
     if failure:
         return failure
     if not peer.bye_from_callee(8):
-        return "the callee kept the call although its only media stopped"
+        return complaint
     return None
+
+
+def video_only_timeout(peer):
+    return ends_when_video_stops(
+        peer, "inactive", "the callee kept the call although its only media stopped")
 
 
 def one_way_audio_timeout(peer):
-    peer.offers_video = True
     peer.audio_direction = "sendonly"
+    return ends_when_video_stops(
+        peer, "recvonly", "the callee kept the call although nothing it watches arrived")
+
+
+def reinvites_until_bye(peer, seconds):
+    def accept(data):
+        if data.startswith("BYE "):
+            return "bye"
+        if re.match(r"SIP/2.0 200", data) and re.search(r"^CSeq: \d+ INVITE", data, re.M | re.I):
+            return "answered"
+        return None
+
+    deadline = time.time() + seconds
+    while time.time() < deadline:
+        peer.invite()
+        result = peer.receive(1, accept)
+        if result == "answered":
+            peer.ack()
+            result = peer.receive(1, accept)
+        if result == "bye":
+            return True
+    return False
+
+
+def audio_goes_one_way(peer):
+    peer.offers_video = True
     if not establish(peer):
         return "call not answered"
-    if not re.search(r"^m=audio.*?^a=recvonly", peer.last_response, re.M | re.S):
-        return "the audio of the answer is not recvonly"
+    audio = audio_stream(peer, media_address(peer.last_response))
+    audio.start()
     failure = send_video_for_a_second(peer)
     if failure:
         return failure
-    if not peer.bye_from_callee(8):
-        return "the callee kept the call although nothing it watches arrived"
-    return None
+    if peer.bye_from_callee(4):
+        return "the callee ended the call when the video stopped"
+    peer.audio_direction = "sendonly"
+    ended = reinvites_until_bye(peer, 10)
+    audio.stopped.set()
+    return None if ended else "the callee kept the call after its audio became one-way"
 
 
 def receive_telephone_event(peer, payload_type, digit, seconds):
@@ -551,6 +585,7 @@ SCENARIOS = {
     "video-stops": video_stops,
     "video-only-timeout": video_only_timeout,
     "one-way-audio-timeout": one_way_audio_timeout,
+    "audio-goes-one-way": audio_goes_one_way,
 }
 
 

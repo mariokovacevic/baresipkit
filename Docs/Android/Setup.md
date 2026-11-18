@@ -282,7 +282,8 @@ Before shipping a VoIP app built on BaresipKit for Android:
 | Firebase | A Firebase project, its `google-services.json`, and a `FirebaseMessagingService` that forwards tokens and messages to `BaresipPushAdapter`; send calls as high-priority data messages |
 | SIP server | Reads the push parameters from the `Contact` and sends a push for a call to a registered device |
 | Calls from other apps | The `sip:` and `tel:` intent filters and the `CALL_PHONE` alias from the recipe above |
-| Licenses | Ship the third-party notices, including OpenSSL's NOTICE (see [License](../../README.md#license)) |
+| Licenses | Ship the third-party notices and license texts, including OpenSSL's license (see [License](../../README.md#license)) |
+| Legal | Export rules for apps with encryption, consent to recording, personal data and emergency calls are the publisher's; see [What the app's publisher handles](../Limitations.md#what-the-apps-publisher-handles) |
 
 ## What the libraries add to the manifest
 

@@ -106,6 +106,7 @@ import io.github.mariokovacevic.baresipkit.sample.model.endConsultation
 import io.github.mariokovacevic.baresipkit.sample.model.endpointChoices
 import io.github.mariokovacevic.baresipkit.sample.model.hangUp
 import io.github.mariokovacevic.baresipkit.sample.model.heldRow
+import io.github.mariokovacevic.baresipkit.sample.model.normalizedDestination
 import io.github.mariokovacevic.baresipkit.sample.model.openCallChat
 import io.github.mariokovacevic.baresipkit.sample.model.openCurrentDoor
 import io.github.mariokovacevic.baresipkit.sample.model.phoneCall
@@ -688,19 +689,12 @@ private fun TransferContent(
     }
 }
 
-/** Someone the call can be transferred to. */
 private data class TransferChoice(
     val title: String,
     val detail: String,
     val address: String,
-) {
-    /** The SIP user, so that `1002`, `sip:1002@pbx` and `sips:1002@pbx;transport=tls` are one. */
-    val key: String get() = key(address)
-
-    companion object {
-        fun key(address: String): String = SipNames.user(address.trim()).lowercase()
-    }
-}
+    val key: String,
+)
 
 private data class TransferChoiceLists(
     val doors: List<TransferChoice>,
@@ -708,36 +702,47 @@ private data class TransferChoiceLists(
     val recent: List<TransferChoice>,
 )
 
-/**
- * The doors, contacts and recent calls to transfer to, without the current call and without an
- * address twice: a door or contact is listed under its own name only.
- */
 private fun transferChoices(
     model: CallModel,
     row: CallRow,
 ): TransferChoiceLists {
-    val seen = mutableSetOf(TransferChoice.key(row.remoteUri))
+    fun addressKey(address: String): String = SipNames.address(model.normalizedDestination(address)).lowercase()
+
+    fun choice(
+        title: String,
+        detail: String,
+        address: String,
+    ): TransferChoice = TransferChoice(title, detail, address, addressKey(address))
+
+    val seen = mutableSetOf(addressKey(row.remoteUri))
 
     fun unique(
-        list: List<TransferChoice>,
+        choices: Sequence<TransferChoice>,
         limit: Int = Int.MAX_VALUE,
-    ): List<TransferChoice> =
-        list
-            .asSequence()
-            .filter { seen.add(it.key) }
-            .take(limit)
-            .toList()
+    ): List<TransferChoice> = choices.filter { seen.add(it.key) }.take(limit).toList()
+
     val doors =
         unique(
-            model.doors.filter { it.address.isNotBlank() }.map { TransferChoice(it.title, it.user, it.address.trim()) },
+            model.doors
+                .asSequence()
+                .filter { it.address.isNotBlank() }
+                .map { choice(it.title, it.user, it.address.trim()) },
         )
     val contacts =
         unique(
-            model.contacts.filter { it.address.isNotBlank() }.map {
-                TransferChoice(it.title, SipNames.user(it.address.trim()), it.address.trim())
-            },
+            model.contacts
+                .asSequence()
+                .filter { it.address.isNotBlank() }
+                .map { choice(it.title, SipNames.user(it.address.trim()), it.address.trim()) },
         )
-    val recent = unique(model.history.filter { it.uri.isNotEmpty() }.map { TransferChoice(it.name, it.user, it.uri) }, limit = 4)
+    val recent =
+        unique(
+            model.history
+                .asSequence()
+                .filter { it.uri.isNotEmpty() }
+                .map { choice(it.name, it.user, it.uri) },
+            limit = 4,
+        )
     return TransferChoiceLists(doors, contacts, recent)
 }
 

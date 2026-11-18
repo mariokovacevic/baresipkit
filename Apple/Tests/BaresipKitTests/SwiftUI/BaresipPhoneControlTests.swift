@@ -365,6 +365,24 @@ final class BaresipPhoneAnsweredElsewhereTests: XCTestCase {
         XCTAssertEqual(phone.activeCall?.id, first)
     }
 
+    func testASwapMissedWhileNotRunningIsReadFromTheSnapshot() throws {
+        let phone = try makePhone()
+        let first = BaresipCallID(rawValue: 1)
+        let second = BaresipCallID(rawValue: 2)
+        phone.apply(.call(first, .streamsRunning, nil))
+        phone.apply(.call(second, .paused, nil))
+        XCTAssertEqual(phone.activeCall?.id, first)
+
+        _ = phone.applySnapshot(of: first, state: .paused)
+        _ = phone.applySnapshot(of: second, state: .streamsRunning)
+        XCTAssertEqual(phone.activeCall?.id, second)
+
+        _ = phone.applySnapshot(of: first, state: .streamsRunning)
+        XCTAssertEqual(phone.activeCall?.id, second)
+        _ = phone.applySnapshot(of: second, state: .paused)
+        XCTAssertEqual(phone.activeCall?.id, first)
+    }
+
     private func makePhone() throws -> BaresipPhone {
         var configuration = BaresipConfiguration(instanceUUID: UUID())
         configuration.modules = ["g711"]

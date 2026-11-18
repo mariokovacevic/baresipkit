@@ -23,3 +23,22 @@ macOS: the XCFramework has an Apple silicon slice (`macos-arm64`, macOS 13 or la
 Android: the core and its limits above are shared. The libraries and the Android sample app run in CI, the JVM tests against the host core and the UI tests on an emulator; nothing has run on a physical Android device yet. What only a device can show is listed in [Platforms.md](Platforms.md#open-questions).
 
 Applied upstream patches (all in `Core/Patches/`, to be proposed upstream): Contact URI parameters API, avcapture CMake gate and iOS guards, libre server-verification handler, ICE module events, starting media after ICE connects with optional SRTP, TURN over TCP/TLS, ICE restart, video bitrate, video filter directions, NAT pinhole for receive-only audio, picture updates over SIP INFO, avcapture for iOS 16.
+
+## What the app's publisher handles
+
+BaresipKit is a library, and some duties come with the app that ships it. This is a list to take
+to your own legal adviser, not legal advice.
+
+- **Encryption and export rules.** The core contains OpenSSL and encrypts signalling and media
+  (TLS, DTLS-SRTP, SRTP), so an app that ships it contains encryption. App Store Connect asks
+  about it for every build; the `ITSAppUsesNonExemptEncryption` key in the Info.plist answers
+  once. The export rules of your country, and of the countries your app is distributed from,
+  may apply as well.
+- **Recording.** `startRecording` records both sides of a call. In many countries the other
+  party has to be told, or has to agree; that is the app's to do.
+- **Personal data.** Calls carry voice, video, SIP addresses and phone numbers to the servers
+  the app configures, and nowhere else. The app may also keep a call history, messages and
+  recordings. The app's privacy notice and its store declarations cover all of that.
+- **Emergency calls.** The kit has no emergency calling: it does not recognise emergency numbers
+  and does not send the caller's location. An app that its users take for a phone should say so,
+  or hand such calls to the system's phone app.
