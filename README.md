@@ -78,6 +78,8 @@ both; only the layers that talk to the operating system differ.
 BaresipKit and everything it ships are under permissive licenses (BSD and Apache 2.0, listed in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)), so a closed-source app can use it as it is.
 H.264 patent licensing is the app publisher's; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+So are export rules for apps with encryption, consent to recording, personal data and emergency
+calls; see [What the app's publisher handles](Docs/Limitations.md#what-the-apps-publisher-handles).
 
 ## Highlights
 
@@ -205,8 +207,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for building, testing and the commit conv
 
 BaresipKit is available under the BSD 3-Clause license; see [LICENSE](LICENSE). libre,
 baresip, Opus and libvpx are BSD-3-Clause too. OpenSSL, built into the C core on both platforms
-for TLS, DTLS-SRTP and crypto, is Apache License 2.0, which requires its NOTICE text to ship
-with the app. The iOS release workflow bundles it, and every other license text, into
+for TLS, DTLS-SRTP and crypto, is Apache License 2.0, which requires its license text to ship
+with the app; OpenSSL 3 has no NOTICE file. The iOS release workflow bundles it, and every other
+license text, into
 `BaresipKitCore-licenses.zip`; the texts are also in
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
@@ -214,3 +217,6 @@ H.264 is patent-encumbered. BaresipKit ships no H.264 code: it uses the platform
 VideoToolbox on iOS, covered by Apple's platform license, and the device's MediaCodec codecs on
 Android. Read the note in [DEPENDENCIES.md](DEPENDENCIES.md) before shipping; it also has the
 full dependency inventory, with versions and roles.
+
+BaresipKit is an independent project. It is not affiliated with, sponsored by or endorsed by the
+baresip project or the Baresip Foundation; the name says what it is built on.

@@ -43,6 +43,11 @@ All notable changes to this project are documented here. The format follows
 - Documentation with the same guides per platform: `Docs/Apple/` and `Docs/Android/` each have
   `Setup.md`, `Building.md` and `Releasing.md` (before `Docs/iOS.md` and `Docs/Android.md`), and
   `Docs/Core/` has the core build, the C ABI and the compatibility matrix.
+- Documentation for publishers: `Docs/Limitations.md` lists what the app's publisher handles
+  (export rules for encryption, consent to recording, personal data, emergency calls), the app
+  checklists point to it, `README.md` says that BaresipKit is not affiliated with the baresip
+  project, and `CONTRIBUTING.md` says under which license contributions are accepted. The README
+  and the Android checklist no longer ask for an OpenSSL NOTICE file; OpenSSL 3 has none.
 - `CONTRIBUTING.md` has the rule for behaviour that only some deployments need: an option that
   is off by default, tested with both values, and turned on in the sample apps.
   `Examples/README.md` lists the options the samples turn on.

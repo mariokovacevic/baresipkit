@@ -121,6 +121,12 @@ Use [Conventional Commits](https://www.conventionalcommits.org/): `feat:`, `fix:
 `style:`, `docs:`, `test:`, `ci:`, `build:` or `chore:`, one concern per commit. Explain why in
 the body when it is not obvious.
 
+## License of contributions
+
+Contributions are accepted under the project's license. By opening a pull request you agree that
+your contribution is licensed under the BSD 3-Clause license in `LICENSE`, and you confirm that
+you may submit it: it is your own work, or its author or your employer allows it.
+
 ## Pull request checklist
 
 - [ ] `Scripts/lint.sh` passes.

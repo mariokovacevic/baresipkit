@@ -539,6 +539,8 @@ Before shipping a VoIP app built on BaresipKit:
 | CallKit | An icon template (`iconTemplateImageData`) and, optionally, a ringtone in the bundle |
 | Licenses | Ship the third-party notices and license texts (see [THIRD_PARTY_NOTICES.md](../../THIRD_PARTY_NOTICES.md)) |
 | Privacy | `BaresipKit` includes a privacy manifest; add your own app's entries |
+| Export compliance | The app contains encryption (TLS, DTLS-SRTP, SRTP): answer App Store Connect's question, or set `ITSAppUsesNonExemptEncryption` in the Info.plist |
+| Legal | Consent to recording, personal data and emergency calls are the publisher's; see [What the app's publisher handles](../Limitations.md#what-the-apps-publisher-handles) |
 
 ## Sample app
 
