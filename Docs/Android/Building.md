@@ -52,6 +52,12 @@ cd Android && ./gradlew ktlintCheck
 
 `./gradlew ktlintFormat` fixes most of what `ktlintCheck` reports.
 
+CI runs Gradle through `Android/Scripts/gradlew-retry.sh`, which takes the same arguments as
+`./gradlew`. When a run fails because a plugin, a dependency or Gradle itself could not be
+downloaded, it runs again, at most three times, after 30 and then 60 seconds; a build or test
+failure is not repeated. CI keeps Gradle's downloads in the Actions cache, keyed on the build
+files, so a run downloads only what changed.
+
 ## Public API baseline
 
 CI fails when the public Kotlin API of a library changes without its baseline. The baselines are

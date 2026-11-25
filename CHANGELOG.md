@@ -43,6 +43,11 @@ All notable changes to this project are documented here. The format follows
 - Documentation with the same guides per platform: `Docs/Apple/` and `Docs/Android/` each have
   `Setup.md`, `Building.md` and `Releasing.md` (before `Docs/iOS.md` and `Docs/Android.md`), and
   `Docs/Core/` has the core build, the C ABI and the compatibility matrix.
+- CI keeps Gradle's downloads (Gradle itself, plugins and dependencies) in the Actions cache, and
+  runs Gradle through `Android/Scripts/gradlew-retry.sh`, which runs it again when a download
+  failed. Twice an emulator job had failed because a Gradle plugin could not be downloaded,
+  before any test ran. The Android release workflow builds through the same script; the
+  publishing step is not repeated.
 - Documentation for publishers: `Docs/Limitations.md` lists what the app's publisher handles
   (export rules for encryption, consent to recording, personal data, emergency calls), the app
   checklists point to it, `README.md` says that BaresipKit is not affiliated with the baresip
