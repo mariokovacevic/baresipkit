@@ -73,7 +73,7 @@ jobs:
         run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-core.sh
       - name: Build, check the ABI and test the libraries
         working-directory: Android
-        run: ./gradlew --no-daemon -PVERSION_NAME="$VERSION" assembleRelease checkKotlinAbi testDebugUnitTest
+        run: Scripts/gradlew-retry.sh --no-daemon -PVERSION_NAME="$VERSION" assembleRelease checkKotlinAbi testDebugUnitTest
       - name: Assemble the SBOM and SHA256SUMS
         run: |
           mkdir -p Core/Build/out/android-release

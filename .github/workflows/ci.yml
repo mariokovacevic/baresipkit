@@ -102,16 +102,24 @@ jobs:
           PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-core.sh
       - name: Validate the Gradle wrapper
         uses: gradle/actions/wrapper-validation@7296c772c13d12d9871528814b51fb2143c138ef # v6.4.1
+      - name: Cache Gradle and the downloaded dependencies
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-android-${{ hashFiles('Android/**/*.gradle.kts', 'Examples/Android/*.gradle.kts', 'Android/gradle.properties', 'Android/gradle/libs.versions.toml', 'Android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-android-
       - name: Build and test the Android modules
         working-directory: Android
         run: |
           export JAVA_HOME="$JAVA_HOME_21_X64"
-          ./gradlew --no-daemon assembleDebug testDebugUnitTest checkKotlinAbi
+          Scripts/gradlew-retry.sh --no-daemon assembleDebug testDebugUnitTest checkKotlinAbi
       - name: Check Kotlin style with ktlint
         working-directory: Android
         run: |
           export JAVA_HOME="$JAVA_HOME_21_X64"
-          ./gradlew --no-daemon --continue ktlintCheck
+          Scripts/gradlew-retry.sh --no-daemon --continue ktlintCheck
       - name: Make a patch with ktlint's formatting
         if: failure()
         working-directory: Android
@@ -164,6 +172,14 @@ jobs:
             Core/Build/out/android-arm64-v8a/prefix
             Core/Build/out/android-x86_64/prefix
           key: android-${{ hashFiles('Core/Build/versions.env', 'Core/Build/module-sets.env', 'Core/Build/build-core.sh', 'Core/Build/cmake/**', 'Core/Patches/*.patch') }}
+      - name: Cache Gradle and the downloaded dependencies
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-emulator-${{ hashFiles('Android/**/*.gradle.kts', 'Examples/Android/*.gradle.kts', 'Android/gradle.properties', 'Android/gradle/libs.versions.toml', 'Android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-emulator-
       - name: Build the core for Android
         run: PLATFORM=android MODULE_SET=full JOBS=4 Core/Build/build-core.sh
       - name: Build the host core and the call peer
@@ -208,7 +224,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           working-directory: Android
           script: |
-            ./gradlew --no-daemon :baresipkit:connectedDebugAndroidTest :sample:installDebug :sample:installDebugAndroidTest
+            Scripts/gradlew-retry.sh --no-daemon :baresipkit:connectedDebugAndroidTest :sample:installDebug :sample:installDebugAndroidTest
             adb shell am instrument -w -e class io.github.mariokovacevic.baresipkit.sample.ScreenshotTest io.github.mariokovacevic.baresipkit.sample.test/androidx.test.runner.AndroidJUnitRunner | tee screenshot-test.txt
             mkdir -p build/screenshots && adb pull /sdcard/Android/data/io.github.mariokovacevic.baresipkit.sample/files/screenshots build/screenshots
             grep -q "^OK (" screenshot-test.txt
